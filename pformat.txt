@@ -1,0 +1,18 @@
+{{#تبديل:{{{ويكي بيانات|}}}
+|لا=|#افتراضي={{#if:{{#invoke:Wikidata2|formatStatements|entityId={{{معرف ويكي بيانات|}}}|property=P402|noref=2}}{{#invoke:Wikidata2|formatStatements|entityId={{{معرف ويكي بيانات|}}}|property=P625|noref=2}}
+|{{Map draw
+    | geotype   = {{#if:
+        {{#invoke:Wikidata2|formatStatements|entityId={{{معرف ويكي بيانات|}}}|property=P402|noref=t|firstvalue=y|nounit=t}}
+        | geoshape
+        | Point
+    }}
+    | frameless = s
+    | ids       = {{{معرف ويكي بيانات|}}}
+    | zoom      = {{#if:
+        {{{تكبير الخريطة|}}}
+        | {{{تكبير الخريطة|}}}
+        | {{AutoMapZoom
+            | 1 = {{#invoke:Wikidata2|formatStatements|entityId={{{معرف ويكي بيانات|}}}|property=P2046|noref=t|firstvalue=y|nounit=t}}
+        }}
+    }}
+}}[[تصنيف:صفحات بها بيانات ويكي بيانات]][[تصنيف:خريطة موقع من ويكي بيانات]]}}[[تصنيف:صفحات بها بيانات ويكي بيانات]][[تصنيف:خريطة موقع من ويكي بيانات]]}}<noinclude>{{توثيق}}</noinclude>
