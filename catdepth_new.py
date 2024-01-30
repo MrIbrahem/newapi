@@ -8,7 +8,20 @@ def login_def(lang, family):
 
 
 class CategoryDepth:
-    def __init__(self, title, sitecode='en', depth=0, family="wikipedia", ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], no_gcmsort=False, **kwargs):
+    def __init__(
+        self,
+        title,
+        sitecode="en",
+        depth=0,
+        family="wikipedia",
+        ns="all",
+        nslist=[],
+        without_lang="",
+        with_lang="",
+        tempyes=[],
+        no_gcmsort=False,
+        **kwargs,
+    ):
         # ---
         self.title = title
         self.no_gcmsort = no_gcmsort
@@ -27,9 +40,10 @@ class CategoryDepth:
             try:
                 self.depth = int(self.depth)
             except ValueError:
-                print(f'self.depth != int: {self.depth}')
+                print(f"self.depth != int: {self.depth}")
                 self.depth = 0
         # ---
+        self.timestamps = {}
         self.result_table = {}
         self.params = {}
         self.make_params()
@@ -43,7 +57,21 @@ class CategoryDepth:
         return self.log.post(params, addtoken=True)
 
     def make_params(self):
-        params = {"action": "query", "format": "json", "utf8": 1, "generator": "categorymembers", "gcmprop": "title", "prop": [], "gcmtype": "page|subcat", "gcmlimit": "max", "formatversion": "1", "gcmsort": "timestamp", "gcmdir": "newer"}
+        params = {
+            "action": "query",
+            "format": "json",
+            "utf8": 1,
+            "generator": "categorymembers",
+            "gcmprop": "title",
+            "prop": ["revisions"],
+            "gcmtype": "page|subcat",
+            "gcmlimit": "max",
+            "formatversion": "1",
+            "gcmsort": "timestamp",
+            "gcmdir": "newer",
+            "rvprop": "timestamp",
+        }
+        # ---
         if self.no_gcmsort:
             del params["gcmsort"]
             del params["gcmdir"]
@@ -52,7 +80,7 @@ class CategoryDepth:
             params["prop"].append("templates")
             params["tllimit"] = "max"
             params["tltemplates"] = "|".join(self.tempyes)
-        if self.with_lang != "" or self.without_lang != '':  # مع وصلة لغة معينة
+        if self.with_lang != "" or self.without_lang != "":  # مع وصلة لغة معينة
             params["prop"].append("langlinks")
             params["lllimit"] = "max"
         # ---
@@ -61,7 +89,7 @@ class CategoryDepth:
         elif self.ns in [14, "14"]:
             params["gcmtype"] = "subcat"
         # ---
-        print('gcmtype::', params["gcmtype"])
+        # print('gcmtype::', params["gcmtype"])
         # ---
         if len(self.nslist) > 0:
             if self.nslist == [14]:
@@ -69,10 +97,10 @@ class CategoryDepth:
             elif 14 not in self.nslist and self.depth == 0:
                 params["gcmtype"] = "page"
         # ---
-        print('gcmtype::', params["gcmtype"])
+        # print('gcmtype::', params["gcmtype"])
         # ---
-        if len(params['prop']) == 0:
-            del params['prop']
+        if len(params["prop"]) == 0:
+            del params["prop"]
         # ---
         self.params = params
 
@@ -81,26 +109,26 @@ class CategoryDepth:
         params = self.params
         params["gcmtitle"] = cac
         # ---
-        continue_v = 'x'
-        continue_p = ''
+        continue_v = "x"
+        continue_p = ""
         # ---
         table = {}
         # ---
-        while continue_v != '':
-            if continue_v != 'x':
+        while continue_v != "":
+            if continue_v != "x":
                 params[continue_p] = continue_v
             # ---
-            continue_v = ''
+            continue_v = ""
             # ---
             api = self.post_params(params)
             # ---
             if not api:
-                print(f'api == false for {cac}')
+                print(f"api == false for {cac}")
                 break
             # ---
             continue_d = api.get("continue", {})
             for p, v in continue_d.items():
-                if p == 'continue':
+                if p == "continue":
                     continue
                 continue_v = v
                 continue_p = p
@@ -111,16 +139,22 @@ class CategoryDepth:
                 caca = pages[category] if isinstance(pages, dict) else category
                 cate_title = caca["title"]
                 # ---
+                timestamp = caca.get("revisions", [{}])[0].get("timestamp", "")
+                self.timestamps[cate_title] = timestamp
+                # ---
                 tablese = {}
                 # ---
                 if "ns" in caca:
-                    tablese['ns'] = caca['ns']
+                    tablese["ns"] = caca["ns"]
                     if self.ns == "14" or self.nslist == [14]:
-                        if str(caca['ns']) != "14":
+                        if str(caca["ns"]) != "14":
                             continue
                 # ---
-                tablese['templates'] = [x['title'] for x in caca.get('templates', {})]
-                tablese['langlinks'] = {fo['lang']: fo.get('title') or fo.get('*') or '' for fo in caca.get('langlinks', [])}
+                tablese["templates"] = [x["title"] for x in caca.get("templates", {})]
+                tablese["langlinks"] = {
+                    fo["lang"]: fo.get("title") or fo.get("*") or ""
+                    for fo in caca.get("langlinks", [])
+                }
                 # ---
                 table[cate_title] = tablese
             # ---
@@ -131,20 +165,20 @@ class CategoryDepth:
             return
 
         if self.without_lang != "":
-            no_langs = tab.get('langlinks', {}).get(self.without_lang, '')
+            no_langs = tab.get("langlinks", {}).get(self.without_lang, "")
             if no_langs != "":
                 return
 
         if self.with_lang != "":
-            langs = tab.get('langlinks', {}).get(self.with_lang, '')
+            langs = tab.get("langlinks", {}).get(self.with_lang, "")
             if langs == "":
                 return
-
+        # print(tab)
         self.result_table[x] = tab
 
     def subcatquery_(self):
         # ---
-        print(f'catdepyh_new.py cat:{self.title}, ns:{self.ns}')
+        print(f"catdepyh_new.py cat:{self.title}, ns:{self.ns}")
         # ---
         tablemember = self.get_cat(self.title)
         # ---
@@ -173,17 +207,56 @@ class CategoryDepth:
             # ---
             new_list = new_tab2
         # ---
+        # sort self.result_table by timestamp
+        if not self.no_gcmsort:
+            soro = sorted(self.result_table.items(), key=lambda item: self.timestamps.get(item[0], 0), reverse=True)
+            self.result_table = {k: v for k, v in soro}
+        # ---
         return self.result_table
 
 
-def subcatquery(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], **kwargs):
+def subcatquery(
+    title,
+    sitecode="en",
+    family="wikipedia",
+    depth=0,
+    ns="all",
+    nslist=[],
+    without_lang="",
+    with_lang="",
+    tempyes=[],
+    **kwargs,
+):
     # ---
-    printe.output(f'<<lightyellow>> catdepth.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}')
+    priffixs = {
+        "ar": "تصنيف:",
+        "en": "Category:",
+    }
+    # ---
+    start_priffix = priffixs.get(sitecode)
+    # ---
+    if start_priffix and not title.startswith(start_priffix):
+        title = start_priffix + title
+    # ---
+    printe.output(
+        f"<<lightyellow>> catdepth.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}"
+    )
     # ---
     start = time.time()
     final = time.time()
     # ---
-    bot = CategoryDepth(title, sitecode=sitecode, family=family, depth=depth, ns=ns, nslist=nslist, without_lang=without_lang, with_lang=with_lang, tempyes=tempyes, **kwargs)
+    bot = CategoryDepth(
+        title,
+        sitecode=sitecode,
+        family=family,
+        depth=depth,
+        ns=ns,
+        nslist=nslist,
+        without_lang=without_lang,
+        with_lang=with_lang,
+        tempyes=tempyes,
+        **kwargs,
+    )
     # ---
     bot.Login_to_wiki()
     # ---
@@ -195,6 +268,8 @@ def subcatquery(title, sitecode='en', family="wikipedia", depth=0, ns="all", nsl
     if "printresult" in sys.argv:
         printe.output(result)
     # ---
-    printe.output(f'<<lightblue>>catdepth.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds')
+    printe.output(
+        f"<<lightblue>>catdepth.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds"
+    )
     # ---
     return result
