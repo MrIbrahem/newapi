@@ -16,5 +16,5 @@ jobs:
     - name: Open URL on successful merge
       if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
       run: |
-        curl -L -f -S -s https://himo.toolforge.org/update_api.php > curl_output.txt || echo "Curl request failed with status code $?"
+        curl -L -f -S -s https://himo.toolforge.org/update.php?api=1 > curl_output.txt || echo "Curl request failed with status code $?"
         curl -L -f -S -s https://mdwiki.toolforge.org/update_md.php?api=1 > curl_api.txt || echo "Curl request failed with status code $?"
