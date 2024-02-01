@@ -1,7 +1,7 @@
 """
 Usage:
 
-from newapi.wiki_page import CatDepth
+from newapi.wiki_page import CatDepth, MainPage, NEW_API
 # cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[])
 
 """

@@ -209,24 +209,17 @@ class CategoryDepth:
         # ---
         # sort self.result_table by timestamp
         if not self.no_gcmsort:
-            soro = sorted(self.result_table.items(), key=lambda item: self.timestamps.get(item[0], 0), reverse=True)
+            soro = sorted(
+                self.result_table.items(),
+                key=lambda item: self.timestamps.get(item[0], 0),
+                reverse=True,
+            )
             self.result_table = {k: v for k, v in soro}
         # ---
         return self.result_table
 
 
-def subcatquery(
-    title,
-    sitecode="en",
-    family="wikipedia",
-    depth=0,
-    ns="all",
-    nslist=[],
-    without_lang="",
-    with_lang="",
-    tempyes=[],
-    **kwargs,
-):
+def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], **kwargs):
     # ---
     priffixs = {
         "ar": "تصنيف:",
@@ -238,9 +231,7 @@ def subcatquery(
     if start_priffix and not title.startswith(start_priffix):
         title = start_priffix + title
     # ---
-    printe.output(
-        f"<<lightyellow>> catdepth.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}"
-    )
+    printe.output(f"<<lightyellow>> catdepth_new.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}")
     # ---
     start = time.time()
     final = time.time()
@@ -269,7 +260,7 @@ def subcatquery(
         printe.output(result)
     # ---
     printe.output(
-        f"<<lightblue>>catdepth.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds"
+        f"<<lightblue>>catdepth_new.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds"
     )
     # ---
     return result
