@@ -11,6 +11,7 @@ from newapi.page import NEW_API
 # l_links  = api_new.Get_langlinks_for_list(titles, targtsitecode="", numbes=50)
 # text_w   = api_new.expandtemplates(text)
 # subst    = api_new.Parse_Text('{{subst:page_name}}', title)
+# extlinks = api_new.get_extlinks(title)
 # revisions= api_new.get_revisions(title)
 
 Usage:
