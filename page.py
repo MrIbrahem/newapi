@@ -77,6 +77,12 @@ def test():
     # print('---------------------------')
     # print(f'hidden_categories:{hidden_categories}')
     # ---
+    cat_members = CatDepth("Association football players by nationality", sitecode='en', family="wikipedia", depth=0, ns="14")
+    # ---
+    # print(cat_members)
+    for cat in cat_members:
+        print(f"'{cat}':'[[{cat}]],")
+    # ---
     # red = page.page_links()
     # print(f'page_links:{red}')
     # ---

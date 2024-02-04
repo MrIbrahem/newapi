@@ -1,15 +1,5 @@
-import inspect
-from warnings import warn
-import pywikibot
-import sys
-import wikitextparser as wtp
-from newapi import printe
-from newapi import txtlib
-# ---
-if __file__.find('mdwiki') == -1:
-    from API import botEdit
-# ---
 """
+Usage:
 # ---
 from newapi.mdwiki_page import MainPage
 page      = MainPage(title, 'www', family='mdwiki')
@@ -54,22 +44,22 @@ purge       = page.purge()
 '''
 
 """
+import inspect
+from warnings import warn
+import pywikibot
+import sys
+import wikitextparser as wtp
+from newapi import printe
+from newapi import txtlib
 # ---
-# ingr = txtlib.extract_templates_and_params(text)
-# for temp in ingr: name, namestrip, params, template = temp['name'], temp['namestrip'], temp['params'], temp['item']
+if __file__.find('mdwiki') == -1:
+    from API import botEdit
 # ---
 print_test = {1: False}
 # ---
 Edit_summary_line = {1: ' -Edit summary: %s:'}
-
-
-def warn_err(err):
-    err = str(err)
-    nn = inspect.stack()[1][3]
-    return f'\ndef {nn}(): {err}'
-
-
 # ---
+not_loged_m = {1: ""}
 Save_Edit_Pages = {1: False}
 # ---
 change_codes = {
@@ -87,14 +77,14 @@ change_codes = {
     "zh_yue": "zh-yue",
 }
 
+def warn_err(err):
+    err = str(err)
+    nn = inspect.stack()[1][3]
+    return f'\ndef {nn}(): {err}'
+
 
 def login_def(lang, family):
     return {}
-
-
-# ---
-not_loged_m = {1: ""}
-# ---
 
 
 class MainPage:
@@ -891,6 +881,3 @@ class MainPage:
             return er
             # ---
         return False
-
-
-# ---
