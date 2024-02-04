@@ -275,8 +275,3 @@ class Login:
             printe.output(data)
         # ---
         return data
-
-    # ---
-
-
-# ---
