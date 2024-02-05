@@ -13,6 +13,7 @@ from newapi.page import NEW_API
 # subst    = api_new.Parse_Text('{{subst:page_name}}', title)
 # extlinks = api_new.get_extlinks(title)
 # revisions= api_new.get_revisions(title)
+# logs     = api_new.get_logs(title)
 
 Usage:
 from newapi.page import NEW_API
@@ -467,6 +468,26 @@ class NEW_API:
         newtext = data.get("expandtemplates", {}).get("wikitext") or text
         # ---
         return newtext
+
+    def get_logs(self, title):
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "list": "logevents",
+            "formatversion": "2",
+            "ledir": "newer",
+            "letitle": title
+        }
+        # ---
+        data = self.post_params(params)
+        # ---
+        if not data or data == {}:
+            return []
+        # ---
+        logevents = data.get("query", {}).get("logevents") or []
+        # ---
+        return logevents
 
     def Parse_Text(self, line, title):
         # ---
