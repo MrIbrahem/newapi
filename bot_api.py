@@ -2,7 +2,7 @@
 from newapi.page import NEW_API
 # api_new  = NEW_API('ar', family='wikipedia')
 # login    = api_new.Login_to_wiki()
-# pages    = api_new.Find_pages_exists_or_not(liste)
+# pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
@@ -144,13 +144,14 @@ class NEW_API:
         # ---
         return results
 
-    def Find_pages_exists_or_not(self, liste):
+    def Find_pages_exists_or_not(self, liste, get_redirect=False):
         # ---
         normalized = {}
         table = {}
         # ---
         done = 0
         # ---
+        redirects = 0
         missing = 0
         exists = 0
         # ---
@@ -191,10 +192,13 @@ class NEW_API:
                     if "missing" in kk:
                         table[tit] = False
                         missing += 1
+                    elif "redirect" in kk and get_redirect:
+                        table[tit] = "redirect"
+                        redirects += 1
                     else:
                         exists += 1
         # ---
-        printe.output(f"Find_pages_exists_or_not : missing:{missing}, exists: {exists}")
+        printe.output(f"Find_pages_exists_or_not : missing:{missing}, exists: {exists}, redirects: {redirects}")
         # ---
         return table
 
