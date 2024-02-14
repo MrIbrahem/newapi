@@ -2,7 +2,7 @@ import pymysql
 from pywikibot import config as _config
 
 
-class Database(Base):
+class Database:
     """A class for interacting with a database.
 
     Attributes:
@@ -54,7 +54,7 @@ class Database(Base):
         Args:
             value (str): The new SQL query.
         """
-        self._query = str(value).replace("START_WEEK_DATE", self.first_day_of_week_formatted).replace("END_WEEK_DATE", self.last_day_of_week_formatted).replace("DATE_BEFORE_30_DAYS", self.date_before_30_days_formatted)
+        self._query = value
 
     def get_content_from_database(self):
         """Executes the current SQL query and stores the result in the `result` attribute.

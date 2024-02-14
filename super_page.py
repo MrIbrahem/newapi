@@ -809,7 +809,7 @@ class MainPage:
             self.text = newtext
             self.user = ''
             printe.output(f'<<lightgreen>> ** true .. [[{self.lang}:{self.family}:{self.title}]] ')
-            printe.output('Done True... time.sleep() ')
+            # printe.output('Done True...')
             # ---
             if 'printpop' in sys.argv:
                 print(pop)
@@ -866,7 +866,7 @@ class MainPage:
             self.text = text
             # ---
             printe.output(f'<<lightgreen>> ** true .. [[{self.lang}:{self.family}:{self.title}]] ')
-            printe.output('Done True... time.sleep() ')
+            # printe.output('Done True... time.sleep() ')
             # ---
             self.pageid = edit.get('pageid') or self.pageid
             self.revid = edit.get('newrevid') or self.revid
