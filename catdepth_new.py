@@ -249,7 +249,7 @@ def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nsl
         **kwargs,
     )
     # ---
-    bot.Login_to_wiki()
+    # bot.Login_to_wiki()
     # ---
     result = bot.subcatquery_()
     # ---
@@ -259,8 +259,12 @@ def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nsl
     if "printresult" in sys.argv:
         printe.output(result)
     # ---
-    printe.output(
-        f"<<lightblue>>catdepth_new.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds"
-    )
+    printe.output(f"<<lightblue>>catdepth_new.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds")
     # ---
     return result
+
+def login_wiki(sitecode="en", family="wikipedia"):
+    # ---
+    bot = CategoryDepth('',sitecode=sitecode,family=family)
+    # ---
+    bot.log.Log_to_wiki_1()

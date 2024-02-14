@@ -162,7 +162,7 @@ class NEW_API:
             # ---
             printe.output(f"Find_pages_exists_or_not : {done}/{len(liste)}")
             # ---
-            params = {"action": "query", "titles": "|".join(titles), "formatversion": 2}
+            params = {"action": "query", "titles": "|".join(titles), "prop": "info", "formatversion": 2}
             # ---
             json1 = self.post_params(params)
             # ---

@@ -8,6 +8,7 @@
 # ---
 import inspect
 import sys
+import time
 import json
 import requests
 import urllib
@@ -144,6 +145,8 @@ class Login:
     def Log_to_wiki_1(self):
         # ---
         login_lang[1] = self.lang
+        # ---
+        time.sleep(0.5)
         # ---
         colors = {"ar": "yellow", "en": "lightpurple"}
         # ---
