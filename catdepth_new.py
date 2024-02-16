@@ -6,6 +6,26 @@ from newapi import printe
 def login_def(lang, family):
     return {}
 
+ns_list = {
+    "0" : "",
+    "1" : "نقاش",
+    "2" : "مستخدم",
+    "3" : "نقاش المستخدم",
+    "4" : "ويكيبيديا",
+    "5" : "نقاش ويكيبيديا",
+    "6" : "ملف",
+    "7" : "نقاش الملف",
+    "10" : "قالب",
+    "11" : "نقاش القالب",
+    "12" : "مساعدة",
+    "13" : "نقاش المساعدة",
+    "14" : "تصنيف",
+    "15" : "نقاش التصنيف",
+    "100" : "بوابة",
+    "101" : "نقاش البوابة",
+    "828" : "وحدة",
+    "829" : "نقاش الوحدة"
+}
 
 class CategoryDepth:
     def __init__(
@@ -84,9 +104,9 @@ class CategoryDepth:
             params["prop"].append("langlinks")
             params["lllimit"] = "max"
         # ---
-        if self.ns in ["0", "10", 0, 10]:
+        if self.ns in ["0", "10"]:
             params["gcmtype"] = "page"
-        elif self.ns in [14, "14"]:
+        elif self.ns in [14]:
             params["gcmtype"] = "subcat"
         # ---
         # print('gcmtype::', params["gcmtype"])
@@ -149,6 +169,13 @@ class CategoryDepth:
                     if self.ns == "14" or self.nslist == [14]:
                         if str(caca["ns"]) != "14":
                             continue
+                    if self.ns == "0" or self.nslist == [0]:
+                        if str(caca["ns"]) != "0":
+                            continue
+                    # do same for ns_list
+                    # if self.ns in ns_list:
+                    #     if str(caca["ns"]) not in ns_list:
+                    #         continue
                 # ---
                 tablese["templates"] = [x["title"] for x in caca.get("templates", {})]
                 tablese["langlinks"] = {

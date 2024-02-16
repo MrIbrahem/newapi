@@ -1,6 +1,7 @@
 r"""
 
-from newapi.page import CatDepth
+from newapi.page import CatDepth, CatDepthLogin
+# CatDepthLogin(sitecode="en", family="wikipedia")
 # cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[])
 
 match long ref:
@@ -44,6 +45,7 @@ NEW_API = bot_api.NEW_API
 MainPage = super_page.MainPage
 change_codes = super_page.change_codes
 CatDepth = catdepth_new.subcatquery
+CatDepthLogin = catdepth_new.login_wiki
 # ---
 # xxxxxxxxxxx
 
