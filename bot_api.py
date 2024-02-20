@@ -144,7 +144,7 @@ class NEW_API:
         # ---
         return results
 
-    def Find_pages_exists_or_not(self, liste, get_redirect=False):
+    def Find_pages_exists_or_not(self, liste, get_redirect=False, noprint=False):
         # ---
         normalized = {}
         table = {}
@@ -160,15 +160,18 @@ class NEW_API:
             # ---
             done += len(titles)
             # ---
-            printe.output(f"Find_pages_exists_or_not : {done}/{len(liste)}")
+            if not noprint:
+                printe.output(f"Find_pages_exists_or_not : {done}/{len(liste)}")
             # ---
             params = {"action": "query", "titles": "|".join(titles), "prop": "info", "formatversion": 2}
             # ---
             json1 = self.post_params(params)
             # ---
             if not json1 or json1 == {}:
-                printe.output("<<lightred>> error when Find_pages_exists_or_not")
-                return table
+                if not noprint:
+                    printe.output("<<lightred>> error when Find_pages_exists_or_not")
+                # return table
+                continue
             # ---
             query = json1.get("query", {})
             normalz = query.get("normalized", [])
@@ -198,7 +201,8 @@ class NEW_API:
                     else:
                         exists += 1
         # ---
-        printe.output(f"Find_pages_exists_or_not : missing:{missing}, exists: {exists}, redirects: {redirects}")
+        if not noprint:
+            printe.output(f"Find_pages_exists_or_not : missing:{missing}, exists: {exists}, redirects: {redirects}")
         # ---
         return table
 

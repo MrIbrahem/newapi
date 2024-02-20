@@ -11,7 +11,7 @@ page      = MainPage(title, 'ar', family='wikipedia')
 exists    = page.exists()
 if not exists: return
 # ---
-page_edit = page.can_edit(script='')
+page_edit = page.can_edit(script='fixref|cat|stub|tempcat|portal')
 if not page_edit: return
 # ---
 if page.isRedirect() :  return

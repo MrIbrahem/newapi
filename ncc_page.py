@@ -72,6 +72,9 @@ Dir = str(Path(__file__).parents[0])
 dir2 = Dir.replace('\\', '/')
 dir2 = dir2.split('/pybot/')[0]
 # ---
+if dir2.startswith('I:'):
+    dir2 = 'I:/mdwiki'
+# ---
 config = configparser.ConfigParser()
 config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
