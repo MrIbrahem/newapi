@@ -52,8 +52,7 @@ import wikitextparser as wtp
 from newapi import printe
 from newapi import txtlib
 # ---
-if __file__.find('mdwiki') == -1:
-    from API import botEdit
+from newapi import botEdit
 # ---
 print_test = {1: False}
 # ---

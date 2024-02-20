@@ -5,7 +5,7 @@ python3 core8/pwb.py newapi/tests/test_login
 python3 core8/pwb.py newapi/tests/test_login
 
 """
-from API import useraccount
+from newapi import useraccount
 
 User_tables = {"username": useraccount.username, "password": useraccount.password}
 # ---
