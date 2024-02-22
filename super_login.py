@@ -224,7 +224,7 @@ class Login:
         # ---
         params['format'] = 'json'
         params['utf8'] = 1
-        # params['bot'] = self.Bot_or_himo
+        params['bot'] = self.Bot_or_himo
         params["maxlag"] = ar_lag[1]
         # ---
         if 'minor' in params and params['minor'] == '':

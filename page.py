@@ -12,7 +12,7 @@ short ref:
 """
 # ---
 import sys
-from API import useraccount
+from newapi import useraccount
 from newapi import super_page
 from newapi import bot_api
 from newapi import catdepth_new
