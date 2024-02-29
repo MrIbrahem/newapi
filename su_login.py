@@ -174,7 +174,7 @@ class Login:
         # self.Log_to_wiki_1()
         
         if self.r3_token == "":
-            self.r3_token = tokens_by_lang.get(self.lang)
+            self.r3_token = tokens_by_lang.get(self.lang, "")
             
         if self.r3_token == "":
             self.Log_to_wiki_1()
