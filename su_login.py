@@ -54,15 +54,11 @@ class Login:
         return True
 
     def p_url(self, params):
-        pams2 = params.copy()
-        for x, v in params.items():
-            if isinstance(v, str) and len(v) > 100:
-                pams2[x] = v[:100]
-        url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}"
-        url_o_print = url_o_print.replace("&format=json", "")
         if print_test[1] or "printurl" in sys.argv:
+            pams2 = {k: v[:100] if isinstance(v, str) and len(v) > 100 else v for k, v in params.items()}
+            url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(url_o_print)
-            
+        
     def make_response(self, params, files=None):
         self.p_url(params)
         
