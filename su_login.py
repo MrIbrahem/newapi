@@ -65,19 +65,12 @@ class Login:
             return data
         except Exception as e:
             text = str(req0.text).strip()
-            if not text.startswith("{") or not text.endswith("}"):
-                # stop log for sometime
-                if "pp" in sys.argv:
-                    pywikibot.output("<<lightred>> Traceback (most recent call last):")
-                    pywikibot.output(f"error:{e}")
-                    pywikibot.output(traceback.format_exc())
-                    pywikibot.output(url_o_print)
-                    if str(e) == "Expecting value: line 1 column 1 (char 0)":
-                        pywikibot.output(params)
-                    pywikibot.output("CRITICAL:")
-                return {}
-        if not text:
+
+        valid_text = text.startswith("{") and text.endswith("}")
+        
+        if not text or not valid_text:
             return {}
+            
         try:
             data = json.loads(text)
             return data
@@ -89,7 +82,7 @@ class Login:
             if str(e) == "Expecting value: line 1 column 1 (char 0)":
                 pywikibot.output(params)
             pywikibot.output("CRITICAL:")
-            return {}
+        
         return {}
     
     def make_response(self, params, files=None):
