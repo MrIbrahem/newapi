@@ -35,19 +35,18 @@ class Login:
     def __init__(self, lang, family="wikipedia"):
         self.lang = lang
         self.family = family
-        if self.family not in User_tables:
-            User_tables[self.family] = {}
+        self.r3_token = ""
+        
+        User_tables.setdefault(self.family, {"username": "", "password": ""})
+        tokens_by_lang.setdefault(self.lang, "")
+        seasons_by_lang.setdefault(self.lang, requests.Session())
+        
         self.username = User_tables[self.family]["username"]
         self.password = User_tables[self.family]["password"]
-        self.Bot_or_himo = ""
-        if self.username.find("bot") == -1:
-            self.Bot_or_himo = 1
+        
+        self.Bot_or_himo = 1 if "bot" not in self.username else ""
+      
         self.endpoint = f"https://{self.lang}.{self.family}.org/w/api.php"
-        self.r3_token = ""
-        if self.lang not in tokens_by_lang:
-            tokens_by_lang[self.lang] = ""
-        if self.lang not in seasons_by_lang:
-            seasons_by_lang[self.lang] = requests.Session()
         # self.season = requests.Session()
 
     def Log_to_wiki(self):
@@ -96,8 +95,8 @@ class Login:
     def make_response(self, params, files=None):
         self.p_url(params)
         
-        if self.lang not in seasons_by_lang:
-            seasons_by_lang[self.lang] = requests.Session()
+        seasons_by_lang.setdefault(self.lang, requests.Session())
+        
         # handle errors
         try:
             req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
@@ -107,30 +106,42 @@ class Login:
             pywikibot.output(traceback.format_exc())
             pywikibot.output("CRITICAL:")
             return {}
+            
         data = self.prase_data(req0)
         return data
 
     def Log_to_wiki_1(self):
         login_lang[1] = self.lang
         time.sleep(0.5)
+        
         colors = {"ar": "yellow", "en": "lightpurple"}
         color = colors.get(self.lang, "")
+        
         # self.season = requests.Session()
         printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
+        
         r2_params = {"format": "json", "action": "login", "lgname": self.username, "lgpassword": self.password, "lgtoken": ""}
         printe.output(f"newapi/page.py: log to {self.lang}.{self.family}.org user:{self.username}")
+        
         r1_params = {"format": "json", "action": "query", "meta": "tokens", "type": "login"}
+        
         # WARNING: /data/project/himo/core/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         r11 = self.make_response(r1_params)
         r2_params["lgtoken"] = r11.get("query", {}).get("tokens", {}).get("logintoken", "")
+        
         r22 = {}
+        
         if r2_params["lgtoken"] == "":
             return False
+            
         r22 = self.make_response(r2_params)
+        
         if r22 == {}:
             return False
+            
         reason = r22.get("login", {}).get("reason", "")
         success = r22.get("login", {}).get("result", "").lower()
+        
         if success != "success":
             pywikibot.output("<<lightred>> Traceback (most recent call last):")
             warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
@@ -138,16 +149,22 @@ class Login:
                 pywikibot.output(f"user:{self.username}, pass:{self.password}")
             pywikibot.output("CRITICAL:")
             return False
+            
         printe.output(f"<<green>> {__file__} login Success")
+        
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
+        
         r33 = self.make_response(r3_params)
+        
         if r33 == {}:
             _Except_ions_ = [
                 """('Connection aborted.', OSError("(104, 'ECONNRESET')"))""",
             ]
             return False
+            
         r3_token = r33.get("query", {}).get("tokens", {}).get("csrftoken", "")
         self.r3_token = r3_token
+        
         tokens_by_lang[self.lang] = r3_token
         # printe.output(f'<<green>> r3_token: {self.r3_token}')
 
@@ -155,34 +172,46 @@ class Login:
         # if login_lang[1] != self.lang:
         # printe.output(f'<<red>> login_lang[1]: {login_lang[1]} != self.lang:{self.lang}')
         # self.Log_to_wiki_1()
+        
         if self.r3_token == "":
             self.r3_token = tokens_by_lang.get(self.lang)
+            
         if self.r3_token == "":
             self.Log_to_wiki_1()
+            
         params["format"] = "json"
         params["utf8"] = 1
         params["bot"] = self.Bot_or_himo
         params["maxlag"] = ar_lag[1]
+        
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
+            
         if addtoken or params["action"] in ["edit", "create", "upload", "delete"]:
             if self.r3_token == "":
                 warn(warn_err('self.r3_token == "" '), UserWarning)
                 warn(warn_err('self.r3_token == "" '), UserWarning)
             params["token"] = self.r3_token
+            
         if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
+            
         if "workibrahem" in sys.argv:
             params["summary"] = ""
+            
         if params["action"] in ["query"]:
             if "bot" in params:
                 del params["bot"]
             if "summary" in params:
                 del params["summary"]
-        params["formatversion"] = params.get("formatversion") or "1"
+                
+        params.setdefault("formatversion", "1")
+        
         data = self.make_response(params, files=files)
+        
         if data == {}:
             return {}
+            
         error = data.get("error", {})
         if error != {}:
             # printe.output(data)
@@ -194,8 +223,11 @@ class Login:
                 self.r3_token = ""
                 self.Log_to_wiki_1()
                 return self.post(params, Type=Type, addtoken=addtoken, CSRF=False)
+                
         if "printdata" in sys.argv:
             # printe.output( json.dumps(data,ensure_ascii=False) )
             printe.output(data)
+            
         return data
+
         
