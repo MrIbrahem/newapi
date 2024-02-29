@@ -160,6 +160,22 @@ class Login:
         tokens_by_lang[self.lang] = r3_token
         # printe.output(f'<<green>> r3_token: {self.r3_token}')
 
+    
+    def filter_params(self, params)
+        if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
+            params["summary"] = ""
+            
+        if "workibrahem" in sys.argv:
+            params["summary"] = ""
+            
+        if params["action"] in ["query"]:
+            if "bot" in params:
+                del params["bot"]
+            if "summary" in params:
+                del params["summary"]
+                
+        return params
+
     def post(self, params, Type="get", addtoken=False, CSRF=True, files=None):
         # if login_lang[1] != self.lang:
         # printe.output(f'<<red>> login_lang[1]: {login_lang[1]} != self.lang:{self.lang}')
@@ -184,18 +200,8 @@ class Login:
                 warn(warn_err('self.r3_token == "" '), UserWarning)
                 warn(warn_err('self.r3_token == "" '), UserWarning)
             params["token"] = self.r3_token
-            
-        if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
-            params["summary"] = ""
-            
-        if "workibrahem" in sys.argv:
-            params["summary"] = ""
-            
-        if params["action"] in ["query"]:
-            if "bot" in params:
-                del params["bot"]
-            if "summary" in params:
-                del params["summary"]
+
+        params = self.filter_params(params)
                 
         params.setdefault("formatversion", "1")
         
