@@ -36,6 +36,7 @@ class Login:
         self.lang = lang
         self.family = family
         self.r3_token = ""
+        self.url_o_print = ""
         
         User_tables.setdefault(self.family, {"username": "", "password": ""})
         tokens_by_lang.setdefault(self.lang, "")
@@ -55,8 +56,8 @@ class Login:
     def p_url(self, params):
         if print_test[1] or "printurl" in sys.argv:
             pams2 = {k: v[:100] if isinstance(v, str) and len(v) > 100 else v for k, v in params.items()}
-            url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
-            printe.output(url_o_print)
+            self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
+            printe.output(self.url_o_print)
         
     def prase_data(self, req0):
         text = ""
@@ -78,7 +79,7 @@ class Login:
             pywikibot.output("<<lightred>> Traceback (most recent call last):")
             pywikibot.output(f"error:{e} when json.loads(response.text)")
             pywikibot.output(traceback.format_exc())
-            pywikibot.output(url_o_print)
+            pywikibot.output(self.url_o_print)
             if str(e) == "Expecting value: line 1 column 1 (char 0)":
                 pywikibot.output(params)
             pywikibot.output("CRITICAL:")
