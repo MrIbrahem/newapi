@@ -17,6 +17,7 @@ import traceback
 from warnings import warn
 import pywikibot
 from newapi import printe
+from requests.exceptions import Timeout
 # ---
 print_test = {1: False}
 # ---
@@ -88,7 +89,7 @@ class Login:
         # ---
         # handle errors
         try:
-            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files)
+            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
             # req0.raise_for_status()
         except Exception:
             pywikibot.output('<<lightred>> Traceback (most recent call last):')
