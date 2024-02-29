@@ -66,9 +66,7 @@ class Login:
             seasons_by_lang[self.lang] = requests.Session()
         # handle errors
         try:
-            req0 = seasons_by_lang[self.lang].post(
-                self.endpoint, data=params, files=files, timeout=30
-            )
+            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
             # req0.raise_for_status()
         except Exception:
             pywikibot.output("<<lightred>> Traceback (most recent call last):")
@@ -116,27 +114,12 @@ class Login:
         color = colors.get(self.lang, "")
         # self.season = requests.Session()
         printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
-        r2_params = {
-            "format": "json",
-            "action": "login",
-            "lgname": self.username,
-            "lgpassword": self.password,
-            "lgtoken": "",
-        }
-        printe.output(
-            f"newapi/page.py: log to {self.lang}.{self.family}.org user:{self.username}"
-        )
-        r1_params = {
-            "format": "json",
-            "action": "query",
-            "meta": "tokens",
-            "type": "login",
-        }
+        r2_params = {"format": "json", "action": "login", "lgname": self.username, "lgpassword": self.password, "lgtoken": ""}
+        printe.output(f"newapi/page.py: log to {self.lang}.{self.family}.org user:{self.username}")
+        r1_params = {"format": "json", "action": "query", "meta": "tokens", "type": "login"}
         # WARNING: /data/project/himo/core/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         r11 = self.make_response(r1_params)
-        r2_params["lgtoken"] = (
-            r11.get("query", {}).get("tokens", {}).get("logintoken", "")
-        )
+        r2_params["lgtoken"] = r11.get("query", {}).get("tokens", {}).get("logintoken", "")
         r22 = {}
         if r2_params["lgtoken"] == "":
             return False
@@ -184,11 +167,7 @@ class Login:
                 warn(warn_err('self.r3_token == "" '), UserWarning)
                 warn(warn_err('self.r3_token == "" '), UserWarning)
             params["token"] = self.r3_token
-        if (
-            self.family == "wikipedia"
-            and params.get("summary")
-            and self.username.find("bot") == -1
-        ):
+        if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
         if "workibrahem" in sys.argv:
             params["summary"] = ""
@@ -208,9 +187,7 @@ class Login:
             code = error.get("code", "")
             # printe.output(Invalid)
             if Invalid == "Invalid CSRF token." and CSRF:
-                pywikibot.output(
-                    f'<<lightred>> ** error "Invalid CSRF token.".\n{self.r3_token} '
-                )
+                pywikibot.output(f'<<lightred>> ** error "Invalid CSRF token.".\n{self.r3_token} ')
                 self.r3_token = ""
                 self.Log_to_wiki_1()
                 return self.post(params, Type=Type, addtoken=addtoken, CSRF=False)
@@ -218,4 +195,4 @@ class Login:
             # printe.output( json.dumps(data,ensure_ascii=False) )
             printe.output(data)
         return data
-            
+        
