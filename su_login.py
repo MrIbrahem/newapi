@@ -161,7 +161,7 @@ class Login:
         # printe.output(f'<<green>> r3_token: {self.r3_token}')
 
     
-    def filter_params(self, params)
+    def filter_params(self, params):
         if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
             
