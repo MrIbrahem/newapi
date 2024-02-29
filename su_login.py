@@ -127,9 +127,8 @@ class Login:
         
         # WARNING: /data/project/himo/core/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         r11 = self.make_response(r1_params)
-        r2_params["lgtoken"] = r11.get("query", {}).get("tokens", {}).get("logintoken", "")
         
-        r22 = {}
+        r2_params["lgtoken"] = r11.get("query", {}).get("tokens", {}).get("logintoken", "")
         
         if r2_params["lgtoken"] == "":
             return False
@@ -139,10 +138,10 @@ class Login:
         if r22 == {}:
             return False
             
-        reason = r22.get("login", {}).get("reason", "")
-        success = r22.get("login", {}).get("result", "").lower()
-        
-        if success != "success":
+        success = r22.get("login", {}).get("result", "").lower() == "success"
+
+        if not success:
+            reason = r22.get("login", {}).get("reason", "")
             pywikibot.output("<<lightred>> Traceback (most recent call last):")
             warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
             if reason == "Incorrect username or password entered. Please try again.":
@@ -152,8 +151,7 @@ class Login:
             
         printe.output(f"<<green>> {__file__} login Success")
         
-        r3_params = {"format": "json", "action": "query", "meta": "tokens"}
-        
+        r3_params = {"format": "json", "action": "query", "meta": "tokens"}   
         r33 = self.make_response(r3_params)
         
         if r33 == {}:
