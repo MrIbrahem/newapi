@@ -59,21 +59,7 @@ class Login:
             url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(url_o_print)
         
-    def make_response(self, params, files=None):
-        self.p_url(params)
-        
-        if self.lang not in seasons_by_lang:
-            seasons_by_lang[self.lang] = requests.Session()
-        # handle errors
-        try:
-            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
-            # req0.raise_for_status()
-        except Exception:
-            pywikibot.output("<<lightred>> Traceback (most recent call last):")
-            pywikibot.output(traceback.format_exc())
-            pywikibot.output("CRITICAL:")
-            return {}
-        data = {}
+    def prase_data(self, req0):
         text = ""
         try:
             data = req0.json()
@@ -106,6 +92,23 @@ class Login:
             pywikibot.output("CRITICAL:")
             return {}
         return {}
+    
+    def make_response(self, params, files=None):
+        self.p_url(params)
+        
+        if self.lang not in seasons_by_lang:
+            seasons_by_lang[self.lang] = requests.Session()
+        # handle errors
+        try:
+            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
+            # req0.raise_for_status()
+        except Exception:
+            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+            pywikibot.output(traceback.format_exc())
+            pywikibot.output("CRITICAL:")
+            return {}
+        data = self.prase_data(req0)
+        return data
 
     def Log_to_wiki_1(self):
         login_lang[1] = self.lang
