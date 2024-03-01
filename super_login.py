@@ -69,7 +69,7 @@ class Login:
     def Log_to_wiki(self):
         return True
 
-    def make_response(self, params, files=None):
+    def p_url(self, params):
         # ---
         pams2 = params.copy()
         # ---
@@ -83,6 +83,9 @@ class Login:
         # ---
         if print_test[1] or 'printurl' in sys.argv:
             printe.output(url_o_print)
+            
+    def make_response(self, params, files=None):
+        self.p_url(params)
         # ---
         if self.lang not in seasons_by_lang:
             seasons_by_lang[self.lang] = requests.Session()
