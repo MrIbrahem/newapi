@@ -67,16 +67,14 @@ from newapi import catdepth_new
 # ---
 from pathlib import Path
 
-Dir = str(Path(__file__).parents[0])
+Dir = Path(__file__).parent
 # ---
-dir2 = Dir.replace('\\', '/')
-dir2 = dir2.split('/pybot/')[0]
 # ---
 if dir2.startswith('I:'):
     dir2 = 'I:/mdwiki'
 # ---
 config = configparser.ConfigParser()
-config.read(f"{dir2}/confs/nccommons_user.ini")
+config.read(Dir / "confs" / "nccommons_user.ini")
 # ---
 print(f"{dir2}/confs/nccommons_user.ini")
 # ---
