@@ -215,48 +215,9 @@ def get_color_table():
         'cyan': "\033[96m%s\033[00m",
         'white': "\033[97m%s\033[00m",
         'black': "\033[98m%s\033[00m",
-        'grey': "\033[99m%s\033[00m",
-        'gray': "\033[100m%s\033[00m",
-        'underline': "\033[4m%s\033[00m",
-        'invert': "\033[7m%s\033[00m",
-        'blink': "\033[5m%s\033[00m",
-        'lightblack': "\033[108m%s\033[00m",
-        'bold': "\033[1m%s\033[00m",
-    }
-    # Add light versions of the colors to the color table
-    for color in ["purple", "yellow", "blue", "red", "green", "cyan", "gray"]:
-        color_table[f"light{color}"] = color_table.get(color, "")
+from pathlib import Path
 
-    # Add some additional color names to the color table
-    color_table["aqua"] = color_table.get("cyan", "")
-    color_table["lightaqua"] = color_table.get("cyan", "")
-    color_table["lightgrey"] = color_table.get("gray", "")
-    color_table["grey"] = color_table.get("gray", "")
-    color_table["lightwhite"] = color_table.get("gray", "")
-    color_table["light"] = color_table.get("", "")
-
-    return color_table
-
-
-def output(textm):
-    """
-    Prints the given text with color formatting.
-
-    The text can contain color tags like '<<color>>' where 'color' is the name of the color.
-    The color will be applied to the text that follows the tag, until the end of the string or until a '<<default>>' tag is found.
-
-    If 'noprint' is in sys.argv, the function will return without printing anything.
-
-    :param textm: The text to print. Can contain color tags.
-    """
-    if 'noprint' in sys.argv:
-        return
-
-    color_table = get_color_table()
-    # Define a pattern for color tags
-    _color_pat = r'((:?\w+|previous);?(:?\w+|previous)?)'
-    # Compile a regex for color tags
-    colorTagR = re.compile(fr'(?:\03{{|<<){_color_pat}(?:}}|>>)')
+Dir = Path(__file__).parent
 
     # Initialize a stack for color tags
     color_stack = ['default']
@@ -276,7 +237,6 @@ def output(textm):
 
     # Enumerate the parts for processing
     enu = enumerate(zip(text_parts[::4], text_parts[1::4]))
-
     # Initialize the string to be printed
     toprint = ''
 
