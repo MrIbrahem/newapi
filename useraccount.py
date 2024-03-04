@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import configparser
 
 project = '/data/project/himo/'
