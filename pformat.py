@@ -36,7 +36,7 @@ def make_new_text(text):
 Dir = Path(__file__).parent
 # ---
 title = ''
-text = codecs.open(f"{Dir}/pformat.txt", "r", encoding="utf-8").read()
+text = (Dir / "pformat.txt").read_text(encoding="utf-8")
 for arg in sys.argv:
     arg, _, value = arg.partition(':')
     if arg == '-title' or arg == '-page':
@@ -57,7 +57,7 @@ else:
 # ---
 print(newtext)
 # ---
-with codecs.open(f"{Dir}/pformat.txt", "w", encoding="utf-8") as logfile:
+with (Dir / "pformat.txt").open("w", encoding="utf-8") as logfile:
     logfile.write(newtext)
 # ---
 print('add "save" to sys.argv to save.')
