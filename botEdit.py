@@ -6,17 +6,20 @@ bot_edit!
 import sys
 from newapi import printe
 from newapi import txtlib
+
 # ---
-edit_username = {1: "Mr.Ibrahembot"}
+edit_username = {
+    1: "Mr.Ibrahembot"
+}
 # ---
 Bot_Cash = {}
 # ---
 stop_edit_temps = {
-    'all': ['تحرر', 'قيد التطوير', 'يحرر'], 
-    'fixref': ["لا لصيانة المراجع"], 
-    'cat': ["لا للتصنيف المعادل"], 
-    'stub': ["لا لتخصيص البذرة"], 
-    'tempcat': ["لا لإضافة صناديق تصفح معادلة"], 
+    'all': ['تحرر', 'قيد التطوير', 'يحرر'],
+    'fixref': ["لا لصيانة المراجع"],
+    'cat': ["لا للتصنيف المعادل"],
+    'stub': ["لا لتخصيص البذرة"],
+    'tempcat': ["لا لإضافة صناديق تصفح معادلة"],
     'portal': ["لا لربط البوابات المعادل", 'لا لصيانة البوابات']
 }
 
