@@ -7,10 +7,30 @@ def login_def(lang, family):
     return {}
 
 
-ns_list = {"0": "", "1": "نقاش", "2": "مستخدم", "3": "نقاش المستخدم", "4": "ويكيبيديا", "5": "نقاش ويكيبيديا", "6": "ملف", "7": "نقاش الملف", "10": "قالب", "11": "نقاش القالب", "12": "مساعدة", "13": "نقاش المساعدة", "14": "تصنيف", "15": "نقاش التصنيف", "100": "بوابة", "101": "نقاش البوابة", "828": "وحدة", "829": "نقاش الوحدة"}
+ns_list = {
+    "0": "",
+    "1": "نقاش",
+    "2": "مستخدم",
+    "3": "نقاش المستخدم",
+    "4": "ويكيبيديا",
+    "5": "نقاش ويكيبيديا",
+    "6": "ملف",
+    "7": "نقاش الملف",
+    "10": "قالب",
+    "11": "نقاش القالب",
+    "12": "مساعدة",
+    "13": "نقاش المساعدة",
+    "14": "تصنيف",
+    "15": "نقاش التصنيف",
+    "100": "بوابة",
+    "101": "نقاش البوابة",
+    "828": "وحدة",
+    "829": "نقاش الوحدة"
+}
 
 
 class CategoryDepth:
+
     def __init__(
         self,
         title,
@@ -161,7 +181,10 @@ class CategoryDepth:
                     #         continue
                 # ---
                 tablese["templates"] = [x["title"] for x in caca.get("templates", {})]
-                tablese["langlinks"] = {fo["lang"]: fo.get("title") or fo.get("*") or "" for fo in caca.get("langlinks", [])}
+                tablese["langlinks"] = {
+                    fo["lang"]: fo.get("title") or fo.get("*") or ""
+                    for fo in caca.get("langlinks", [])
+                }
                 # ---
                 table[cate_title] = tablese
             # ---
@@ -221,7 +244,10 @@ class CategoryDepth:
                 key=lambda item: self.timestamps.get(item[0], 0),
                 reverse=True,
             )
-            self.result_table = {k: v for k, v in soro}
+            self.result_table = {
+                k: v
+                for k, v in soro
+            }
         # ---
         return self.result_table
 

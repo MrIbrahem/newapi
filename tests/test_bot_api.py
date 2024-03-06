@@ -17,6 +17,7 @@ sys.argv.append("printurl")
 
 
 class testmybot:
+
     def __init__(self):
         self.test = "test"
         self.api_new = NEW_API('ar', family='wikipedia')
@@ -61,7 +62,15 @@ class testmybot:
         # ---
         defs1 = {}
         # ---
-        defs = {1: self.test1, 2: self.test2, 3: self.test3, 4: self.test4, 5: self.test5, 6: self.test6, 7: self.test7}
+        defs = {
+            1: self.test1,
+            2: self.test2,
+            3: self.test3,
+            4: self.test4,
+            5: self.test5,
+            6: self.test6,
+            7: self.test7
+        }
         # ---
         for arg in sys.argv:
             arg, _, value = arg.partition(":")
@@ -92,7 +101,9 @@ class testmybot:
                     # ---
                     if na == "claims":
                         for x, u in ta.items():
-                            ta = {x: u}
+                            ta = {
+                                x: u
+                            }
                             break
                     # ---
                     # ta = json.dumps(ta, indent=2, ensure_ascii=False)

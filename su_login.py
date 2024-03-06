@@ -17,18 +17,28 @@ import traceback
 from warnings import warn
 import pywikibot
 from newapi import printe
-from requests.exceptions import Timeout
 
 # ---
-print_test = {1: False}
+print_test = {
+    1: False
+}
 # ---
-User_tables = {"mdwiki": {}, "wikidata": {}, "wikipedia": {}, "nccommons": {}}
+User_tables = {
+    "mdwiki": {},
+    "wikidata": {},
+    "wikipedia": {},
+    "nccommons": {}
+}
 # ---
 tokens_by_lang = {}
 seasons_by_lang = {}
 # ---
-ar_lag = {1: 3}
-login_lang = {1: True}
+ar_lag = {
+    1: 3
+}
+login_lang = {
+    1: True
+}
 
 
 def warn_err(err):
@@ -38,13 +48,17 @@ def warn_err(err):
 
 
 class Login:
+
     def __init__(self, lang, family="wikipedia"):
         self.lang = lang
         self.family = family
         self.r3_token = ""
         self.url_o_print = ""
 
-        User_tables.setdefault(self.family, {"username": "", "password": ""})
+        User_tables.setdefault(self.family, {
+            "username": "",
+            "password": ""
+        })
         tokens_by_lang.setdefault(self.lang, "")
         seasons_by_lang.setdefault(self.lang, requests.Session())
 
@@ -61,7 +75,10 @@ class Login:
 
     def p_url(self, params):
         if print_test[1] or "printurl" in sys.argv:
-            pams2 = {k: v[:100] if isinstance(v, str) and len(v) > 100 else v for k, v in params.items()}
+            pams2 = {
+                k: v[:100] if isinstance(v, str) and len(v) > 100 else v
+                for k, v in params.items()
+            }
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
 
@@ -70,7 +87,7 @@ class Login:
         try:
             data = req0.json()
             return data
-        except Exception as e:
+        except Exception:
             text = str(req0.text).strip()
 
         valid_text = text.startswith("{") and text.endswith("}")
@@ -119,7 +136,10 @@ class Login:
 
         time.sleep(0.5)
 
-        colors = {"ar": "yellow", "en": "lightpurple"}
+        colors = {
+            "ar": "yellow",
+            "en": "lightpurple"
+        }
 
         color = colors.get(self.lang, "")
 
@@ -170,7 +190,11 @@ class Login:
 
         printe.output(f"<<green>> {__file__} login Success")
 
-        r3_params = {"format": "json", "action": "query", "meta": "tokens"}
+        r3_params = {
+            "format": "json",
+            "action": "query",
+            "meta": "tokens"
+        }
         r33 = self.make_response(r3_params)
 
         if r33 == {}:

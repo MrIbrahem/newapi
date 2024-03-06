@@ -19,7 +19,10 @@ from newapi import catdepth_new
 from newapi import super_login
 
 # ---
-User_tables = {"username": useraccount.username, "password": useraccount.password}
+User_tables = {
+    "username": useraccount.username,
+    "password": useraccount.password
+}
 # ---
 himo_file = __file__.replace('\\', '/').split("/")[-1]
 # ---

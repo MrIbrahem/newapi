@@ -26,8 +26,7 @@ except ImportError:
         import mwparserfromhell as wikitextparser
     except ImportError:
         # print required because pywikibot is not imported completely
-        raise ImportError(
-            """
+        raise ImportError("""
 Pywikibot is missing a MediaWiki markup parser which is necessary.
 Please update the required module with either
 
@@ -36,8 +35,7 @@ Please update the required module with either
 or
 
     pip install "wikitextparser>=0.47.5"
-"""
-        ) from None
+""") from None
 
 
 def extract_templates_and_params(text):
@@ -138,7 +136,9 @@ def get_one_temp_params(text, tempname="", templates=[], lowers=False, get_all_t
             # ---
             # print("te:%s, namestrip:%s" % (te,namestrip) )
             # ---
-            tabe = {namestrip: params}
+            tabe = {
+                namestrip: params
+            }
             named.append(tabe)
     # ---
     return named
