@@ -34,6 +34,7 @@ import datetime
 from datetime import timedelta
 
 from newapi import printe
+
 # ---
 change_codes = {
     "nb": "no",
@@ -479,14 +480,7 @@ class NEW_API:
 
     def get_logs(self, title):
         # ---
-        params = {
-            "action": "query",
-            "format": "json",
-            "list": "logevents",
-            "formatversion": "2",
-            "ledir": "newer",
-            "letitle": title
-        }
+        params = {"action": "query", "format": "json", "list": "logevents", "formatversion": "2", "ledir": "newer", "letitle": title}
         # ---
         data = self.post_params(params)
         # ---

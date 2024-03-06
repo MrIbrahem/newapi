@@ -61,15 +61,8 @@ class Login:
 
     def p_url(self, params):
         if print_test[1] or "printurl" in sys.argv:
-            pams2 = {
-                k: v[:100] if isinstance(v, str) and len(v) > 100 else v
-                for k, v in params.items()
-            }
-            self.url_o_print = (
-                f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace(
-                    "&format=json", ""
-                )
-            )
+            pams2 = {k: v[:100] if isinstance(v, str) and len(v) > 100 else v for k, v in params.items()}
+            self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
 
     def prase_data(self, req0):
@@ -122,7 +115,6 @@ class Login:
         return data
 
     def Log_to_wiki_1(self):
-
         login_lang[1] = self.lang
 
         time.sleep(0.5)
@@ -142,9 +134,7 @@ class Login:
             "lgtoken": "",
         }
 
-        printe.output(
-            f"newapi/page.py: log to {self.lang}.{self.family}.org user:{self.username}"
-        )
+        printe.output(f"newapi/page.py: log to {self.lang}.{self.family}.org user:{self.username}")
 
         r1_params = {
             "format": "json",
@@ -157,9 +147,7 @@ class Login:
 
         r11 = self.make_response(r1_params)
 
-        r2_params["lgtoken"] = (
-            r11.get("query", {}).get("tokens", {}).get("logintoken", "")
-        )
+        r2_params["lgtoken"] = r11.get("query", {}).get("tokens", {}).get("logintoken", "")
 
         if r2_params["lgtoken"] == "":
             return False
@@ -198,11 +186,7 @@ class Login:
         # printe.output(f'<<green>> r3_token: {self.r3_token}')
 
     def filter_params(self, params):
-        if (
-            self.family == "wikipedia"
-            and params.get("summary")
-            and self.username.find("bot") == -1
-        ):
+        if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
 
         if "workibrahem" in sys.argv:
@@ -257,9 +241,7 @@ class Login:
             code = error.get("code", "")
             # printe.output(Invalid)
             if Invalid == "Invalid CSRF token." and CSRF:
-                pywikibot.output(
-                    f'<<lightred>> ** error "Invalid CSRF token.".\n{self.r3_token} '
-                )
+                pywikibot.output(f'<<lightred>> ** error "Invalid CSRF token.".\n{self.r3_token} ')
                 self.r3_token = ""
                 self.Log_to_wiki_1()
                 return self.post(params, Type=Type, addtoken=addtoken, CSRF=False)

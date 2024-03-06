@@ -51,8 +51,10 @@ import sys
 import wikitextparser as wtp
 from newapi import printe
 from newapi import txtlib
+
 # ---
 from newapi import botEdit
+
 # ---
 print_test = {1: False}
 # ---
@@ -75,6 +77,7 @@ change_codes = {
     "zh_min_nan": "zh-min-nan",
     "zh_yue": "zh-yue",
 }
+
 
 def warn_err(err):
     err = str(err)
