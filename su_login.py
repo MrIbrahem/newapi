@@ -103,8 +103,6 @@ class Login:
             pywikibot.output(f"error:{e} when json.loads(response.text)")
             pywikibot.output(traceback.format_exc())
             pywikibot.output(self.url_o_print)
-            if str(e) == "Expecting value: line 1 column 1 (char 0)":
-                pywikibot.output(params)
             pywikibot.output("CRITICAL:")
 
         return {}
@@ -117,9 +115,12 @@ class Login:
         # handle errors
         try:
             req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
+            data = self.prase_data(req0)
+            return data
 
         except requests.exceptions.ReadTimeout:
             printe.output(f'ReadTimeout: {self.endpoint}')
+            return {}
 
             # req0.raise_for_status()
         except Exception:
@@ -128,8 +129,6 @@ class Login:
             pywikibot.output("CRITICAL:")
             return {}
 
-        data = self.prase_data(req0)
-        return data
 
     def Log_to_wiki_1(self):
         login_lang[1] = self.lang
