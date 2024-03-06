@@ -55,7 +55,6 @@ from newapi.ncc_page import NEW_API
 """
 
 # ---
-import os
 import configparser
 
 # ---
@@ -85,7 +84,10 @@ print(config["DEFAULT"])
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
 # ---
-User_tables = {"username": username, "password": password}
+User_tables = {
+    "username": username,
+    "password": password
+}
 # ---
 # ---
 super_login.User_tables['nccommons'] = User_tables

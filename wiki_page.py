@@ -15,7 +15,10 @@ from newapi import catdepth_new
 from mdpy.bots import user_account_new
 
 # ---
-User_tables = {"username": user_account_new.my_username, "password": user_account_new.my_password}
+User_tables = {
+    "username": user_account_new.my_username,
+    "password": user_account_new.my_password
+}
 # ---
 # xxxxxxxxxxx
 # ---
