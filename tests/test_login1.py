@@ -12,7 +12,7 @@ User_tables = {
     "password": useraccount.password + "213"
 }
 # ---
-from newapi import super_login1
+from newapi.super import super_login1
 
 super_login1.User_tables['wikipedia'] = User_tables
 # ---

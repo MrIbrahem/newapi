@@ -1,5 +1,5 @@
 # ---
-# from newapi import super_login
+# from newapi.super import super_login
 # super_login.User_tables["wikipedia"] = User_tables
 # ---
 # bot   = Login(lang, family="wikipedia")

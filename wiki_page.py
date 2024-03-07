@@ -8,10 +8,10 @@ from newapi.wiki_page import CatDepth, CatDepthLogin
 from newapi.wiki_page import MainPage, NEW_API
 """
 # ---
-from newapi import super_login
-from newapi import bot_api
-from newapi import super_page
-from newapi import catdepth_new
+from newapi.super import super_login
+from newapi.super import bot_api
+from newapi.super import super_page
+from newapi.super import catdepth_new
 from mdpy.bots import user_account_new
 
 # ---
