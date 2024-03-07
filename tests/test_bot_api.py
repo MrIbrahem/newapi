@@ -1,8 +1,8 @@
 '''
 
-python3 core8/pwb.py newapi/test_bot_api test:7
-
-python3 core8/pwb.py newapi/test_bot_api test:7
+python3 core8/pwb.py newapi/tests/test_bot_api test:4
+python3 core8/pwb.py newapi/tests/test_bot_api test:44
+python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
 
 '''
 import sys
@@ -30,7 +30,7 @@ class testmybot:
 
     def test2(self):
         '''Get_All_pages'''
-        ex = self.api_new.Get_All_pages(start='!', limit_all=1000)
+        ex = self.api_new.Get_All_pages(start='!', limit_all=10000)
         return ex
 
     def test3(self):
@@ -40,7 +40,7 @@ class testmybot:
 
     def test4(self):
         '''Get_Newpages'''
-        ex = self.api_new.Get_Newpages(limit=1000)
+        ex = self.api_new.Get_Newpages(limit=10000)
         return ex
 
     def test5(self):
@@ -58,6 +58,15 @@ class testmybot:
         ex = self.api_new.expandtemplates('{{refn|Wing drop is an unc maneuvering.}}')
         return ex
 
+    def test8(self):
+        '''get_extlinks'''
+        ex = self.api_new.get_extlinks('اليمن')
+        return ex
+    def test9(self):
+        '''querypage_list'''
+        ex = self.api_new.querypage_list(qppage='Wantedcategories', max=500)
+        return ex
+
     def start(self):
         # ---
         defs1 = {}
@@ -69,7 +78,9 @@ class testmybot:
             4: self.test4,
             5: self.test5,
             6: self.test6,
-            7: self.test7
+            7: self.test7,
+            8: self.test8,
+            9: self.test9,
         }
         # ---
         for arg in sys.argv:
@@ -113,13 +124,15 @@ class testmybot:
             if result == "":
                 raise Exception("result == ''")
             # ---
-            if isinstance(result, str):
-                printe.output(f"result:{result}")
-            elif isinstance(result, list):
-                printe.output(result)
-            else:
-                printe.output(result)
+            if "noprr" not in sys.argv:
+                if isinstance(result, str):
+                    printe.output(f"result:{result}")
+                elif isinstance(result, list):
+                    printe.output(result)
+                else:
+                    printe.output(result)
             # ---
+            printe.output(f"{len(result)=}")
             printe.output("=====================")
             printe.output(f"<<lightyellow>> test: {def_name} end...")
             printe.output("time.sleep(1)")
