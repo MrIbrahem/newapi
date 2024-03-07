@@ -7,44 +7,11 @@ def login_def(lang, family):
     return {}
 
 
-ns_list = {
-    "0": "",
-    "1": "نقاش",
-    "2": "مستخدم",
-    "3": "نقاش المستخدم",
-    "4": "ويكيبيديا",
-    "5": "نقاش ويكيبيديا",
-    "6": "ملف",
-    "7": "نقاش الملف",
-    "10": "قالب",
-    "11": "نقاش القالب",
-    "12": "مساعدة",
-    "13": "نقاش المساعدة",
-    "14": "تصنيف",
-    "15": "نقاش التصنيف",
-    "100": "بوابة",
-    "101": "نقاش البوابة",
-    "828": "وحدة",
-    "829": "نقاش الوحدة"
-}
+ns_list = {"0": "", "1": "نقاش", "2": "مستخدم", "3": "نقاش المستخدم", "4": "ويكيبيديا", "5": "نقاش ويكيبيديا", "6": "ملف", "7": "نقاش الملف", "10": "قالب", "11": "نقاش القالب", "12": "مساعدة", "13": "نقاش المساعدة", "14": "تصنيف", "15": "نقاش التصنيف", "100": "بوابة", "101": "نقاش البوابة", "828": "وحدة", "829": "نقاش الوحدة"}
 
 
 class CategoryDepth:
-
-    def __init__(
-        self,
-        title,
-        sitecode="en",
-        depth=0,
-        family="wikipedia",
-        ns="all",
-        nslist=[],
-        without_lang="",
-        with_lang="",
-        tempyes=[],
-        no_gcmsort=False,
-        **kwargs,
-    ):
+    def __init__(self, title, sitecode="en", depth=0, family="wikipedia", ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], no_gcmsort=False, **kwargs):
         # ---
         self.title = title
         self.no_gcmsort = no_gcmsort
@@ -80,20 +47,7 @@ class CategoryDepth:
         return self.log.post(params, addtoken=True)
 
     def make_params(self):
-        params = {
-            "action": "query",
-            "format": "json",
-            "utf8": 1,
-            "generator": "categorymembers",
-            "gcmprop": "title",
-            "prop": ["revisions"],
-            "gcmtype": "page|subcat",
-            "gcmlimit": "max",
-            "formatversion": "1",
-            "gcmsort": "timestamp",
-            "gcmdir": "newer",
-            "rvprop": "timestamp",
-        }
+        params = {"action": "query", "format": "json", "utf8": 1, "generator": "categorymembers", "gcmprop": "title", "prop": ["revisions"], "gcmtype": "page|subcat", "gcmlimit": "max", "formatversion": "1", "gcmsort": "timestamp", "gcmdir": "newer", "rvprop": "timestamp"}
         # ---
         if self.no_gcmsort:
             del params["gcmsort"]
@@ -181,10 +135,7 @@ class CategoryDepth:
                     #         continue
                 # ---
                 tablese["templates"] = [x["title"] for x in caca.get("templates", {})]
-                tablese["langlinks"] = {
-                    fo["lang"]: fo.get("title") or fo.get("*") or ""
-                    for fo in caca.get("langlinks", [])
-                }
+                tablese["langlinks"] = {fo["lang"]: fo.get("title") or fo.get("*") or "" for fo in caca.get("langlinks", [])}
                 # ---
                 table[cate_title] = tablese
             # ---
@@ -239,25 +190,15 @@ class CategoryDepth:
         # ---
         # sort self.result_table by timestamp
         if not self.no_gcmsort:
-            soro = sorted(
-                self.result_table.items(),
-                key=lambda item: self.timestamps.get(item[0], 0),
-                reverse=True,
-            )
-            self.result_table = {
-                k: v
-                for k, v in soro
-            }
+            soro = sorted(self.result_table.items(), key=lambda item: self.timestamps.get(item[0], 0), reverse=True)
+            self.result_table = {k: v for k, v in soro}
         # ---
         return self.result_table
 
 
 def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], **kwargs):
     # ---
-    priffixs = {
-        "ar": "تصنيف:",
-        "en": "Category:",
-    }
+    priffixs = {"ar": "تصنيف:", "en": "Category:"}
     # ---
     start_priffix = priffixs.get(sitecode)
     # ---
@@ -269,18 +210,7 @@ def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nsl
     start = time.time()
     final = time.time()
     # ---
-    bot = CategoryDepth(
-        title,
-        sitecode=sitecode,
-        family=family,
-        depth=depth,
-        ns=ns,
-        nslist=nslist,
-        without_lang=without_lang,
-        with_lang=with_lang,
-        tempyes=tempyes,
-        **kwargs,
-    )
+    bot = CategoryDepth(title, sitecode=sitecode, family=family, depth=depth, ns=ns, nslist=nslist, without_lang=without_lang, with_lang=with_lang, tempyes=tempyes, **kwargs)
     # ---
     # bot.Login_to_wiki()
     # ---
@@ -299,6 +229,6 @@ def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nsl
 
 def login_wiki(sitecode="en", family="wikipedia"):
     # ---
-    bot = CategoryDepth('', sitecode=sitecode, family=family)
+    bot = CategoryDepth("", sitecode=sitecode, family=family)
     # ---
     bot.log.Log_to_wiki_1()

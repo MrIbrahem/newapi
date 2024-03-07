@@ -14,6 +14,7 @@ from newapi.page import NEW_API
 # extlinks = api_new.get_extlinks(title)
 # revisions= api_new.get_revisions(title)
 # logs     = api_new.get_logs(title)
+# wantedcategories  = api_new.querypage_list(qppage='Wantedcategories', max=5000)
 
 Usage:
 from newapi.page import NEW_API
@@ -35,7 +36,6 @@ from datetime import timedelta
 
 from newapi import printe
 
-# ---
 change_codes = {
     "nb": "no",
     "bat_smg": "bat-smg",
@@ -54,9 +54,6 @@ change_codes = {
 
 def login_def(lang, family):
     return {}
-
-
-# ---
 
 
 class NEW_API:
@@ -108,22 +105,22 @@ class NEW_API:
     def post_params(self, params, addtoken=False, files=None):
         return self.log.post(params, addtoken=addtoken, files=files)
 
-    def post_continue(self, params, action, _p_, p_empty, Max=50000):
+    def post_continue(self, params, action, _p_="pages", p_empty=None, Max=50000, first=False, _p_2="", _p_2_empty=None):
         # ---
         if not isinstance(Max, int) and Max.isdigit():
             Max = int(Max)
         # ---
         continue_params = {}
         # ---
+        p_empty = p_empty or []
+        _p_2_empty = _p_2_empty or []
+        # ---
         results = p_empty
         # ---
         while continue_params != {} or len(results) == 0:
             # ---
             if continue_params:
-                params = {
-                    **params,
-                    **continue_params
-                }
+                params = {**params, **continue_params}
             # ---
             json1 = self.post_params(params)
             # ---
@@ -133,6 +130,14 @@ class NEW_API:
             continue_params = json1.get("continue", {})
             # ---
             data = json1.get(action, {}).get(_p_, p_empty)
+            # ---
+            if _p_ == "querypage":
+                data = data.get("results", [])
+            elif first:
+                if isinstance(data, list) and len(data) > 0:
+                    data = data[0]
+                    if _p_2:
+                        data = data.get(_p_2, _p_2_empty)
             # ---
             if not data:
                 break
@@ -145,10 +150,9 @@ class NEW_API:
             if isinstance(results, list):
                 results.extend(data)
             else:
-                results = {
-                    **results,
-                    **data
-                }
+                print(f"{type(results)=}")
+                print(f"{type(data)=}")
+                results = {**results, **data}
         # ---
         return results
 
@@ -223,8 +227,6 @@ class NEW_API:
         # ---
         printe.output(f'Get_All_pages for start:{start}, limit:{limit},namespace:{namespace},apfilterredir:{apfilterredir}')
         # ---
-        numb = 0
-        # ---
         params = {
             "action": "query",
             "format": "json",
@@ -232,6 +234,7 @@ class NEW_API:
             "apnamespace": namespace,
             "aplimit": limit,
             "apfilterredir": "nonredirects",
+            "formatversion": 1
         }
         # ---
         if str(namespace) in ['*', '', 'all']:
@@ -243,52 +246,19 @@ class NEW_API:
         if start != '':
             params['apfrom'] = start
         # ---
-        apcontinue = 'x'
+        newp = self.post_continue(params, "query", _p_="allpages", p_empty=[], Max=limit_all)
         # ---
-        Main_table = []
+        printe.output(f"<<lightpurple>> --- Get_All_pages : find {len(newp)} pages.")
         # ---
-        while apcontinue != '':
-            # ---
-            numb += 1
-            # ---
-            printe.output(f'Get_All_pages {numb}, apcontinue:{apcontinue}..')
-            # ---
-            if apcontinue != 'x':
-                params['apcontinue'] = apcontinue
-            # ---
-            json1 = self.post_params(params)
-            # ---
-            if not json1 or json1 == {}:
-                break
-            # ---
-            apcontinue = json1.get("continue", {}).get("apcontinue", '')
-            # ---
-            newp = json1.get("query", {}).get("allpages", [])
-            printe.output(f"<<lightpurple>> --- Get_All_pages : find {len(newp)} pages.")
-            # ---
-            for x in newp:
-                if x["title"] not in Main_table:
-                    Main_table.append(x["title"])
-            # ---
-            printe.output(f"len of Main_table {len(Main_table)}.")
-            # ---
-            if limit_all > 0 and len(Main_table) > limit_all:
-                apcontinue = ''
-                printe.output("<<lightgreen>> limit_all > len(Main_table) ")
-                break
-            # ---
+        Main_table = [x["title"] for x in newp]
         # ---
-        if numb > 0 and apcontinue == '':
-            printe.output("<<lightgreen>> apcontinue == '' ")
+        printe.output(f"len of Main_table {len(Main_table)}.")
         # ---
         printe.output(f"bot_api.py Get_All_pages : find {len(Main_table)} pages.")
         # ---
         return Main_table
 
     def Search(self, value='', ns="*", offset='', srlimit="max", RETURN_dict=False, addparams=None):
-        # ---
-        if addparams is None:
-            addparams = {}
         # ---
         printe.output(f'bot_api.Search for "{value}",ns:{ns}')
         # ---
@@ -302,12 +272,8 @@ class NEW_API:
             "srsearch": value,
             "srnamespace": 0,
             "srlimit": srlimit,
+            "formatversion": 1
         }
-        # ---
-        if addparams != {}:
-            for pp, vv in addparams.items():
-                if vv != '':
-                    params[pp] = vv
         # ---
         if ns != "":
             params["srnamespace"] = ns
@@ -315,7 +281,11 @@ class NEW_API:
         if offset != "":
             params["sroffset"] = offset
         # ---
-        search = self.post_continue(params, "query", "search", [])
+        if addparams:
+            addparams = {x: v for x, v in addparams.items() if v != '' and x not in params}
+            params = {**params, **addparams}
+        # ---
+        search = self.post_continue(params, "query", _p_="search", p_empty=[])
         # ---
         results = []
         # ---
@@ -335,7 +305,6 @@ class NEW_API:
             dd = datetime.datetime.utcnow() - timedelta(hours=3)
             # ---
             rcstart = dd.strftime('%Y-%m-%dT%H:%M:00.000Z')
-            # ---
         # ---
         params = {
             "action": "query",
@@ -346,6 +315,7 @@ class NEW_API:
             "rclimit": 'max',
             "utf8": 1,
             "rctype": "new",
+            "formatversion": 2
         }
         # ---
         if rcstart != "":
@@ -353,43 +323,15 @@ class NEW_API:
         if user != "":
             params["rcuser"] = user
         # ---
-        Main_table = []
-        # ---
-        numb = 0
-        # ---
         if (isinstance(limit, str) and limit.isdigit()) or isinstance(limit, int):
             limit = int(limit)
             params['rclimit'] = limit
         else:
             limit = 5000
         # ---
-        rccontinue = "x"
+        json1 = self.post_continue(params, "query", _p_="recentchanges", p_empty=[], Max=limit)
         # ---
-        while rccontinue != '':
-            # ---
-            numb += 1
-            # ---
-            printe.output(f'Get_All_pages {numb}, rccontinue:{rccontinue}, all :{len(Main_table)}..')
-            # ---
-            if rccontinue != 'x':
-                params['rccontinue'] = rccontinue
-            # ---
-            json1 = self.post_params(params)
-            # ---
-            if not json1 or json1 == {}:
-                break
-            # ---
-            newp = json1.get("query", {}).get("recentchanges", {})
-            # ---
-            rccontinue = json1.get("continue", {}).get("rccontinue", '')
-            # ---
-            # {"type": "new", "ns": 0, "title": "تشارلز مسيون ريمي", "pageid": 7004776, "revid": 41370093, "old_revid": 0, "rcid": 215347464, "timestamp": "2019-12-15T13:14:34Z"}
-            # ---
-            Main_table.extend([x["title"] for x in newp])
-            # ---
-            if limit <= len(Main_table) and len(Main_table) > 1:
-                break
-            # ---
+        Main_table = [x["title"] for x in json1]
         # ---
         printe.output(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
         # ---
@@ -413,13 +355,14 @@ class NEW_API:
             "ucuser": user,
             "utf8": 1,
             "bot": 1,
-            "ucprop": "title"
+            "ucprop": "title",
+            "formatversion": 1
         }
         # ---
         if ucshow != "":
             params["ucshow"] = ucshow
         # ---
-        results = self.post_continue(params, "query", "usercontribs", [], Max=limit)
+        results = self.post_continue(params, "query", _p_="usercontribs", p_empty=[], Max=limit)
         # ---
         results = [x["title"] for x in results]
         # ---
@@ -446,9 +389,10 @@ class NEW_API:
             "format": "json",
             "prop": "langlinks",
             # "redirects": 1,
+            # "normalize": 1,
             'lllimit': "max",
             "utf8": 1,
-            # "normalize": 1
+            "formatversion": 1
         }
         # ---
         if targtsitecode != "":
@@ -495,7 +439,7 @@ class NEW_API:
             "format": "json",
             "text": text,
             "prop": "wikitext",
-            "formatversion": "2"
+            "formatversion": 2
         }
         # ---
         data = self.post_params(params)
@@ -513,9 +457,9 @@ class NEW_API:
             "action": "query",
             "format": "json",
             "list": "logevents",
-            "formatversion": "2",
             "ledir": "newer",
-            "letitle": title
+            "letitle": title,
+            "formatversion": 2
         }
         # ---
         data = self.post_params(params)
@@ -537,7 +481,7 @@ class NEW_API:
             "pst": 1,
             "contentmodel": "wikitext",
             "utf8": 1,
-            "formatversion": "2"
+            "formatversion": 2
         }
         # ---
         # {"parse": {"title": "كريس فروم", "pageid": 2639244, "wikitext": "{{subst:user:Mr._Ibrahem/line2|Q76|P31}}", "psttext": "\"Q76\":{\n\"P31\":\"إنسان\"\n\n\n\n\n},"}}
@@ -559,50 +503,29 @@ class NEW_API:
             "format": "json",
             "prop": "extlinks",
             "titles": title,
-            "formatversion": "2",
             "utf8": 1,
-            "ellimit": "max"
+            "ellimit": "max",
+            "formatversion": 2
         }
         # ---
-        continue_params = {}
-        # ---
-        results = []
-        # ---
-        while continue_params != {} or not results:
-            # ---
-            if continue_params:
-                params = {
-                    **params,
-                    **continue_params
-                }
-            # ---
-            json1 = self.post_params(params)
-            # ---
-            if not json1 or json1 == {}:
-                break
-            # ---
-            continue_params = json1.get("continue", {})
-            # ---
-            # elcontinue = json1.get('continue', {}).get('elcontinue', '')
-            # ---
-            linkso = json1.get('query', {}).get('pages', [{}])[0].get('extlinks', [])
-            # ---
-            results.extend(linkso)
+        results = self.post_continue(params, "query", "pages", [], first=True, _p_2="extlinks", _p_2_empty=[])
         # ---
         links = [x['url'] for x in results]
+        # ---
         return sorted(set(links))
 
-    def get_revisions(self, title, rvprop='comment|timestamp|user|content|ids', options={}):
+    def get_revisions(self, title, rvprop='comment|timestamp|user|content|ids', options=None):
+        # ---
         params = {
             "action": "query",
             "format": "json",
             "prop": "revisions",
             "titles": title,
             "utf8": 1,
-            "formatversion": "2",
             "rvprop": "comment|timestamp|user|content|ids",
             "rvdir": "newer",
-            "rvlimit": "max"
+            "rvlimit": "max",
+            "formatversion": 2
         }
         # ---
         params["rvprop"] = rvprop or "comment|timestamp|user|content|ids"
@@ -610,7 +533,24 @@ class NEW_API:
         if options:
             params.update(options)
         # ---
-        results = self.post_continue(params, "query", "pages", [])
+        results = self.post_continue(params, "query", _p_="pages", p_empty=[])
         # ---
         return results
+
+    def querypage_list(self, qppage='Wantedcategories', max=5000):
         # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "list": "querypage",
+            # "qppage": "Wantedcategories",
+            "qplimit": "max",
+            "formatversion": 2
+        }
+        # ---
+        params["qppage"] = qppage
+        # ---
+        results = self.post_continue(params, "query", _p_="querypage", p_empty=[], Max=max)
+        # ---
+        return results
+
