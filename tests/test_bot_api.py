@@ -1,5 +1,11 @@
 '''
 
+This file contains tests for the bot_api module.
+
+Each test function corresponds to a specific functionality of the bot_api module and verifies its correctness.
+
+Author: [Your Name]
+
 python3 core8/pwb.py newapi/tests/test_bot_api test:4
 python3 core8/pwb.py newapi/tests/test_bot_api test:44
 python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
@@ -24,6 +30,7 @@ class testmybot:
         # self.api_new.Login_to_wiki()
 
     def test1(self):
+        '''Find pages that exist or not.'''
         '''Find_pages_exists_or_not'''
         ex = self.api_new.Find_pages_exists_or_not(["اليمن", "sana'a"])
         return ex
@@ -44,6 +51,7 @@ class testmybot:
         return ex
 
     def test5(self):
+        '''Get langlinks for a list of pages.'''
         '''Get_langlinks_for_list'''
         ex = self.api_new.Get_langlinks_for_list(["طواف العالم للدراجات 2023", "كريس فروم"])
         return ex
@@ -63,6 +71,7 @@ class testmybot:
         ex = self.api_new.get_extlinks('اليمن')
         return ex
     def test9(self):
+        '''Query page list for wanted categories.'''
         '''querypage_list'''
         ex = self.api_new.querypage_list(qppage='Wantedcategories', max=500)
         return ex
