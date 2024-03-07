@@ -38,10 +38,10 @@ purge       = page.purge()
 '''
 """
 # ---
-from newapi import super_login as su_login
-from newapi import bot_api
-from newapi import super_page as su_page
-from newapi import catdepth_new
+from newapi.super import super_login as su_login
+from newapi.super import bot_api
+from newapi.super import super_page as su_page
+from newapi.super import catdepth_new
 from mdpy.bots import user_account_new
 
 # ---
@@ -115,4 +115,3 @@ if __name__ == '__main__':
     su_page.print_test[1] = True
     su_login.print_test[1] = True
     test()
-# ---

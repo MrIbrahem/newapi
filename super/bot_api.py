@@ -2,6 +2,7 @@
 from newapi.page import NEW_API
 # api_new  = NEW_API('ar', family='wikipedia')
 # login    = api_new.Login_to_wiki()
+# move_it  = api_new.move(old_title, to, reason="", noredirect=False, movesubpages=False)
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
@@ -29,7 +30,6 @@ if login_done_lang[1] != code:
     api_new.Login_to_wiki()
 '''
 # ---
-# ---
 import pywikibot
 import datetime
 from datetime import timedelta
@@ -50,7 +50,6 @@ change_codes = {
     "zh_min_nan": "zh-min-nan",
     "zh_yue": "zh-yue",
 }
-
 
 def login_def(lang, family):
     return {}
@@ -554,3 +553,102 @@ class NEW_API:
         # ---
         return results
 
+    def move(self, old_title, to, reason="", noredirect=False, movesubpages=False):
+        # ---
+        printe.output(f'<<lightyellow>> ** move .. [[{old_title}]] to [[{to}]] ')
+        # ---
+        params = {
+            "action": "move",
+            "format": "json",
+            "from": old_title,
+            "to": to,
+            "movetalk": 1,
+            "formatversion": 2
+        }
+        # ---
+        if noredirect:
+            params['noredirect'] = 1
+        if movesubpages:
+            params['movesubpages'] = 1
+        # ---
+        if reason != '':
+            params['reason'] = reason
+        # ---
+        if old_title == to:
+            printe.output(f'<<lightred>>** old_title == to {to} ')
+            return False
+        # ---
+        data = self.post_params(params)
+        # { "move": { "from": "d", "to": "d2", "reason": "wrong", "redirectcreated": true, "moveoverredirect": false } }
+        # ---
+        if not data or data == {}:
+            return ""
+        # ---
+        expend_data = {
+            "move": {
+                "from": "User:Mr. Ibrahem",
+                "to": "User:Mr. Ibrahem/x",
+                "reason": "wrong title",
+                "redirectcreated": True,
+                "moveoverredirect": False,
+                "talkmove-errors": [
+                    {
+                        "message": "content-not-allowed-here",
+                        "params": [
+                            "Structured Discussions board",
+                            "User talk:Mr. Ibrahem/x",
+                            "main"
+                        ],
+                        "code": "contentnotallowedhere",
+                        "type": "error"
+                    },
+                    {
+                        "message": "flow-error-allowcreation-flow-create-board",
+                        "params": [],
+                        "code": "flow-error-allowcreation-flow-create-board",
+                        "type": "error"
+                    }
+                ],
+                "subpages": {
+                    "errors": [
+                        {
+                            "message": "cant-move-subpages",
+                            "params": [],
+                            "code": "cant-move-subpages",
+                            "type": "error"
+                        }
+                    ]
+                },
+                "subpages-talk": {
+                    "errors": [
+                        {
+                            "message": "cant-move-subpages",
+                            "params": [],
+                            "code": "cant-move-subpages",
+                            "type": "error"
+                        }
+                    ]
+                }
+            }
+        }
+        # ---
+        move_done = data.get('move', {})
+        error = data.get('error', {})
+        error_code = error.get('code', "") # missingtitle
+        # ---
+        # elif "Please choose another name." in r4:
+        # ---
+        if move_done:
+            printe.output('<<lightgreen>>** true.')
+            return True
+        elif error:
+            if error_code == "ratelimited":
+                # ---
+                printe.output('<<red>> move ratelimited:')
+                return self.move(old_title, to, reason=reason, noredirect=noredirect, movesubpages=movesubpages)
+            
+            if error_code == "articleexists":
+                printe.output('<<red>> articleexists')
+                return "articleexists"
+        # ---
+        return False

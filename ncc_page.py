@@ -58,10 +58,10 @@ from newapi.ncc_page import NEW_API
 import configparser
 
 # ---
-from newapi import super_login
-from newapi import bot_api
-from newapi import super_page
-from newapi import catdepth_new
+from newapi.super import super_login
+from newapi.super import bot_api
+from newapi.super import super_page
+from newapi.super import catdepth_new
 
 # ---
 from pathlib import Path
