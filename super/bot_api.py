@@ -536,7 +536,9 @@ class NEW_API:
         # ---
         return results
 
-    def querypage_list(self, qppage='Wantedcategories', max=5000):
+    def querypage_list(self, qppage='Wantedcategories', max=None, Max=None):
+        # ---
+        Max = max or Max or 5000
         # ---
         params = {
             "action": "query",
@@ -549,7 +551,7 @@ class NEW_API:
         # ---
         params["qppage"] = qppage
         # ---
-        results = self.post_continue(params, "query", _p_="querypage", p_empty=[], Max=max)
+        results = self.post_continue(params, "query", _p_="querypage", p_empty=[], Max=Max)
         # ---
         return results
 
