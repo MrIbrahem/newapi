@@ -107,14 +107,17 @@ class Login:
 
         return {}
 
-    def make_response(self, params, files=None):
+    def make_response(self, params, files=None, timeout=30):
         self.p_url(params)
+
+        if params.get("action") == "querypage":
+            timeout = 60
 
         seasons_by_lang.setdefault(self.lang, requests.Session())
 
         # handle errors
         try:
-            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=30)
+            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
             # req0.raise_for_status()
             data = self.prase_data(req0)
             return data

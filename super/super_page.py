@@ -893,10 +893,10 @@ class MainPage:
         self.templates = txtlib.extract_templates_and_params(self.text)
         return self.templates
 
-    def ask_put(self, nodiff=False):
+    def ask_put(self, nodiff=False, ASK=False):
         yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
         # ---
-        if 'ask' in sys.argv and not Save_Edit_Pages[1] or print_test[1]:
+        if 'ask' in sys.argv and not Save_Edit_Pages[1] or print_test[1] or ASK:
             # ---
             if "nodiff" not in sys.argv and not nodiff:
                 if len(self.newtext) < 70000 and len(self.text) < 70000 or 'diff' in sys.argv:
@@ -955,13 +955,13 @@ class MainPage:
         # ---
         printe.output(f'<<lightred>>{function} ERROR: <<defaut>>info: {err_info}.')
 
-    def save(self, newtext='', summary='', nocreate=1, minor='', tags='', nodiff=False):
+    def save(self, newtext='', summary='', nocreate=1, minor='', tags='', nodiff=False, ASK=False):
         # ---
         self.newtext = newtext
         if summary != '':
             self.summary = summary
         # ---
-        ask = self.ask_put(nodiff=nodiff)
+        ask = self.ask_put(nodiff=nodiff, ASK=ASK)
         if ask is False:
             return False
         # ---

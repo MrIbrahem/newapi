@@ -15,7 +15,7 @@ from newapi.page import NEW_API
 # extlinks = api_new.get_extlinks(title)
 # revisions= api_new.get_revisions(title)
 # logs     = api_new.get_logs(title)
-# wantedcategories  = api_new.querypage_list(qppage='Wantedcategories', max=5000)
+# wantedcategories  = api_new.querypage_list(qppage='Wantedcategories', Max=5000)
 
 Usage:
 from newapi.page import NEW_API
@@ -539,7 +539,6 @@ class NEW_API:
     def querypage_list(self, qppage='Wantedcategories', max=None, Max=None):
         # ---
         Max = max or Max or 5000
-        # ---
         params = {
             "action": "query",
             "format": "json",
