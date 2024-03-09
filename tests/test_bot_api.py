@@ -64,7 +64,7 @@ class testmybot:
         return ex
     def test9(self):
         '''querypage_list'''
-        ex = self.api_new.querypage_list(qppage='Wantedcategories', max=500)
+        ex = self.api_new.querypage_list(qppage='Wantedcategories', Max=500)
         return ex
 
     def start(self):
