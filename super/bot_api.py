@@ -536,10 +536,9 @@ class NEW_API:
         # ---
         return results
 
-    def querypage_list(self, qppage='Wantedcategories', Max=5000):
+    def querypage_list(self, qppage='Wantedcategories', max=None, Max=None):
         # ---
-        
-        # ---
+        Max = max or Max or 5000
         params = {
             "action": "query",
             "format": "json",
