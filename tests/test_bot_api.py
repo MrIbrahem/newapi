@@ -67,6 +67,11 @@ class testmybot:
         ex = self.api_new.querypage_list(qppage='Wantedcategories', Max=500)
         return ex
 
+    def test10(self):
+        '''Get_template_pages'''
+        ex = self.api_new.Get_template_pages( "قالب:طواف العالم للدراجات", namespace="*", Max=10000)
+        return ex
+
     def start(self):
         # ---
         defs1 = {}
@@ -81,6 +86,7 @@ class testmybot:
             7: self.test7,
             8: self.test8,
             9: self.test9,
+            10: self.test10
         }
         # ---
         for arg in sys.argv:
