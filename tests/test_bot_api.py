@@ -76,7 +76,7 @@ class testmybot:
         ex = self.api_new.Get_template_pages( "قالب:طواف العالم للدراجات", namespace="*", Max=10000)
         return ex
 
-    def start(self):
+    def start_GETAPI(self):
         # ---
         defs1 = {}
         # ---
