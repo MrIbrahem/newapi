@@ -9,6 +9,7 @@ import sys
 import time
 
 from newapi.page import NEW_API
+from newapi.page import NEW_API
 
 from newapi import printe
 
