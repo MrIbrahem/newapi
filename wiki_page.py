@@ -84,6 +84,7 @@ def test():
     # ---
     text = page.get_text()
     print(text)
+    """ Placeholder docstring """
     # ---
     page2 = MainPage("Yemen", 'en', family='wikipedia')
     # ---
