@@ -89,6 +89,15 @@ def test():
     # ---
     # ---
     ex = page.page_backlinks()
+    page = MainPage("تصنيف:اليمن", 'ar', family='wikipedia')
+    # ---
+    text = page.get_text()
+    print(text)
+    # ---
+    page2 = MainPage("Yemen", 'en', family='wikipedia')
+    # ---
+    # ---
+    ex = page.page_backlinks()
     print('---------------------------')
     print(f'page_backlinks:{ex}')
 
