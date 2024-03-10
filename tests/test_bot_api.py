@@ -11,6 +11,7 @@ import time
 from newapi.page import NEW_API
 from newapi.page import NEW_API
 from newapi.page import NEW_API
+from newapi.page import NEW_API
 
 from newapi import printe
 
@@ -22,6 +23,7 @@ class testmybot:
 
     def __init__(self):
         self.test = "test"
+        self.api_new = NEW_API('ar', family='wikipedia')
         self.api_new = NEW_API('ar', family='wikipedia')
         # self.api_new.Login_to_wiki()
 
