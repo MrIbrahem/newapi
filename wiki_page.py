@@ -47,22 +47,22 @@ if "botuser" in sys.argv:
 # xxxxxxxxxxx
 # ---
 
-# ---
-super_login.User_tables["wikipedia"] = User_tables
-# ---
-Login = super_login.Login
-# ---
-bot_api.login_def = Login
-super_page.login_def = Login
-catdepth_new.login_def = Login
-# ---
-NEW_API = bot_api.NEW_API
-MainPage = super_page.MainPage
-change_codes = super_page.change_codes
-CatDepth = catdepth_new.subcatquery
-CatDepthLogin = catdepth_new.login_wiki
-# ---
-# xxxxxxxxxxx
+# Add unit tests for the methods of the NEW_API class
+import unittest
+
+class TestNewAPI(unittest.TestCase):
+    def test_Get_template_pages(self):
+        api = NEW_API('ar', family='wikipedia')
+        result = api.Get_template_pages("قالب:طواف العالم للدراجات", namespace="*", Max=10000)
+        self.assertIsNotNone(result)
+
+    def test_start_GETAPI(self):
+        api = NEW_API('ar', family='wikipedia')
+        result = api.start_GETAPI()
+        self.assertIsNotNone(result)
+
+if __name__ == '__main__':
+    unittest.main()
 
 
 def test():
