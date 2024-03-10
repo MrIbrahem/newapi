@@ -1,5 +1,10 @@
 """
 Usage:
+from wikimedia_utils import smaller_function1
+page      = smaller_function1(title, 'www', family='mdwiki')
+from wikimedia_utils import smaller_function2
+page      = smaller_function2(title, 'ar', family='wikipedia')
+from wikimedia_utils import smaller_function1, smaller_function2
 # ---
 from newapi.mdwiki_page import MainPage
 page      = MainPage(title, 'www', family='mdwiki')
