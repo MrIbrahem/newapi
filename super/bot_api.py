@@ -187,7 +187,7 @@ class NEW_API:
                     kk = query_pages[kk]
                 # ---
                 tit = kk.get("title", "")
-                if tit != "":
+                if tit:
                     tit = normalized.get(tit, tit)
                     # ---
                     table[tit] = True
@@ -218,7 +218,7 @@ class NEW_API:
         if apfilterredir in ["redirects", "all", "nonredirects"]:
             params["apfilterredir"] = apfilterredir
         # ---
-        if start != "":
+        if start:
             params["apfrom"] = start
         # ---
         newp = self.post_continue(params, "query", _p_="allpages", p_empty=[], Max=limit_all)
@@ -242,14 +242,14 @@ class NEW_API:
         # ---
         params = {"action": "query", "format": "json", "list": "search", "srsearch": value, "srnamespace": 0, "srlimit": srlimit, "formatversion": 1}
         # ---
-        if ns != "":
+        if ns:
             params["srnamespace"] = ns
         # ---
-        if offset != "":
+        if offset:
             params["sroffset"] = offset
         # ---
         if addparams:
-            addparams = {x: v for x, v in addparams.items() if v != "" and x not in params}
+            addparams = {x: v for x, v in addparams.items() if v and x not in params}
             params = {**params, **addparams}
         # ---
         search = self.post_continue(params, "query", _p_="search", p_empty=[])
@@ -285,9 +285,9 @@ class NEW_API:
             "formatversion": 2,
         }
         # ---
-        if rcstart != "":
+        if rcstart:
             params["rcstart"] = rcstart
-        if user != "":
+        if user:
             params["rcuser"] = user
         # ---
         if (isinstance(limit, str) and limit.isdigit()) or isinstance(limit, int):
@@ -314,7 +314,7 @@ class NEW_API:
         # ---
         params = {"action": "query", "format": "json", "list": "usercontribs", "ucdir": "older", "ucnamespace": namespace, "uclimit": "max", "ucuser": user, "utf8": 1, "bot": 1, "ucprop": "title", "formatversion": 1}
         # ---
-        if ucshow != "":
+        if ucshow:
             params["ucshow"] = ucshow
         # ---
         results = self.post_continue(params, "query", _p_="usercontribs", p_empty=[], Max=limit)
@@ -350,7 +350,7 @@ class NEW_API:
             "formatversion": 1,
         }
         # ---
-        if targtsitecode != "":
+        if targtsitecode:
             params["lllang"] = targtsitecode
             printe.output(f'params["lllang"] = {targtsitecode}')
         # ---
@@ -481,7 +481,7 @@ class NEW_API:
         if movesubpages:
             params["movesubpages"] = 1
         # ---
-        if reason != "":
+        if reason:
             params["reason"] = reason
         # ---
         if old_title == to:

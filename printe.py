@@ -666,7 +666,7 @@ if __name__ == '__main__':
     line = ""
     numb = 0
     for co, cac in color_table.items():
-        if cac != "":
+        if cac:
             numb += 1
             line += f" {co.ljust(15)} <<{co}>> test.<<default>>"
             line += "\n"
