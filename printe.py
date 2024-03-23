@@ -298,7 +298,7 @@ def output(textm):
         cc = color_table.get(current_color, "")
 
         # If the color code is not empty, apply it to the text
-        if cc and cc != "":
+        if cc:
             text = cc % text
 
         # Add the colored text to the string to be printed
@@ -656,6 +656,8 @@ def showDiff(text_a: str, text_b: str, context: int = 0) -> None:
     The differences are highlighted (only on compatible systems) to show which
     changes were made.
     """
+    if "nodiff" in sys.argv:
+        return
     PatchManager(text_a, text_b, context=context).print_hunks()
 
 
