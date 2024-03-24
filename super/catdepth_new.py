@@ -236,7 +236,7 @@ class CategoryDepth:
             # ---
             depth_done += 1
             # ---
-            for cat in tqdm(new_list):
+            for cat in tqdm.tqdm(new_list):
                 # ---
                 table2 = self.get_cat(cat)
                 # ---
