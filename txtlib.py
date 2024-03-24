@@ -110,7 +110,7 @@ def get_one_temp_params(text, tempname="", templates=[], lowers=False, get_all_t
     # ---
     temps = templates
     # ---
-    if tempname != '':
+    if tempname:
         temps.append(tempname)
     # ---
     temps = [x.replace("قالب:", "").replace("Template:", "").replace('_', ' ').strip() for x in temps]

@@ -57,7 +57,7 @@ class CategoryDepth:
             params["prop"].append("templates")
             params["tllimit"] = "max"
             params["tltemplates"] = "|".join(self.tempyes)
-        if self.with_lang != "" or self.without_lang != "":  # مع وصلة لغة معينة
+        if self.with_lang or self.without_lang:  # مع وصلة لغة معينة
             params["prop"].append("langlinks")
             params["lllimit"] = "max"
         # ---
@@ -145,12 +145,12 @@ class CategoryDepth:
         if x in self.result_table:
             return
 
-        if self.without_lang != "":
+        if self.without_lang:
             no_langs = tab.get("langlinks", {}).get(self.without_lang, "")
-            if no_langs != "":
+            if no_langs:
                 return
 
-        if self.with_lang != "":
+        if self.with_lang:
             langs = tab.get("langlinks", {}).get(self.with_lang, "")
             if langs == "":
                 return

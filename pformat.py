@@ -42,7 +42,7 @@ for arg in sys.argv:
     if arg == '-title' or arg == '-page':
         title = value
 # ---
-if title != '':
+if title:
     # ---
     from newapi.page import MainPage
 
