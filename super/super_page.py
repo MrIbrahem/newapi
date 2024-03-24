@@ -586,7 +586,7 @@ class MainPage:
         # ---
         to = redirects.get("to", '')
         # ---
-        if to != '':
+        if to:
             printe.output(f'<<lightyellow>>Page:{self.title} redirect to {to}')
         # ---
         return to
@@ -958,7 +958,7 @@ class MainPage:
     def save(self, newtext='', summary='', nocreate=1, minor='', tags='', nodiff=False, ASK=False):
         # ---
         self.newtext = newtext
-        if summary != '':
+        if summary:
             self.summary = summary
         # ---
         ask = self.ask_put(nodiff=nodiff, ASK=ASK)
@@ -977,10 +977,10 @@ class MainPage:
         if nocreate != 1:
             del params['nocreate']
         # ---
-        if self.revid != '':
+        if self.revid:
             params['baserevid'] = self.revid
         # ---
-        if tags != "":
+        if tags:
             params["tags"] = tags
         # ---
         # params['basetimestamp'] = self.timestamp

@@ -32,6 +32,7 @@ if login_done_lang[1] != code:
     api_new.Login_to_wiki()
 """
 # ---
+import sys
 import pywikibot
 import datetime
 from datetime import timedelta
@@ -39,6 +40,7 @@ from datetime import timedelta
 from newapi import printe
 
 change_codes = {"nb": "no", "bat_smg": "bat-smg", "be_x_old": "be-tarask", "be-x-old": "be-tarask", "cbk_zam": "cbk-zam", "fiu_vro": "fiu-vro", "map_bms": "map-bms", "nds_nl": "nds-nl", "roa_rup": "roa-rup", "zh_classical": "zh-classical", "zh_min_nan": "zh-min-nan", "zh_yue": "zh-yue"}
+yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
 
 
 def login_def(lang, family):
@@ -49,6 +51,8 @@ class NEW_API:
     def __init__(self, lang, family="wikipedia"):
         # ---
         self.lang = change_codes.get(lang) or lang
+        # ---
+        self.save_move = False
         # ---
         self.family = family
         self.endpoint = f"https://{lang}.{family}.org/w/api.php"
@@ -187,7 +191,7 @@ class NEW_API:
                     kk = query_pages[kk]
                 # ---
                 tit = kk.get("title", "")
-                if tit != "":
+                if tit:
                     tit = normalized.get(tit, tit)
                     # ---
                     table[tit] = True
@@ -218,7 +222,7 @@ class NEW_API:
         if apfilterredir in ["redirects", "all", "nonredirects"]:
             params["apfilterredir"] = apfilterredir
         # ---
-        if start != "":
+        if start:
             params["apfrom"] = start
         # ---
         newp = self.post_continue(params, "query", _p_="allpages", p_empty=[], Max=limit_all)
@@ -242,14 +246,14 @@ class NEW_API:
         # ---
         params = {"action": "query", "format": "json", "list": "search", "srsearch": value, "srnamespace": 0, "srlimit": srlimit, "formatversion": 1}
         # ---
-        if ns != "":
+        if ns:
             params["srnamespace"] = ns
         # ---
-        if offset != "":
+        if offset:
             params["sroffset"] = offset
         # ---
         if addparams:
-            addparams = {x: v for x, v in addparams.items() if v != "" and x not in params}
+            addparams = {x: v for x, v in addparams.items() if v and x not in params}
             params = {**params, **addparams}
         # ---
         search = self.post_continue(params, "query", _p_="search", p_empty=[])
@@ -285,9 +289,9 @@ class NEW_API:
             "formatversion": 2,
         }
         # ---
-        if rcstart != "":
+        if rcstart:
             params["rcstart"] = rcstart
-        if user != "":
+        if user:
             params["rcuser"] = user
         # ---
         if (isinstance(limit, str) and limit.isdigit()) or isinstance(limit, int):
@@ -314,7 +318,7 @@ class NEW_API:
         # ---
         params = {"action": "query", "format": "json", "list": "usercontribs", "ucdir": "older", "ucnamespace": namespace, "uclimit": "max", "ucuser": user, "utf8": 1, "bot": 1, "ucprop": "title", "formatversion": 1}
         # ---
-        if ucshow != "":
+        if ucshow:
             params["ucshow"] = ucshow
         # ---
         results = self.post_continue(params, "query", _p_="usercontribs", p_empty=[], Max=limit)
@@ -350,7 +354,7 @@ class NEW_API:
             "formatversion": 1,
         }
         # ---
-        if targtsitecode != "":
+        if targtsitecode:
             params["lllang"] = targtsitecode
             printe.output(f'params["lllang"] = {targtsitecode}')
         # ---
@@ -472,7 +476,7 @@ class NEW_API:
 
     def move(self, old_title, to, reason="", noredirect=False, movesubpages=False):
         # ---
-        printe.output(f"<<lightyellow>> ** move .. [[{old_title}]] to [[{to}]] ")
+        printe.output(f"<<lightyellow>> def move [[{old_title}]] to [[{to}]] ")
         # ---
         params = {"action": "move", "format": "json", "from": old_title, "to": to, "movetalk": 1, "formatversion": 2}
         # ---
@@ -481,17 +485,33 @@ class NEW_API:
         if movesubpages:
             params["movesubpages"] = 1
         # ---
-        if reason != "":
+        if reason:
             params["reason"] = reason
         # ---
         if old_title == to:
             printe.output(f"<<lightred>>** old_title == to {to} ")
             return False
         # ---
+        if not self.save_move and "ask" in sys.argv:
+            sa = pywikibot.input(f"<<lightyellow>>bot_api: Do you move page:[[{old_title}]] to [[{to}]]? ([y]es, [N]o, [a]ll)?")
+            # ---
+            if sa == "a":
+                printe.output('<<lightgreen>> ---------------------------------')
+                printe.output('<<lightgreen>> bot_api.py move all without asking.')
+                printe.output('<<lightgreen>> ---------------------------------')
+                self.save_move = True
+            # ---
+            if sa not in yes_answer:
+                printe.output('<<red>> bot_api: wrong answer')
+                return False
+            # ---
+            printe.output(f'<<lightgreen>> answer: {sa in yes_answer}')
+        # ---
         data = self.post_params(params)
         # { "move": { "from": "d", "to": "d2", "reason": "wrong", "redirectcreated": true, "moveoverredirect": false } }
         # ---
-        if not data or data == {}:
+        if not data:
+            printe.output("no data")
             return ""
         # ---
         expend_data = {
@@ -516,15 +536,20 @@ class NEW_API:
         if move_done:
             printe.output("<<lightgreen>>** true.")
             return True
-        elif error:
+        # ---
+        if error:
             if error_code == "ratelimited":
-                # ---
                 printe.output("<<red>> move ratelimited:")
                 return self.move(old_title, to, reason=reason, noredirect=noredirect, movesubpages=movesubpages)
 
             if error_code == "articleexists":
                 printe.output("<<red>> articleexists")
                 return "articleexists"
+            
+            printe.output("<<red>> error")
+            printe.output(error)
+
+            return False
         # ---
         return False
 
