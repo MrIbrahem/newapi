@@ -2,7 +2,7 @@
 """
 from newapi.ncc_page import CatDepth, CatDepthLogin
 # CatDepthLogin(sitecode="en", family="wikipedia")
-# cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[])
+# cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[])
 
 # from newapi.mdwiki_page import MainPage as md_MainPage
 '''
@@ -41,8 +41,11 @@ purge       = page.purge()
 from newapi.super import super_login as su_login
 from newapi.super import bot_api
 from newapi.super import super_page as su_page
-from newapi.super import catdepth_new
 from mdpy.bots import user_account_new
+from newapi.super import catdepth_new
+
+catdepth_new.SITECODE = "www"
+catdepth_new.FAMILY = "mdwiki"
 
 # ---
 User_tables = {

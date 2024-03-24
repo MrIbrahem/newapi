@@ -62,6 +62,7 @@ class testmybot:
         '''get_extlinks'''
         ex = self.api_new.get_extlinks('اليمن')
         return ex
+
     def test9(self):
         '''querypage_list'''
         ex = self.api_new.querypage_list(qppage='Wantedcategories', Max=500)
@@ -69,7 +70,7 @@ class testmybot:
 
     def test10(self):
         '''Get_template_pages'''
-        ex = self.api_new.Get_template_pages( "قالب:طواف العالم للدراجات", namespace="*", Max=10000)
+        ex = self.api_new.Get_template_pages("قالب:طواف العالم للدراجات", namespace="*", Max=10000)
         return ex
 
     def start(self):

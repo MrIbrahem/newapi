@@ -1,23 +1,55 @@
+"""
+
+from newapi.ncc_page import CatDepth, CatDepthLogin
+# CatDepthLogin(sitecode="www", family="nccommons")
+# cat_members = CatDepth(title, sitecode='www', family="nccommons", depth=0, ns=10, nslist=[], onlyns=False, tempyes=[])
+
+"""
 import time
 import sys
+import tqdm
 from newapi import printe
+
+SITECODE = "en"
+FAMILY = "wikipedia"
 
 
 def login_def(lang, family):
     return {}
 
 
-ns_list = {"0": "", "1": "نقاش", "2": "مستخدم", "3": "نقاش المستخدم", "4": "ويكيبيديا", "5": "نقاش ويكيبيديا", "6": "ملف", "7": "نقاش الملف", "10": "قالب", "11": "نقاش القالب", "12": "مساعدة", "13": "نقاش المساعدة", "14": "تصنيف", "15": "نقاش التصنيف", "100": "بوابة", "101": "نقاش البوابة", "828": "وحدة", "829": "نقاش الوحدة"}
+ns_list = {
+    "0": "",
+    "1": "نقاش",
+    "2": "مستخدم",
+    "3": "نقاش المستخدم",
+    "4": "ويكيبيديا",
+    "5": "نقاش ويكيبيديا",
+    "6": "ملف",
+    "7": "نقاش الملف",
+    "10": "قالب",
+    "11": "نقاش القالب",
+    "12": "مساعدة",
+    "13": "نقاش المساعدة",
+    "14": "تصنيف",
+    "15": "نقاش التصنيف",
+    "100": "بوابة",
+    "101": "نقاش البوابة",
+    "828": "وحدة",
+    "829": "نقاش الوحدة"
+}
 
 
 class CategoryDepth:
-    def __init__(self, title, sitecode="en", depth=0, family="wikipedia", ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], no_gcmsort=False, **kwargs):
+
+    def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns= False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, **kwargs):
         # ---
         self.title = title
         self.no_gcmsort = no_gcmsort
         # ---
         self.log = login_def(sitecode, family=family)
         # ---
+        self.onlyns = onlyns
         self.tempyes = tempyes
 
         self.without_lang = without_lang
@@ -47,18 +79,33 @@ class CategoryDepth:
         return self.log.post(params, addtoken=True)
 
     def make_params(self):
-        params = {"action": "query", "format": "json", "utf8": 1, "generator": "categorymembers", "gcmprop": "title", "prop": ["revisions"], "gcmtype": "page|subcat", "gcmlimit": "max", "formatversion": "1", "gcmsort": "timestamp", "gcmdir": "newer", "rvprop": "timestamp"}
+        props = ["revisions"]
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "utf8": 1,
+            "generator": "categorymembers",
+            "gcmprop": "title",
+            # "prop": "revisions",
+            "gcmtype": "page|subcat",
+            "gcmlimit": "max",
+            "formatversion": "1",
+            "gcmsort": "timestamp",
+            "gcmdir": "newer",
+            "rvprop": "timestamp"
+        }
         # ---
         if self.no_gcmsort:
             del params["gcmsort"]
             del params["gcmdir"]
 
         if self.tempyes != []:
-            params["prop"].append("templates")
+            props.append("templates")
             params["tllimit"] = "max"
             params["tltemplates"] = "|".join(self.tempyes)
         if self.with_lang or self.without_lang:  # مع وصلة لغة معينة
-            params["prop"].append("langlinks")
+            props.append("langlinks")
             params["lllimit"] = "max"
         # ---
         if self.ns in ["0", "10"]:
@@ -76,8 +123,8 @@ class CategoryDepth:
         # ---
         # print('gcmtype::', params["gcmtype"])
         # ---
-        if len(params["prop"]) == 0:
-            del params["prop"]
+        if len(props) > 0:
+            params["prop"] = "|".join(props)
         # ---
         self.params = params
 
@@ -119,23 +166,31 @@ class CategoryDepth:
                 timestamp = caca.get("revisions", [{}])[0].get("timestamp", "")
                 self.timestamps[cate_title] = timestamp
                 # ---
+                p_ns = str(caca.get("ns", 0))
+                # ---
                 tablese = {}
                 # ---
-                if "ns" in caca:
+                if p_ns:
                     tablese["ns"] = caca["ns"]
+                    # ---
                     if self.ns == "14" or self.nslist == [14]:
-                        if str(caca["ns"]) != "14":
+                        if p_ns != "14":
                             continue
+                    # ---
                     if self.ns == "0" or self.nslist == [0]:
-                        if str(caca["ns"]) != "0":
+                        if p_ns != "0":
                             continue
+                    # ---
                     # do same for ns_list
                     # if self.ns in ns_list:
-                    #     if str(caca["ns"]) not in ns_list:
+                    #     if p_ns not in ns_list:
                     #         continue
                 # ---
                 tablese["templates"] = [x["title"] for x in caca.get("templates", {})]
-                tablese["langlinks"] = {fo["lang"]: fo.get("title") or fo.get("*") or "" for fo in caca.get("langlinks", [])}
+                tablese["langlinks"] = {
+                    fo["lang"]: fo.get("title") or fo.get("*") or ""
+                    for fo in caca.get("langlinks", [])
+                }
                 # ---
                 table[cate_title] = tablese
             # ---
@@ -154,6 +209,12 @@ class CategoryDepth:
             langs = tab.get("langlinks", {}).get(self.with_lang, "")
             if langs == "":
                 return
+
+        if self.onlyns:
+            p_ns = str(tab.get("ns", 0))
+            if p_ns != str(self.onlyns):
+                return
+        # ---
         # print(tab)
         self.result_table[x] = tab
 
@@ -175,7 +236,7 @@ class CategoryDepth:
             # ---
             depth_done += 1
             # ---
-            for cat in new_list:
+            for cat in tqdm(new_list):
                 # ---
                 table2 = self.get_cat(cat)
                 # ---
@@ -191,26 +252,32 @@ class CategoryDepth:
         # sort self.result_table by timestamp
         if not self.no_gcmsort:
             soro = sorted(self.result_table.items(), key=lambda item: self.timestamps.get(item[0], 0), reverse=True)
-            self.result_table = {k: v for k, v in soro}
+            self.result_table = {
+                k: v
+                for k, v in soro
+            }
         # ---
         return self.result_table
 
 
-def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[], **kwargs):
+def subcatquery(title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], **kwargs):
     # ---
-    priffixs = {"ar": "تصنيف:", "en": "Category:"}
+    priffixs = {
+        "ar": "تصنيف:",
+        "en": "Category:"
+    }
     # ---
     start_priffix = priffixs.get(sitecode)
     # ---
     if start_priffix and not title.startswith(start_priffix):
         title = start_priffix + title
     # ---
-    printe.output(f"<<lightyellow>> catdepth_new.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}")
+    printe.output(f"<<lightyellow>> catdepth_new.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}, onlyns:{onlyns}")
     # ---
     start = time.time()
     final = time.time()
     # ---
-    bot = CategoryDepth(title, sitecode=sitecode, family=family, depth=depth, ns=ns, nslist=nslist, without_lang=without_lang, with_lang=with_lang, tempyes=tempyes, **kwargs)
+    bot = CategoryDepth(title, sitecode=sitecode, family=family, depth=depth, ns=ns, nslist=nslist, onlyns=onlyns, without_lang=without_lang, with_lang=with_lang, tempyes=tempyes, **kwargs)
     # ---
     # bot.Login_to_wiki()
     # ---
@@ -227,7 +294,7 @@ def subcatquery(title, sitecode="en", family="wikipedia", depth=0, ns="all", nsl
     return result
 
 
-def login_wiki(sitecode="en", family="wikipedia"):
+def login_wiki(sitecode=SITECODE, family=FAMILY):
     # ---
     bot = CategoryDepth("", sitecode=sitecode, family=family)
     # ---
