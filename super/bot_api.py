@@ -32,6 +32,7 @@ if login_done_lang[1] != code:
     api_new.Login_to_wiki()
 """
 # ---
+import sys
 import pywikibot
 import datetime
 from datetime import timedelta
@@ -39,6 +40,7 @@ from datetime import timedelta
 from newapi import printe
 
 change_codes = {"nb": "no", "bat_smg": "bat-smg", "be_x_old": "be-tarask", "be-x-old": "be-tarask", "cbk_zam": "cbk-zam", "fiu_vro": "fiu-vro", "map_bms": "map-bms", "nds_nl": "nds-nl", "roa_rup": "roa-rup", "zh_classical": "zh-classical", "zh_min_nan": "zh-min-nan", "zh_yue": "zh-yue"}
+yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
 
 
 def login_def(lang, family):
@@ -49,6 +51,8 @@ class NEW_API:
     def __init__(self, lang, family="wikipedia"):
         # ---
         self.lang = change_codes.get(lang) or lang
+        # ---
+        self.save_move = False
         # ---
         self.family = family
         self.endpoint = f"https://{lang}.{family}.org/w/api.php"
@@ -472,7 +476,7 @@ class NEW_API:
 
     def move(self, old_title, to, reason="", noredirect=False, movesubpages=False):
         # ---
-        printe.output(f"<<lightyellow>> ** move .. [[{old_title}]] to [[{to}]] ")
+        printe.output(f"<<lightyellow>> def move [[{old_title}]] to [[{to}]] ")
         # ---
         params = {"action": "move", "format": "json", "from": old_title, "to": to, "movetalk": 1, "formatversion": 2}
         # ---
@@ -488,10 +492,26 @@ class NEW_API:
             printe.output(f"<<lightred>>** old_title == to {to} ")
             return False
         # ---
+        if not self.save_move and "ask" in sys.argv:
+            sa = pywikibot.input(f"<<lightyellow>>bot_api: Do you move page:[[{old_title}]] to [[{to}]]? ([y]es, [N]o, [a]ll)?")
+            # ---
+            if sa == "a":
+                printe.output('<<lightgreen>> ---------------------------------')
+                printe.output('<<lightgreen>> bot_api.py move all without asking.')
+                printe.output('<<lightgreen>> ---------------------------------')
+                self.save_move = True
+            # ---
+            if sa not in yes_answer:
+                printe.output('<<red>> bot_api: wrong answer')
+                return False
+            # ---
+            printe.output(f'<<lightgreen>> answer: {sa in yes_answer}')
+        # ---
         data = self.post_params(params)
         # { "move": { "from": "d", "to": "d2", "reason": "wrong", "redirectcreated": true, "moveoverredirect": false } }
         # ---
-        if not data or data == {}:
+        if not data:
+            printe.output("no data")
             return ""
         # ---
         expend_data = {
@@ -516,15 +536,20 @@ class NEW_API:
         if move_done:
             printe.output("<<lightgreen>>** true.")
             return True
-        elif error:
+        # ---
+        if error:
             if error_code == "ratelimited":
-                # ---
                 printe.output("<<red>> move ratelimited:")
                 return self.move(old_title, to, reason=reason, noredirect=noredirect, movesubpages=movesubpages)
 
             if error_code == "articleexists":
                 printe.output("<<red>> articleexists")
                 return "articleexists"
+            
+            printe.output("<<red>> error")
+            printe.output(error)
+
+            return False
         # ---
         return False
 

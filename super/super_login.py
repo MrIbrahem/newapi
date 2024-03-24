@@ -245,7 +245,7 @@ class Login:
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 
-        if addtoken or params["action"] in ["edit", "create", "upload", "delete"]:
+        if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
             if self.r3_token == "":
                 warn(warn_err('self.r3_token == "" '), UserWarning)
                 warn(warn_err('self.r3_token == "" '), UserWarning)
