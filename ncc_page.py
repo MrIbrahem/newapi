@@ -1,8 +1,8 @@
 # ---
 """
 from newapi.ncc_page import CatDepth, CatDepthLogin
-# CatDepthLogin(sitecode="en", family="wikipedia")
-# cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], tempyes=[])
+# CatDepthLogin(sitecode="www", family="nccommons")
+# cat_members = CatDepth(title, sitecode='www', family="nccommons", depth=0, ns=10, nslist=[], onlyns=False, tempyes=[])
 
 from newapi.ncc_page import MainPage as ncc_MainPage
 '''
@@ -56,6 +56,7 @@ from newapi.ncc_page import NEW_API
 
 # ---
 import configparser
+from pathlib import Path
 
 # ---
 from newapi.super import super_login
@@ -64,7 +65,9 @@ from newapi.super import super_page
 from newapi.super import catdepth_new
 
 # ---
-from pathlib import Path
+
+catdepth_new.SITECODE = "www"
+catdepth_new.FAMILY = "nccommons"
 
 Dir = str(Path(__file__).parents[0])
 # ---
@@ -79,7 +82,7 @@ config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
 print(f"{dir2}/confs/nccommons_user.ini")
 # ---
-print(config["DEFAULT"])
+print(list(config["DEFAULT"].keys()))
 # ---
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
@@ -88,7 +91,6 @@ User_tables = {
     "username": username,
     "password": password
 }
-# ---
 # ---
 super_login.User_tables['nccommons'] = User_tables
 # ---

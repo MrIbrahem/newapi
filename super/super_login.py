@@ -132,7 +132,6 @@ class Login:
             pywikibot.output("CRITICAL:")
             return {}
 
-
     def Log_to_wiki_1(self):
         login_lang[1] = self.lang
 
