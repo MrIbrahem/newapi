@@ -107,10 +107,8 @@ def test():
     # pages   = api_new.Get_Newpages()
 
 
-# ---
 if __name__ == '__main__':
     # python3 core8/pwb.py newapi/wiki_page
     super_page.print_test[1] = True
     super_login.print_test[1] = True
     test()
-# ---

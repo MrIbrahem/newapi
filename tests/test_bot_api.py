@@ -20,12 +20,12 @@ class testmybot:
 
     def __init__(self):
         self.test = "test"
-        self.api_new = NEW_API('ar', family='wikipedia')
+        self.api_new = NEW_API('en', family='wikipedia')
         # self.api_new.Login_to_wiki()
 
     def test1(self):
         '''Find_pages_exists_or_not'''
-        ex = self.api_new.Find_pages_exists_or_not(["اليمن", "sana'a"])
+        ex = self.api_new.Find_pages_exists_or_not(["Thyrotropin alfa", "Thiamine"], get_redirect=True)
         return ex
 
     def test2(self):
