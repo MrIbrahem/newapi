@@ -42,7 +42,7 @@ ns_list = {
 
 class CategoryDepth:
 
-    def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns= False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, **kwargs):
+    def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, **kwargs):
         # ---
         self.title = title
         self.no_gcmsort = no_gcmsort
@@ -93,7 +93,7 @@ class CategoryDepth:
             "formatversion": "1",
             "gcmsort": "timestamp",
             "gcmdir": "newer",
-            "rvprop": "timestamp"
+            "rvprop": "timestamp",
         }
         # ---
         if self.no_gcmsort:
