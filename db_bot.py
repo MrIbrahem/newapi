@@ -36,7 +36,7 @@ class LiteDB:
 
     def insert(self, table_name, data, check=True):
         if check:
-            is_in = self.select("nc_files", data)
+            is_in = self.select(table_name, data)
             if is_in:
                 print(f" Skipping {data} - already in database")
                 return
