@@ -11,68 +11,20 @@ from newapi import txtlib
 # for temp in temps: name, namestrip, params, template = temp['name'], temp['namestrip'], temp['params'], temp['item']
 
 """
-#
-# (C) Ibrahem Qasim, 2021
-#
-#
-# ---
 # from newapi import printe
 
-try:
-    import wikitextparser
-except ImportError:
-    print('import wikitextparser error..')
-    try:
-        import mwparserfromhell as wikitextparser
-    except ImportError:
-        # print required because pywikibot is not imported completely
-        raise ImportError("""
-Pywikibot is missing a MediaWiki markup parser which is necessary.
-Please update the required module with either
-
-    pip install "mwparserfromhell>=0.5.0"
-
-or
-
-    pip install "wikitextparser>=0.47.5"
-""") from None
-
+import wikitextparser as wtp
 
 def extract_templates_and_params(text):
     # ---
     result = []
     # ---
-    pra = wikitextparser
-    # ---
-    '''
-    if RECURSE_OTHERS :
-        try:
-            import mwparserfromhell as pra
-            printe.output("mwparserfromhell is used")
-        except ImportError:
-            printe.output("mwparserfromhell is missing")
-            return result
-    '''
-    # ---
-    parser_name = pra.__name__
-    parsed = pra.parse(text)
-    if parser_name == 'wikitextparser':
-        templates = parsed.templates
-        arguments = 'arguments'
-    else:
-        # if RECURSE_OTHERS:
-        # templates = parsed.ifilter_templates(parsed.RECURSE_OTHERS, matches=lambda x: not x.name.lstrip().startswith('#'))
-        # else:
-        templates = parsed.ifilter_templates(matches=lambda x: not x.name.lstrip().startswith('#'), recursive=True)
-        arguments = 'params'
-    # ---
-    # print("parsed.templates:")
-    # print(parsed.templates)
+    parsed = wtp.parse(text)
+    templates = parsed.templates
+    arguments = 'arguments'
     # ---
     for template in templates:
-        # print(dir(template))
         # ---
-        # params = OrderedDict()
         params = {}
         for param in getattr(template, arguments):
             value = str(param.value)  # mwpfh needs upcast to str
@@ -84,11 +36,8 @@ def extract_templates_and_params(text):
         # ---
         # print('=====')
         # ---
-        if parser_name == 'wikitextparser':
-            name = str(template.normal_name()).strip()
-            pa_item = template.string
-        else:
-            pa_item = template.__str__()
+        name = str(template.normal_name()).strip()
+        pa_item = template.string
         # printe.output( "<<lightyellow>> pa_item: %s" % pa_item )
         # ---
         namestrip = name
@@ -179,7 +128,3 @@ if __name__ == '__main__':
         print(f"namestrip: {namestrip}")
         print(f"params: {params}")
         print(f"template: {template}")
-
-    # ---
-    parser_name = wikitextparser.__name__
-    print(f"parser_name: {parser_name}")
