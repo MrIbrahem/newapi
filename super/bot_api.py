@@ -133,7 +133,7 @@ class NEW_API:
             # ---
             json1 = self.post_params(params)
             # ---
-            if not json1 or json1 == {}:
+            if not json1:
                 break
             # ---
             continue_params = json1.get("continue", {})
@@ -196,7 +196,7 @@ class NEW_API:
             # ---
             json1 = self.post_params(params)
             # ---
-            if not json1 or json1 == {}:
+            if not json1:
                 if not noprint:
                     printe.output("<<lightred>> error when Find_pages_exists_or_not")
                 # return table
@@ -424,7 +424,7 @@ class NEW_API:
             # ---
             json1 = self.post_params(params)
             # ---
-            if not json1 or json1 == {}:
+            if not json1:
                 continue
             # ---
             norma = json1.get("query", {}).get("normalized", {})
@@ -462,7 +462,7 @@ class NEW_API:
         # ---
         data = self.post_params(params)
         # ---
-        if not data or data == {}:
+        if not data:
             return text
         # ---
         newtext = data.get("expandtemplates", {}).get("wikitext") or text
@@ -482,7 +482,7 @@ class NEW_API:
         # ---
         data = self.post_params(params)
         # ---
-        if not data or data == {}:
+        if not data:
             return []
         # ---
         logevents = data.get("query", {}).get("logevents") or []
@@ -506,7 +506,7 @@ class NEW_API:
         # ---
         data = self.post_params(params)
         # ---
-        if not data or data == {}:
+        if not data:
             return ""
         # ---
         textnew = data.get("parse", {}).get("psttext", "")
@@ -724,7 +724,7 @@ class NEW_API:
         # ---
         results = self.post_params(params)
         # ---
-        if not results or results == {}:
+        if not results:
             return ""
         # ---
         data = results.get("query", {}).get("pages", [])

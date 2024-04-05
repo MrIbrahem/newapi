@@ -5,7 +5,7 @@ import configparser
 project = '/data/project/himo/'
 # ---
 if not os.path.isdir(project):
-    project = 'I:/core/master'
+    project = 'I:/core/bots/core1'
 # ---
 config = configparser.ConfigParser()
 config.read(project + '/user.ini')
