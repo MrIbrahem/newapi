@@ -425,7 +425,7 @@ class MainPage:
             # ---
             json1 = self.post_params(params)
             # ---
-            if not json1 or json1 == {}:
+            if not json1:
                 break
             # ---
             continue_params = json1.get("continue", {})

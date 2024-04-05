@@ -69,7 +69,7 @@ def botMayEdit(page, text='', title_page='', botjob='all'):
                 # ---
                 # {{nobots}}                منع جميع البوتات
                 # منع جميع البوتات
-                if not params or params == {}:
+                if not params:
                     # pywikibot.output( 'return False 2 ' )
                     Bot_Cash[botjob][title_page] = False
                     return False
@@ -87,7 +87,7 @@ def botMayEdit(page, text='', title_page='', botjob='all'):
             elif title.lower() == 'bots':
                 # printe.output( 'title == (%s) ' % title )
                 # {{bots}}                  السماح لجميع البوتات
-                if not params or params == {}:
+                if not params:
                     Bot_Cash[botjob][title_page] = False
                     return False
                 else:
