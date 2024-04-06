@@ -794,7 +794,7 @@ class MainPage:
         for x in wikilinks:
             print(x.title)
         # ---
-        return self.can_be_edit
+        return wikilinks
 
     def Get_tags(self, tag=''):
         if not self.text:
