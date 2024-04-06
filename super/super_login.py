@@ -185,7 +185,7 @@ class Login:
             pywikibot.output("<<lightred>> Traceback (most recent call last):")
             warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
             if reason == "Incorrect username or password entered. Please try again.":
-                pywikibot.output(f"user:{self.username}, pass:{self.password}")
+                pywikibot.output(f"user:{self.username}, pass:******")
             pywikibot.output("CRITICAL:")
             return False
 
