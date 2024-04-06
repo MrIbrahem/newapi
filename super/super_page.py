@@ -601,7 +601,7 @@ class MainPage:
         }
         data = self.post_params(params, addtoken=True)
         # ---
-        if data == {}:
+        if not data:
             return 0
         # ---
         search = data.get('query', {}).get('search', [])
@@ -702,7 +702,7 @@ class MainPage:
         # ---
         data = self.post_params(params, addtoken=True)
         # ---
-        if data == {}:
+        if not data:
             printe.output('<<lightred>> ** purge error. ')
             return False
         # ---
@@ -728,7 +728,7 @@ class MainPage:
 
     def isRedirect(self):
         # ---
-        if self.is_redirect == '':
+        if not self.is_redirect:
             self.get_infos()
         # ---
         return self.is_redirect
@@ -745,7 +745,7 @@ class MainPage:
 
     def get_categories(self, with_hidden=False):
         # ---
-        # if self.categories == {}: self.get_infos()
+        # if not self.categories: self.get_infos()
         if not self.info['done']:
             self.get_infos()
         # ---
@@ -783,7 +783,7 @@ class MainPage:
         return self.links_here
 
     def get_wiki_links_from_text(self):
-        if self.text == '':
+        if not self.text:
             self.text = self.get_text()
         # ---
         parsed = wtp.parse(self.text)
@@ -797,7 +797,7 @@ class MainPage:
         return self.can_be_edit
 
     def Get_tags(self, tag=''):
-        if self.text == '':
+        if not self.text:
             self.text = self.get_text()
         # ---
         self.text = self.text.replace('<ref>', '<ref name="ss">', 1)
@@ -807,7 +807,7 @@ class MainPage:
         # ---
         # printe.output(f'tags:{str(tags)}')
         # ---
-        if tag == '':
+        if not tag:
             return tags
         # ---
         new_tags = []
@@ -825,7 +825,7 @@ class MainPage:
         if self.family != 'wikipedia':
             return True
         # ---
-        if self.text == '':
+        if not self.text:
             self.text = self.get_text()
         # ---
         self.can_be_edit = botEdit.botMayEdit(False, text=self.text, title_page=self.title, botjob=script)
@@ -834,18 +834,18 @@ class MainPage:
 
     def is_flagged(self):
         # ---
-        if self.text == '':
+        if not self.text:
             self.text = self.get_text()
         # ---
         return self.flagged
 
     def get_timestamp(self):
-        if self.timestamp == '':
+        if not self.timestamp:
             self.get_text()
         return self.timestamp
 
     def exists(self):
-        if self.Exists == '':
+        if not self.Exists:
             self.get_text()
         if not self.Exists:
             printe.output(f'page "{self.title}" not exists in {self.lang}:{self.family}')
@@ -857,7 +857,7 @@ class MainPage:
         return self.ns
 
     def get_user(self):
-        if self.user == '':
+        if not self.user:
             self.get_text()
         return self.user
 
@@ -888,7 +888,7 @@ class MainPage:
         return self.userinfo
 
     def get_templates(self):
-        if self.text == '':
+        if not self.text:
             self.text = self.get_text()
         self.templates = txtlib.extract_templates_and_params(self.text)
         return self.templates
@@ -987,7 +987,7 @@ class MainPage:
         # ---
         pop = self.post_params(params, addtoken=True)
         # ---
-        if pop == {}:
+        if not pop:
             return False
         # ---
         error = pop.get('error', {})
@@ -1039,7 +1039,7 @@ class MainPage:
         # ---
         pop = self.post_params(params, addtoken=True)
         # ---
-        if pop == {}:
+        if not pop:
             return False
         # ---
         error = pop.get('error', {})

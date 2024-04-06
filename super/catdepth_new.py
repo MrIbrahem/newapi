@@ -207,7 +207,7 @@ class CategoryDepth:
 
         if self.with_lang:
             langs = tab.get("langlinks", {}).get(self.with_lang, "")
-            if langs == "":
+            if not langs:
                 return
 
         if self.onlyns:
