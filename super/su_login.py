@@ -167,12 +167,12 @@ class Login:
 
         r2_params["lgtoken"] = r11.get("query", {}).get("tokens", {}).get("logintoken", "")
 
-        if r2_params["lgtoken"] == "":
+        if not r2_params["lgtoken"]:
             return False
 
         r22 = self.make_response(r2_params)
 
-        if r22 == {}:
+        if not r22:
             return False
 
         success = r22.get("login", {}).get("result", "").lower() == "success"
@@ -182,7 +182,7 @@ class Login:
             pywikibot.output("<<lightred>> Traceback (most recent call last):")
             warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
             if reason == "Incorrect username or password entered. Please try again.":
-                pywikibot.output(f"user:{self.username}, pass:{self.password}")
+                pywikibot.output(f"user:{self.username}, pass:******")
             pywikibot.output("CRITICAL:")
             return False
 
@@ -195,7 +195,7 @@ class Login:
         }
         r33 = self.make_response(r3_params)
 
-        if r33 == {}:
+        if not r33:
             _Except_ions_ = [
                 """('Connection aborted.', OSError("(104, "ECONNRESET")"))""",
             ]
@@ -227,10 +227,10 @@ class Login:
         # printe.output(f'<<red>> login_lang[1]: {login_lang[1]} != self.lang:{self.lang}')
         # self.Log_to_wiki_1()
 
-        if self.r3_token == "":
+        if not self.r3_token:
             self.r3_token = tokens_by_lang.get(self.lang, "")
 
-        if self.r3_token == "":
+        if not self.r3_token:
             self.Log_to_wiki_1()
 
         params["format"] = "json"
@@ -242,7 +242,7 @@ class Login:
             params["minor"] = self.Bot_or_himo
 
         if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
-            if self.r3_token == "":
+            if not self.r3_token:
                 warn(warn_err('self.r3_token == "" '), UserWarning)
                 warn(warn_err('self.r3_token == "" '), UserWarning)
             params["token"] = self.r3_token
@@ -253,7 +253,7 @@ class Login:
 
         data = self.make_response(params, files=files)
 
-        if data == {}:
+        if not data:
             return {}
 
         error = data.get("error", {})

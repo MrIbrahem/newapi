@@ -274,7 +274,7 @@ class NEW_API:
         # ---
         printe.output(f'bot_api.Search for "{value}",ns:{ns}')
         # ---
-        if srlimit == "":
+        if not srlimit:
             srlimit = "max"
         # ---
         params = {
