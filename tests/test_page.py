@@ -53,7 +53,7 @@ text = page.get_text()
 # print('---------------------------')
 # print(f'hidden_categories:{hidden_categories}')
 # ---
-newtext = "تجربة!\n" * 1000
+newtext = "تجربة!\n" * 5
 # ---
 save = page.save(newtext=newtext)
 # ---

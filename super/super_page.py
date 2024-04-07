@@ -955,11 +955,31 @@ class MainPage:
         # ---
         printe.output(f'<<lightred>>{function} ERROR: <<defaut>>info: {err_info}.')
 
+    def false_edit(self):
+        # self.newtext
+        # self.text
+        # ---
+        if not self.text:
+            self.text = self.get_text()
+        # ---
+        # If the new edit will remove 90% of the text, return False
+        if len(self.newtext) < 0.1 * len(self.text):
+            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+            pywikibot.output(f"Edit will remove 90% of the text. {len(self.newtext)} < 0.1 * {len(self.text)}")
+            pywikibot.output(f"title: {self.title}, summary: {self.summary}")
+            pywikibot.output("CRITICAL:")
+            return True
+        # ---
+        return False
+
     def save(self, newtext='', summary='', nocreate=1, minor='', tags='', nodiff=False, ASK=False):
         # ---
         self.newtext = newtext
         if summary:
             self.summary = summary
+        # ---
+        if self.false_edit():
+            return False
         # ---
         ask = self.ask_put(nodiff=nodiff, ASK=ASK)
         if ask is False:
