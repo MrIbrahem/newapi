@@ -961,9 +961,16 @@ class MainPage:
         if not self.text:
             self.text = self.get_text()
         # ---
-        # if the new edit will remove 90% of the text return False
-
+        # If the new edit will remove 90% of the text, return False
+        if len(self.newtext) < 0.1 * len(self.text):
+            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+            pywikibot.output(f"Edit will remove 90% of the text. {len(self.newtext)} < 0.1 * {len(self.text)}")
+            pywikibot.output(f"title: {self.title}, summary: {self.summary}")
+            pywikibot.output("CRITICAL:")
+            return True
         # ---
+        return False
+
     def save(self, newtext='', summary='', nocreate=1, minor='', tags='', nodiff=False, ASK=False):
         # ---
         self.newtext = newtext
