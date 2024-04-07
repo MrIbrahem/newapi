@@ -958,6 +958,7 @@ class MainPage:
     def false_edit(self):
         # self.newtext
         # self.text
+        # ---
         if not self.text:
             self.text = self.get_text()
         # ---
