@@ -300,4 +300,4 @@ def login_wiki(sitecode=SITECODE, family=FAMILY):
     # ---
     bot = CategoryDepth("", sitecode=sitecode, family=family)
     # ---
-    bot.log.Log_to_wiki_1()
+    bot.log.log_to_wiki_1()

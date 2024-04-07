@@ -11,43 +11,33 @@ import sys
 import time
 import json
 import requests
-import urllib
 import urllib.parse
 import traceback
 from warnings import warn
 import pywikibot
 from newapi import printe
 
-# ---
-print_test = {
-    1: False
-}
-# ---
-User_tables = {
-    "mdwiki": {},
-    "wikidata": {},
-    "wikipedia": {},
-    "nccommons": {}
-}
-# ---
+print_test = {1: False}
+User_tables = {"mdwiki": {}, "wikidata": {}, "wikipedia": {}, "nccommons": {}}
 tokens_by_lang = {}
 seasons_by_lang = {}
-# ---
-ar_lag = {
-    1: 3
-}
-login_lang = {
-    1: True
-}
+ar_lag = {1: 3}
+login_lang = {1: True}
 
 
 def warn_err(err):
+    """
+    Return formatted warning message with error details.
+    """
     err = str(err)
     nn = inspect.stack()[1][3]
     return f"\ndef {nn}(): {err}"
 
 
 class Login:
+    """
+    Represents a login session for a wiki.
+    """
 
     def __init__(self, lang, family="wikipedia"):
         self.lang = lang
@@ -55,10 +45,7 @@ class Login:
         self.r3_token = ""
         self.url_o_print = ""
 
-        User_tables.setdefault(self.family, {
-            "username": "",
-            "password": ""
-        })
+        User_tables.setdefault(self.family, {"username": "", "password": ""})
         tokens_by_lang.setdefault(self.lang, "")
         seasons_by_lang.setdefault(self.lang, requests.Session())
 
@@ -68,12 +55,17 @@ class Login:
         self.Bot_or_himo = 1 if "bot" not in self.username else ""
 
         self.endpoint = f"https://{self.lang}.{self.family}.org/w/api.php"
-        # self.season = requests.Session()
 
     def Log_to_wiki(self):
+        """
+        Log in to the wiki.
+        """
         return True
 
     def p_url(self, params):
+        """
+        Print the URL for debugging purposes.
+        """
         if print_test[1] or "printurl" in sys.argv:
             pams2 = {
                 k: v[:100] if isinstance(v, str) and len(v) > 100 else v
@@ -82,7 +74,10 @@ class Login:
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
 
-    def prase_data(self, req0):
+    def parse_data(self, req0):
+        """
+        Parse JSON response data.
+        """
         text = ""
         try:
             data = req0.json()
@@ -108,6 +103,9 @@ class Login:
         return {}
 
     def make_response(self, params, files=None, timeout=30):
+        """
+        Make a POST request to the API endpoint.
+        """
         self.p_url(params)
 
         if params.get("action") == "querypage":
@@ -115,15 +113,13 @@ class Login:
 
         seasons_by_lang.setdefault(self.lang, requests.Session())
 
-        # handle errors
         try:
             req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
-            # req0.raise_for_status()
-            data = self.prase_data(req0)
+            data = self.parse_data(req0)
             return data
 
         except requests.exceptions.ReadTimeout:
-            printe.output(f'ReadTimeout: {self.endpoint}')
+            printe.output(f"ReadTimeout: {self.endpoint}")
             return {}
 
         except Exception:
@@ -132,19 +128,18 @@ class Login:
             pywikibot.output("CRITICAL:")
             return {}
 
-    def Log_to_wiki_1(self):
+    def log_to_wiki_1(self):
+        """
+        Log in to the wiki and get authentication token.
+        """
         login_lang[1] = self.lang
 
         time.sleep(0.5)
 
-        colors = {
-            "ar": "yellow",
-            "en": "lightpurple"
-        }
+        colors = {"ar": "yellow", "en": "lightpurple"}
 
         color = colors.get(self.lang, "")
 
-        # self.season = requests.Session()
         printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
 
         r2_params = {
@@ -191,15 +186,11 @@ class Login:
 
         printe.output(f"<<green>> {__file__} login Success")
 
-        r3_params = {
-            "format": "json",
-            "action": "query",
-            "meta": "tokens"
-        }
+        r3_params = {"format": "json", "action": "query", "meta": "tokens"}
         r33 = self.make_response(r3_params)
 
         if not r33:
-            _Except_ions_ = [
+            _exceptions_ = [
                 """('Connection aborted.', OSError("(104, "ECONNRESET")"))""",
             ]
             return False
@@ -208,9 +199,11 @@ class Login:
         self.r3_token = r3_token
 
         tokens_by_lang[self.lang] = r3_token
-        # printe.output(f'<<green>> r3_token: {self.r3_token}')
 
     def filter_params(self, params):
+        """
+        Filter out unnecessary parameters.
+        """
         if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
 
@@ -226,15 +219,14 @@ class Login:
         return params
 
     def post(self, params, Type="get", addtoken=False, CSRF=True, files=None):
-        # if login_lang[1] != self.lang:
-        # printe.output(f'<<red>> login_lang[1]: {login_lang[1]} != self.lang:{self.lang}')
-        # self.Log_to_wiki_1()
-
+        """
+        Make a POST request to the API endpoint with authentication token.
+        """
         if not self.r3_token:
             self.r3_token = tokens_by_lang.get(self.lang, "")
 
         if not self.r3_token:
-            self.Log_to_wiki_1()
+            self.log_to_wiki_1()
 
         params["format"] = "json"
         params["utf8"] = 1
@@ -261,18 +253,15 @@ class Login:
 
         error = data.get("error", {})
         if error != {}:
-            # printe.output(data)
             Invalid = error.get("info", "")
             code = error.get("code", "")
-            # printe.output(Invalid)
             if Invalid == "Invalid CSRF token." and CSRF:
                 pywikibot.output(f'<<lightred>> ** error "Invalid CSRF token.".\n{self.r3_token} ')
                 self.r3_token = ""
-                self.Log_to_wiki_1()
+                self.log_to_wiki_1()
                 return self.post(params, Type=Type, addtoken=addtoken, CSRF=False)
 
         if "printdata" in sys.argv:
-            # printe.output( json.dumps(data,ensure_ascii=False) )
             printe.output(data)
 
         return data
