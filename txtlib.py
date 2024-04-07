@@ -15,6 +15,7 @@ from newapi import txtlib
 
 import wikitextparser as wtp
 
+
 def extract_templates_and_params(text):
     # ---
     result = []
