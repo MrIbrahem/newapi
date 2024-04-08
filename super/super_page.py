@@ -794,7 +794,7 @@ class MainPage:
         if summary:
             self.summary = summary
         # ---
-        if self.false_edit():
+        if self.false_edit() and self.ns == 0:
             return False
         # ---
         ask = self.ask_put(nodiff=nodiff, ASK=ASK)
