@@ -24,6 +24,9 @@ seasons_by_lang = {}
 ar_lag = {1: 3}
 login_lang = {1: True}
 
+def test_print(s):
+    if "test_print" in sys.argv:
+        printe.output(s)
 
 def warn_err(err):
     """
@@ -67,9 +70,12 @@ class Login:
         Print the URL for debugging purposes.
         """
         if print_test[1] or "printurl" in sys.argv:
+            no_url = ["lgpassword", "format"]
             pams2 = {
                 k: v[:100] if isinstance(v, str) and len(v) > 100 else v
                 for k, v in params.items()
+                if k not in no_url
+                
             }
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
@@ -94,7 +100,7 @@ class Login:
             data = json.loads(text)
             return data
         except Exception as e:
-            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+            pywikibot.output("<<red>> Traceback (most recent call last):")
             pywikibot.output(f"error:{e} when json.loads(response.text)")
             pywikibot.output(traceback.format_exc())
             pywikibot.output(self.url_o_print)
@@ -108,23 +114,30 @@ class Login:
         """
         self.p_url(params)
 
-        if params.get("action") == "querypage":
+        if params.get("list") == "querypage":
             timeout = 60
 
         seasons_by_lang.setdefault(self.lang, requests.Session())
 
+        if "dopost" in sys.argv:
+            printe.output("<<green>> dopost:::")
+            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
+            data = self.parse_data(req0)
+            return data
+        
         try:
             req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
             data = self.parse_data(req0)
             return data
 
         except requests.exceptions.ReadTimeout:
-            printe.output(f"ReadTimeout: {self.endpoint}")
+            printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
             return {}
 
-        except Exception:
-            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+        except Exception as e:
+            pywikibot.output("<<red>> Traceback (most recent call last):")
             pywikibot.output(traceback.format_exc())
+            pywikibot.output(e)
             pywikibot.output("CRITICAL:")
             return {}
 
@@ -177,7 +190,7 @@ class Login:
 
         if not success:
             reason = r22.get("login", {}).get("reason", "")
-            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+            pywikibot.output("<<red>> Traceback (most recent call last):")
             warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
             if reason == "Incorrect username or password entered. Please try again.":
                 pywikibot.output(f"user:{self.username}, pass:******")
@@ -249,14 +262,18 @@ class Login:
         data = self.make_response(params, files=files)
 
         if not data:
+            test_print("<<red>> super_login(post): not data. return {}.")
             return {}
 
         error = data.get("error", {})
         if error != {}:
             Invalid = error.get("info", "")
             code = error.get("code", "")
+            # ---
+            test_print(f"<<red>> super_login(post): error: {error}")
+            # ---
             if Invalid == "Invalid CSRF token." and CSRF:
-                pywikibot.output(f'<<lightred>> ** error "Invalid CSRF token.".\n{self.r3_token} ')
+                pywikibot.output(f'<<red>> ** error "Invalid CSRF token.".\n{self.r3_token} ')
                 self.r3_token = ""
                 self.log_to_wiki_1()
                 return self.post(params, Type=Type, addtoken=addtoken, CSRF=False)
