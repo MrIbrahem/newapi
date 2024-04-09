@@ -182,7 +182,7 @@ class MainPage:
             else:
                 self.Exists = True
             # ---
-            title = v["title"]
+            # title = v["title"]
             # ---
             pageprops = v.get("pageprops", {})
             self.wikibase_item = pageprops.get("wikibase_item") or self.wikibase_item
@@ -775,6 +775,9 @@ class MainPage:
         # self.newtext
         # self.text
         # ---
+        if self.ns != 0:
+            return False
+        # ---
         if not self.text:
             self.text = self.get_text()
         # ---
@@ -794,7 +797,7 @@ class MainPage:
         if summary:
             self.summary = summary
         # ---
-        if self.false_edit() and self.ns == 0:
+        if self.false_edit():
             return False
         # ---
         ask = self.ask_put(nodiff=nodiff, ASK=ASK)

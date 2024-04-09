@@ -366,7 +366,7 @@ class Hunk:
         self.b_rng = (first[3], last[4])
 
         self.header = self.get_header()
-        self.diff_plain_text = '{hunk.header}\n{hunk.diff_plain_text}'.format(hunk=self)
+        self.diff_plain_text = f'{self.header}\n{self.diff_plain_text}'
         self.diff_text = self.diff_text
 
         self.reviewed = self.PENDING
@@ -376,14 +376,14 @@ class Hunk:
 
     def get_header(self) -> str:
         """Provide header of unified diff."""
-        return self.get_header_text(self.a_rng, self.b_rng) + '\n'
+        return f"{self.get_header_text(self.a_rng, self.b_rng)}\n"
 
     @staticmethod
     def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str = '@@') -> str:
         """Provide header for any ranges."""
         a_rng = format_range_unified(*a_rng)
         b_rng = format_range_unified(*b_rng)
-        return '{0} -{1} +{2} {0}'.format(affix, a_rng, b_rng)
+        return f'{affix} -{a_rng} +{b_rng} {affix}'
 
     def create_diff(self) -> Iterable[str]:
         """Generator of diff text for this hunk, without formatting."""
@@ -391,7 +391,7 @@ class Hunk:
         # make sure each line ends with '\n' to prevent
         # behaviour like https://bugs.python.org/issue2142
         def check_line(line: str) -> str:
-            return line if line.endswith('\n') else line + '\n'
+            return line if line.endswith('\n') else f"{line}\n"
 
         for tag, i1, i2, j1, j2 in self.group:
             # equal/delete/insert add additional space after the sign as it's
@@ -526,7 +526,7 @@ def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str =
     """Provide header for any ranges."""
     a_rng = format_range_unified(*a_rng)
     b_rng = format_range_unified(*b_rng)
-    return '{0} -{1} +{2} {0}'.format(affix, a_rng, b_rng)
+    return f'{affix} -{a_rng} +{b_rng} {affix}'
 
 
 class PatchManager:
@@ -636,7 +636,7 @@ class PatchManager:
         a11 = get_header_text(*context_range)
         a22 = extend_context(context_range[0][0], hunks[0].a_rng[0])
         # OutPut = color_format('{aqua}{0}{default}\n{1}',a11,a22)
-        OutPut = f'<<aqua>>{a11}' + '<<default>>\n' + a22
+        OutPut = f"<<aqua>>{a11}<<default>>\n{a22}"
         previous_hunk = None
         for hunk in hunks:
             if previous_hunk:
