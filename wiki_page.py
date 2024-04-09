@@ -21,7 +21,7 @@ from newapi.wiki_page import MainPage, NEW_API
 # extlinks = api_new.get_extlinks(title)
 # revisions= api_new.get_revisions(title)
 # logs     = api_new.get_logs(title)
-# wantedcats  = api_new.querypage_list(qppage='Wantedcategories', Max=5000)
+# wantedcats  = api_new.querypage_list(qppage='Wantedcategories', qplimit="max", Max=5000)
 # pages  = api_new.Get_template_pages(title, namespace="*", Max=10000)
 """
 # ---
