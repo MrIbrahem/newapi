@@ -446,7 +446,7 @@ class NEW_API:
                             find_targtsitecode += 1
                     # ---
         # ---
-        printe.output('bot_api.Get_langlinks_for_list find "%d" in table,find_targtsitecode:%s:%d' % (len(table), targtsitecode, find_targtsitecode))
+        printe.output(f'bot_api.Get_langlinks_for_list find "{len(table)}" in table,find_targtsitecode:{targtsitecode}:{int(find_targtsitecode)}')
         # ---
         return table
 

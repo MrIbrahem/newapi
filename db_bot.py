@@ -15,7 +15,7 @@ import sqlite_utils
 
 
 def tracer(sql, params):
-    print("SQL: {} - params: {}".format(sql, params))
+    print(f"SQL: {sql} - params: {params}")
 
 
 class LiteDB:

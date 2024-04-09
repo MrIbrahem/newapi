@@ -8,7 +8,7 @@ if not os.path.isdir(project):
     project = 'I:/core/bots/core1'
 # ---
 config = configparser.ConfigParser()
-config.read(project + '/user.ini')
+config.read(f"{project}/user.ini")
 DEFAULT = config['DEFAULT']
 
 username = config['DEFAULT']['botusername']
