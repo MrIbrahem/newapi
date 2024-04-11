@@ -235,12 +235,6 @@ class Login:
         """
         Make a POST request to the API endpoint with authentication token.
         """
-        if not self.r3_token:
-            self.r3_token = tokens_by_lang.get(self.lang, "")
-
-        if not self.r3_token:
-            self.log_to_wiki_1()
-
         params["format"] = "json"
         params["utf8"] = 1
         params["bot"] = self.Bot_or_himo
@@ -250,6 +244,13 @@ class Login:
             params["minor"] = self.Bot_or_himo
 
         if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
+
+            if not self.r3_token:
+                self.r3_token = tokens_by_lang.get(self.lang, "")
+
+            if not self.r3_token:
+                self.log_to_wiki_1()
+
             if not self.r3_token:
                 warn(warn_err('self.r3_token == "" '), UserWarning)
                 warn(warn_err('self.r3_token == "" '), UserWarning)
