@@ -188,7 +188,7 @@ class MainPage:
             self.wikibase_item = pageprops.get("wikibase_item") or self.wikibase_item
             # ---
             # "flagged": { "stable_revid": 61366100, "level": 0, "level_text": "stable"}
-            self.flagged = v.get('flagged', False) != False
+            self.flagged = v.get('flagged', False) is not False
             # ---
             self.ns = v.get("ns") or self.ns
             self.pageid = v.get("pageid") or self.pageid
