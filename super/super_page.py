@@ -775,7 +775,7 @@ class MainPage:
         # self.newtext
         # self.text
         # ---
-        if self.ns != 0:
+        if self.ns != 0 or "nofa" in sys.argv:
             return False
         # ---
         if not self.text:
