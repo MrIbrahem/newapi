@@ -102,7 +102,7 @@ def botMayEdit(page, text='', title_page='', botjob='all'):
                     if allow:
                         value = [x.strip() for x in allow.split(',')]
                         # if param == 'allow':
-                        # 'all' in value or edit_username[1] in value == True
+                        # 'all' in value or edit_username[1] in value is True
                         sd = 'all' in value or edit_username[1] in value
                         if not sd:
                             printe.output(f"<<lightred>>botEdit.py Template:({title}) has |allow={','.join(value)}.")

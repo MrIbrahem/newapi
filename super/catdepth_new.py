@@ -147,7 +147,7 @@ class CategoryDepth:
             api = self.post_params(params)
             # ---
             if not api:
-                print(f"api == false for {cac}")
+                print(f"api is False for {cac}")
                 break
             # ---
             continue_d = api.get("continue", {})

@@ -18,6 +18,7 @@ from newapi.page import NEW_API
 # wantedcategories  = api_new.querypage_list(qppage='Wantedcategories|Wantedfiles', qplimit="max", Max=5000)
 # pages  = api_new.Get_template_pages(title, namespace="*", Max=10000)
 # img_url  = api_new.Get_image_url(title)
+# added    = api_new.Add_To_Bottom(text, summary, title, poss="Head|Bottom")
 
 Usage:
 from newapi.page import NEW_API
@@ -41,7 +42,7 @@ from newapi import printe
 
 change_codes = {"nb": "no", "bat_smg": "bat-smg", "be_x_old": "be-tarask", "be-x-old": "be-tarask", "cbk_zam": "cbk-zam", "fiu_vro": "fiu-vro", "map_bms": "map-bms", "nds_nl": "nds-nl", "roa_rup": "roa-rup", "zh_classical": "zh-classical", "zh_min_nan": "zh-min-nan", "zh_yue": "zh-yue"}
 yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
-
+Save_Edit_Pages = { 1: False }
 
 def login_def(lang, family):
     return {}
@@ -573,7 +574,7 @@ class NEW_API:
             printe.output("no data")
             return ""
         # ---
-        expend_data = {
+        _expend_data = {
             "move": {
                 "from": "User:Mr. Ibrahem",
                 "to": "User:Mr. Ibrahem/x",
@@ -659,3 +660,75 @@ class NEW_API:
         printe.output(f"Get_image_url: image url: {url}")
         # ---
         return url
+
+    def ask_put(self, nodiff=False, newtext="", text=""):
+        yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
+        # ---
+        if 'ask' in sys.argv and not Save_Edit_Pages[1]:
+            # ---
+            if "nodiff" not in sys.argv and not nodiff:
+                if len(newtext) < 70000 and len(text) < 70000 or 'diff' in sys.argv:
+                    printe.showDiff(text, newtext)
+                else:
+                    printe.output('showDiff error..')
+                    printe.output(f'diference in bytes: {len(newtext) - len(text)}')
+                    printe.output(f'length of text: {len(text)}, length of newtext: {len(newtext)}')
+            # ---
+            sa = pywikibot.input('<<lightyellow>>bot_api.py: save (yes, no)?')
+            # ---
+            if sa == "a":
+                printe.output('<<lightgreen>> ---------------------------------')
+                printe.output(f'<<lightgreen>> {__file__} save all without asking.')
+                printe.output('<<lightgreen>> ---------------------------------')
+                Save_Edit_Pages[1] = True
+            # ---
+            if sa not in yes_answer:
+                printe.output("wrong answer")
+                return False
+        # ---
+        return True
+
+    def Add_To_Bottom(self, text, summary, title, poss="Head|Bottom"):
+        # ---
+        if not title.strip():
+            printe.output('** Add_To_Bottom2 ..  title == ""')
+            return False
+        # ---
+        if not text.strip():
+            printe.output('** Add_To_Bottom2 ..  text == ""')
+            return False
+        # ---
+        printe.output(f"** Add_To_Bottom2 .. [[{title}]] ")
+        # printe.showDiff("", text)
+        # ---
+        ask = self.ask_put(newtext=text, text="")
+        # ---
+        if ask is False:
+            return False
+        # ---
+        params = {"action": "edit", "format": "json", "title": title, "summary": summary, "notminor": 1, "nocreate": 1, "utf8": 1}
+        # ---
+        if poss == "Head":
+            params["prependtext"] = f"{text.strip()}\n"
+        else:
+            params["appendtext"] = f"\n{text.strip()}"
+        # ---
+        results = self.post_params(params)
+        # ---
+        if not results:
+            return ""
+        # ---
+        error = results.get("error", {})
+        data = results.get("edit", {})
+        result = data.get("result", "")
+        # ---
+        if result == "Success":
+            printe.output("<<lightgreen>>** true.")
+            return True
+        # ---
+        if error != {}:
+            er = self.handel_err(error, function='Add_To_Bottom')
+            # ---
+            return er
+        # ---
+        return True
