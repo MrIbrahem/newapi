@@ -1,4 +1,4 @@
-'''
+"""
 This module provides functions for printing colored text and showing differences between two texts.
 The main functions are `output` and `showDiff`.
 
@@ -8,7 +8,7 @@ from newapi import printe
 printe.output('<<red>>red')  # prints 'red' in red color
 # To show differences between two texts
 printe.showDiff('old text', 'new text')  # prints the differences between 'old text' and 'new text'
-'''
+"""
 
 # ---
 import difflib
@@ -22,171 +22,173 @@ from collections.abc import Iterable, Sequence
 
 # ---
 
-_category_cf = frozenset([
-    '\xad',
-    '\u0600',
-    '\u0601',
-    '\u0602',
-    '\u0603',
-    '\u0604',
-    '\u0605',
-    '\u061c',
-    '\u06dd',
-    '\u070f',
-    '\u0890',
-    '\u0891',
-    '\u08e2',
-    '\u180e',
-    '\u200b',
-    '\u200c',
-    '\u200d',
-    '\u200e',
-    '\u200f',
-    '\u202a',
-    '\u202b',
-    '\u202c',
-    '\u202d',
-    '\u202e',
-    '\u2060',
-    '\u2061',
-    '\u2062',
-    '\u2063',
-    '\u2064',
-    '\u2066',
-    '\u2067',
-    '\u2068',
-    '\u2069',
-    '\u206a',
-    '\u206b',
-    '\u206c',
-    '\u206d',
-    '\u206e',
-    '\u206f',
-    '\ufeff',
-    '\ufff9',
-    '\ufffa',
-    '\ufffb',
-    '\U000110bd',
-    '\U000110cd',
-    '\U00013430',
-    '\U00013431',
-    '\U00013432',
-    '\U00013433',
-    '\U00013434',
-    '\U00013435',
-    '\U00013436',
-    '\U00013437',
-    '\U00013438',
-    '\U0001bca0',
-    '\U0001bca1',
-    '\U0001bca2',
-    '\U0001bca3',
-    '\U0001d173',
-    '\U0001d174',
-    '\U0001d175',
-    '\U0001d176',
-    '\U0001d177',
-    '\U0001d178',
-    '\U0001d179',
-    '\U0001d17a',
-    '\U000e0001',
-    '\U000e0020',
-    '\U000e0021',
-    '\U000e0022',
-    '\U000e0023',
-    '\U000e0024',
-    '\U000e0025',
-    '\U000e0026',
-    '\U000e0027',
-    '\U000e0028',
-    '\U000e0029',
-    '\U000e002a',
-    '\U000e002b',
-    '\U000e002c',
-    '\U000e002d',
-    '\U000e002e',
-    '\U000e002f',
-    '\U000e0030',
-    '\U000e0031',
-    '\U000e0032',
-    '\U000e0033',
-    '\U000e0034',
-    '\U000e0035',
-    '\U000e0036',
-    '\U000e0037',
-    '\U000e0038',
-    '\U000e0039',
-    '\U000e003a',
-    '\U000e003b',
-    '\U000e003c',
-    '\U000e003d',
-    '\U000e003e',
-    '\U000e003f',
-    '\U000e0040',
-    '\U000e0041',
-    '\U000e0042',
-    '\U000e0043',
-    '\U000e0044',
-    '\U000e0045',
-    '\U000e0046',
-    '\U000e0047',
-    '\U000e0048',
-    '\U000e0049',
-    '\U000e004a',
-    '\U000e004b',
-    '\U000e004c',
-    '\U000e004d',
-    '\U000e004e',
-    '\U000e004f',
-    '\U000e0050',
-    '\U000e0051',
-    '\U000e0052',
-    '\U000e0053',
-    '\U000e0054',
-    '\U000e0055',
-    '\U000e0056',
-    '\U000e0057',
-    '\U000e0058',
-    '\U000e0059',
-    '\U000e005a',
-    '\U000e005b',
-    '\U000e005c',
-    '\U000e005d',
-    '\U000e005e',
-    '\U000e005f',
-    '\U000e0060',
-    '\U000e0061',
-    '\U000e0062',
-    '\U000e0063',
-    '\U000e0064',
-    '\U000e0065',
-    '\U000e0066',
-    '\U000e0067',
-    '\U000e0068',
-    '\U000e0069',
-    '\U000e006a',
-    '\U000e006b',
-    '\U000e006c',
-    '\U000e006d',
-    '\U000e006e',
-    '\U000e006f',
-    '\U000e0070',
-    '\U000e0071',
-    '\U000e0072',
-    '\U000e0073',
-    '\U000e0074',
-    '\U000e0075',
-    '\U000e0076',
-    '\U000e0077',
-    '\U000e0078',
-    '\U000e0079',
-    '\U000e007a',
-    '\U000e007b',
-    '\U000e007c',
-    '\U000e007d',
-    '\U000e007e',
-    '\U000e007f',
-])
+_category_cf = frozenset(
+    [
+        "\xad",
+        "\u0600",
+        "\u0601",
+        "\u0602",
+        "\u0603",
+        "\u0604",
+        "\u0605",
+        "\u061c",
+        "\u06dd",
+        "\u070f",
+        "\u0890",
+        "\u0891",
+        "\u08e2",
+        "\u180e",
+        "\u200b",
+        "\u200c",
+        "\u200d",
+        "\u200e",
+        "\u200f",
+        "\u202a",
+        "\u202b",
+        "\u202c",
+        "\u202d",
+        "\u202e",
+        "\u2060",
+        "\u2061",
+        "\u2062",
+        "\u2063",
+        "\u2064",
+        "\u2066",
+        "\u2067",
+        "\u2068",
+        "\u2069",
+        "\u206a",
+        "\u206b",
+        "\u206c",
+        "\u206d",
+        "\u206e",
+        "\u206f",
+        "\ufeff",
+        "\ufff9",
+        "\ufffa",
+        "\ufffb",
+        "\U000110bd",
+        "\U000110cd",
+        "\U00013430",
+        "\U00013431",
+        "\U00013432",
+        "\U00013433",
+        "\U00013434",
+        "\U00013435",
+        "\U00013436",
+        "\U00013437",
+        "\U00013438",
+        "\U0001bca0",
+        "\U0001bca1",
+        "\U0001bca2",
+        "\U0001bca3",
+        "\U0001d173",
+        "\U0001d174",
+        "\U0001d175",
+        "\U0001d176",
+        "\U0001d177",
+        "\U0001d178",
+        "\U0001d179",
+        "\U0001d17a",
+        "\U000e0001",
+        "\U000e0020",
+        "\U000e0021",
+        "\U000e0022",
+        "\U000e0023",
+        "\U000e0024",
+        "\U000e0025",
+        "\U000e0026",
+        "\U000e0027",
+        "\U000e0028",
+        "\U000e0029",
+        "\U000e002a",
+        "\U000e002b",
+        "\U000e002c",
+        "\U000e002d",
+        "\U000e002e",
+        "\U000e002f",
+        "\U000e0030",
+        "\U000e0031",
+        "\U000e0032",
+        "\U000e0033",
+        "\U000e0034",
+        "\U000e0035",
+        "\U000e0036",
+        "\U000e0037",
+        "\U000e0038",
+        "\U000e0039",
+        "\U000e003a",
+        "\U000e003b",
+        "\U000e003c",
+        "\U000e003d",
+        "\U000e003e",
+        "\U000e003f",
+        "\U000e0040",
+        "\U000e0041",
+        "\U000e0042",
+        "\U000e0043",
+        "\U000e0044",
+        "\U000e0045",
+        "\U000e0046",
+        "\U000e0047",
+        "\U000e0048",
+        "\U000e0049",
+        "\U000e004a",
+        "\U000e004b",
+        "\U000e004c",
+        "\U000e004d",
+        "\U000e004e",
+        "\U000e004f",
+        "\U000e0050",
+        "\U000e0051",
+        "\U000e0052",
+        "\U000e0053",
+        "\U000e0054",
+        "\U000e0055",
+        "\U000e0056",
+        "\U000e0057",
+        "\U000e0058",
+        "\U000e0059",
+        "\U000e005a",
+        "\U000e005b",
+        "\U000e005c",
+        "\U000e005d",
+        "\U000e005e",
+        "\U000e005f",
+        "\U000e0060",
+        "\U000e0061",
+        "\U000e0062",
+        "\U000e0063",
+        "\U000e0064",
+        "\U000e0065",
+        "\U000e0066",
+        "\U000e0067",
+        "\U000e0068",
+        "\U000e0069",
+        "\U000e006a",
+        "\U000e006b",
+        "\U000e006c",
+        "\U000e006d",
+        "\U000e006e",
+        "\U000e006f",
+        "\U000e0070",
+        "\U000e0071",
+        "\U000e0072",
+        "\U000e0073",
+        "\U000e0074",
+        "\U000e0075",
+        "\U000e0076",
+        "\U000e0077",
+        "\U000e0078",
+        "\U000e0079",
+        "\U000e007a",
+        "\U000e007b",
+        "\U000e007c",
+        "\U000e007d",
+        "\U000e007e",
+        "\U000e007f",
+    ]
+)
 # ---
 _invisible_chars = _category_cf
 INVISIBLE_REGEX = re.compile(f"[{''.join(_invisible_chars)}]")
@@ -205,21 +207,21 @@ def get_color_table():
         # 'lightaqua':    "\033[107m%s\033[00m",
         # 'lightwhite':   "\033[107m%s\033[00m",
         # 'lightgray':    "\033[107m%s\033[00m",
-        'red': "\033[91m%s\033[00m",
-        'green': "\033[92m%s\033[00m",
-        'yellow': "\033[93m%s\033[00m",
-        'blue': "\033[94m%s\033[00m",
-        'purple': "\033[95m%s\033[00m",
-        'cyan': "\033[96m%s\033[00m",
-        'white': "\033[97m%s\033[00m",
-        'black': "\033[98m%s\033[00m",
-        'grey': "\033[99m%s\033[00m",
-        'gray': "\033[100m%s\033[00m",
-        'underline': "\033[4m%s\033[00m",
-        'invert': "\033[7m%s\033[00m",
-        'blink': "\033[5m%s\033[00m",
-        'lightblack': "\033[108m%s\033[00m",
-        'bold': "\033[1m%s\033[00m",
+        "red": "\033[91m%s\033[00m",
+        "green": "\033[92m%s\033[00m",
+        "yellow": "\033[93m%s\033[00m",
+        "blue": "\033[94m%s\033[00m",
+        "purple": "\033[95m%s\033[00m",
+        "cyan": "\033[96m%s\033[00m",
+        "white": "\033[97m%s\033[00m",
+        "black": "\033[98m%s\033[00m",
+        "grey": "\033[99m%s\033[00m",
+        "gray": "\033[100m%s\033[00m",
+        "underline": "\033[4m%s\033[00m",
+        "invert": "\033[7m%s\033[00m",
+        "blink": "\033[5m%s\033[00m",
+        "lightblack": "\033[108m%s\033[00m",
+        "bold": "\033[1m%s\033[00m",
     }
     # Add light versions of the colors to the color table
     for color in ["purple", "yellow", "blue", "red", "green", "cyan", "gray"]:
@@ -247,17 +249,17 @@ def output(textm):
 
     :param textm: The text to print. Can contain color tags.
     """
-    if 'noprint' in sys.argv:
+    if "noprint" in sys.argv:
         return
 
     color_table = get_color_table()
     # Define a pattern for color tags
-    _color_pat = r'((:?\w+|previous);?(:?\w+|previous)?)'
+    _color_pat = r"((:?\w+|previous);?(:?\w+|previous)?)"
     # Compile a regex for color tags
-    colorTagR = re.compile(fr'(?:\03{{|<<){_color_pat}(?:}}|>>)')
+    colorTagR = re.compile(rf"(?:\03{{|<<){_color_pat}(?:}}|>>)")
 
     # Initialize a stack for color tags
-    color_stack = ['default']
+    color_stack = ["default"]
 
     # If the input is not a string, print it as is and return
     if not isinstance(textm, str):
@@ -265,18 +267,18 @@ def output(textm):
         return
 
     # If the text does not contain any color tags, print it as is and return
-    if textm.find('\03') == -1 and textm.find('<<') == -1:
+    if textm.find("\03") == -1 and textm.find("<<") == -1:
         print(textm)
         return
 
     # Split the text into parts based on the color tags
-    text_parts = colorTagR.split(textm) + ['default']
+    text_parts = colorTagR.split(textm) + ["default"]
 
     # Enumerate the parts for processing
     enu = enumerate(zip(text_parts[::4], text_parts[1::4]))
 
     # Initialize the string to be printed
-    toprint = ''
+    toprint = ""
 
     # Process each part of the text
     for _, (text, next_color) in enu:
@@ -286,7 +288,7 @@ def output(textm):
         current_color = color_stack[-1]
 
         # If the next color is 'previous', pop the color stack to get the previous color
-        if next_color == 'previous':
+        if next_color == "previous":
             if len(color_stack) > 1:  # keep the last element in the stack
                 color_stack.pop()
             next_color = color_stack[-1]
@@ -320,7 +322,7 @@ def replace_invisible(text):
             codepoint = (ord(match[0]) & mask) << 10 | (ord(match[1]) & mask)
         else:
             codepoint = ord(match)
-        return f'<{codepoint:x}>'
+        return f"<{codepoint:x}>"
 
     return INVISIBLE_REGEX.sub(replace, text)
 
@@ -349,24 +351,24 @@ class Hunk:
         self.b = b
         self.group = grouped_opcode
         self.colors = {
-            '+': 'lightgreen',
-            '-': 'lightred',
+            "+": "lightgreen",
+            "-": "lightred",
         }
         self.bg_colors = {
-            '+': 'lightgreen',
-            '-': 'lightred',
+            "+": "lightgreen",
+            "-": "lightred",
         }
 
         self.diff = list(self.create_diff())
-        self.diff_plain_text = ''.join(self.diff)
-        self.diff_text = ''.join(self.format_diff())
+        self.diff_plain_text = "".join(self.diff)
+        self.diff_text = "".join(self.format_diff())
 
         first, last = self.group[0], self.group[-1]
         self.a_rng = (first[1], last[2])
         self.b_rng = (first[3], last[4])
 
         self.header = self.get_header()
-        self.diff_plain_text = f'{self.header}\n{self.diff_plain_text}'
+        self.diff_plain_text = f"{self.header}\n{self.diff_plain_text}"
         self.diff_text = self.diff_text
 
         self.reviewed = self.PENDING
@@ -379,11 +381,11 @@ class Hunk:
         return f"{self.get_header_text(self.a_rng, self.b_rng)}\n"
 
     @staticmethod
-    def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str = '@@') -> str:
+    def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str = "@@") -> str:
         """Provide header for any ranges."""
         a_rng = format_range_unified(*a_rng)
         b_rng = format_range_unified(*b_rng)
-        return f'{affix} -{a_rng} +{b_rng} {affix}'
+        return f"{affix} -{a_rng} +{b_rng} {affix}"
 
     def create_diff(self) -> Iterable[str]:
         """Generator of diff text for this hunk, without formatting."""
@@ -391,21 +393,21 @@ class Hunk:
         # make sure each line ends with '\n' to prevent
         # behaviour like https://bugs.python.org/issue2142
         def check_line(line: str) -> str:
-            return line if line.endswith('\n') else f"{line}\n"
+            return line if line.endswith("\n") else f"{line}\n"
 
         for tag, i1, i2, j1, j2 in self.group:
             # equal/delete/insert add additional space after the sign as it's
             # what difflib.ndiff does do too.
-            if tag == 'equal':
+            if tag == "equal":
                 for line in self.a[i1:i2]:
-                    yield f'  {check_line(line)}'
-            elif tag == 'delete':
+                    yield f"  {check_line(line)}"
+            elif tag == "delete":
                 for line in self.a[i1:i2]:
-                    yield f'- {check_line(line)}'
-            elif tag == 'insert':
+                    yield f"- {check_line(line)}"
+            elif tag == "insert":
                 for line in self.b[j1:j2]:
-                    yield f'+ {check_line(line)}'
-            elif tag == 'replace':
+                    yield f"+ {check_line(line)}"
+            elif tag == "replace":
                 for line in difflib.ndiff(self.a[i1:i2], self.b[j1:j2]):
                     yield check_line(line)
 
@@ -413,28 +415,28 @@ class Hunk:
         """Color diff lines."""
         diff = iter(self.diff)
 
-        fmt = ''  # type: Optional[str]
-        line1, line2 = '', next(diff)
+        fmt = ""  # type: Optional[str]
+        line1, line2 = "", next(diff)
         for line in diff:
             fmt, line1, line2 = line1, line2, line
             # do not show lines starting with '?'.
-            if line1.startswith('?'):
+            if line1.startswith("?"):
                 continue
-            if line2.startswith('?'):
+            if line2.startswith("?"):
                 yield self.color_line(line1, line2)
                 # do not try to reuse line2 as format at next iteration
                 # if already used for an added line.
-                if line1.startswith('+'):
-                    line2 = ''
+                if line1.startswith("+"):
+                    line2 = ""
                 continue
-            if line1.startswith('-'):
+            if line1.startswith("-"):
                 # Color whole line to be removed.
                 yield self.color_line(line1)
-            elif line1.startswith('+'):
+            elif line1.startswith("+"):
                 # Reuse last available fmt as diff line, if possible,
                 # or color whole line to be added.
-                fmt = fmt if fmt.startswith('?') else ''
-                fmt = fmt[:min(len(fmt), len(line1))]
+                fmt = fmt if fmt.startswith("?") else ""
+                fmt = fmt[: min(len(fmt), len(line1))]
                 fmt = fmt if fmt else None
                 yield self.color_line(line1, fmt)
 
@@ -443,14 +445,14 @@ class Hunk:
         # If line line2 is added, check if line1 is a '?-type' line, to prevent
         # the entire line line2 to be colored (see T130572).
         # The case where line2 start with '?' has been covered already.
-        if line2.startswith('-'):
+        if line2.startswith("-"):
             # Color whole line to be removed.
             yield self.color_line(line2)
-        elif line2.startswith('+'):
+        elif line2.startswith("+"):
             # Reuse last available line1 as diff line, if possible,
             # or color whole line to be added.
-            fmt = line1 if line1.startswith('?') else ''
-            fmt = fmt[:min(len(fmt), len(line2))]
+            fmt = line1 if line1.startswith("?") else ""
+            fmt = fmt[: min(len(fmt), len(line2))]
             fmt = fmt if fmt else None
             yield self.color_line(line2, fmt)
 
@@ -468,46 +470,45 @@ class Hunk:
         if line_ref is None:
             if color in self.colors:
                 # colored_line = color_format('{color}{0}{default}',line, color=self.colors[color])
-                colored_line = f'<<{self.colors[color]}>>'
-                colored_line += f'{line}<<default>>'
+                colored_line = f"<<{self.colors[color]}>>"
+                colored_line += f"{line}<<default>>"
                 return colored_line
             return line
 
-        colored_line = ''
+        colored_line = ""
         color_closed = True
-        for char, char_ref in zip_longest(line, line_ref.strip(), fillvalue=' '):
+        for char, char_ref in zip_longest(line, line_ref.strip(), fillvalue=" "):
             char_tagged = char
             if color_closed:
-                if char_ref != ' ':
-                    apply_color = self.colors[color] if char != ' ' else f'default;{self.bg_colors[color]}'
+                if char_ref != " ":
+                    apply_color = self.colors[color] if char != " " else f"default;{self.bg_colors[color]}"
                     # char_tagged = color_format('{color}{0}', char, color=apply_color)
-                    char_tagged = f'<<{apply_color}>>'
+                    char_tagged = f"<<{apply_color}>>"
                     char_tagged += char
                     color_closed = False
-            elif char_ref == ' ':
+            elif char_ref == " ":
                 # char_tagged = color_format('{default}{0}', char)
-                char_tagged = f'<<default>>{char}'
+                char_tagged = f"<<default>>{char}"
                 color_closed = True
             colored_line += char_tagged
 
         if not color_closed:
             # colored_line += color_format('{default}')
-            colored_line += '<<default>>'
+            colored_line += "<<default>>"
 
         return colored_line
 
     def __str__(self) -> str:
         """Return the diff as plain text."""
-        return ''.join(self.diff_plain_text)
+        return "".join(self.diff_plain_text)
 
     def __repr__(self) -> str:
         """Return a reconstructable representation."""
         # TODO
-        return f'{self.__class__.__name__}(a, b, {self.group})'
+        return f"{self.__class__.__name__}(a, b, {self.group})"
 
 
 class _Superhunk(abc.Sequence):
-
     def __init__(self, hunks: Sequence[Hunk]) -> None:
         self._hunks = hunks
         self.a_rng = (self._hunks[0].a_rng[0], self._hunks[-1].a_rng[1])
@@ -522,15 +523,14 @@ class _Superhunk(abc.Sequence):
         return len(self._hunks)
 
 
-def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str = '@@') -> str:
+def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str = "@@") -> str:
     """Provide header for any ranges."""
     a_rng = format_range_unified(*a_rng)
     b_rng = format_range_unified(*b_rng)
-    return f'{affix} -{a_rng} +{b_rng} {affix}'
+    return f"{affix} -{a_rng} +{b_rng} {affix}"
 
 
 class PatchManager:
-
     def __init__(self, text_a: str, text_b: str, context: int = 0, by_letter: bool = False, replace_invisible: bool = False) -> None:
         self.a = text_a.splitlines(True)  # type: Union[str, List[str]]
         self.b = text_b.splitlines(True)  # type: Union[str, List[str]]
@@ -590,7 +590,7 @@ class PatchManager:
     def print_hunks(self) -> None:
         """Print the headers and diff texts of all hunks to the output."""
         if self.hunks:
-            output('\n'.join(self._generate_diff(super_hunk) for super_hunk in self._super_hunks))
+            output("\n".join(self._generate_diff(super_hunk) for super_hunk in self._super_hunks))
 
     def _generate_super_hunks(self, hunks: Iterable[Hunk] | None = None) -> list[_Superhunk]:
         if hunks is None:
@@ -630,7 +630,7 @@ class PatchManager:
 
         def extend_context(start: int, end: int) -> str:
             """Add context lines."""
-            return ''.join(f'  {line.rstrip()}\n' for line in self.a[start:end])
+            return "".join(f"  {line.rstrip()}\n" for line in self.a[start:end])
 
         context_range = self._get_context_range(hunks)
         a11 = get_header_text(*context_range)
@@ -661,7 +661,7 @@ def showDiff(text_a: str, text_b: str, context: int = 0) -> None:
     PatchManager(text_a, text_b, context=context).print_hunks()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     color_table = get_color_table()
     line = ""
     numb = 0
