@@ -14,7 +14,7 @@ def find_edit_error(old, new):
 
   for phrase in conversion_phrases:
     if phrase in old and phrase not in new:
-      print(f"ar_err.py found ({phrase}) in old but bot in new. return True")
+      print(f"ar_err.py found ({phrase}) in old but not in new. return True")
       return True
 
   return False
