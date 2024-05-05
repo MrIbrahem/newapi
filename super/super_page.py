@@ -51,7 +51,7 @@ import wikitextparser as wtp
 from newapi import printe
 from newapi import txtlib
 from newapi import botEdit
-
+from newapi.super.ar_err import find_edit_error 
 print_test = { 1: False }
 # ---
 Edit_summary_line = { 1: ' -Edit summary: %s:' }
@@ -787,6 +787,10 @@ class MainPage:
             pywikibot.output(f"title: {self.title}, summary: {self.summary}")
             pywikibot.output("CRITICAL:")
             return True
+        # ---
+        if self.lang == "ar" and self.ns == 0:
+            if find_edit_error(self.text, self.newtext):
+                return True
         # ---
         return False
 
