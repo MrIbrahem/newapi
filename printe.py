@@ -415,7 +415,7 @@ class Hunk:
         """Color diff lines."""
         diff = iter(self.diff)
 
-        fmt = ""  # type: Optional[str]
+        fmt = ""  
         line1, line2 = "", next(diff)
         for line in diff:
             fmt, line1, line2 = line1, line2, line
@@ -516,7 +516,7 @@ class _Superhunk(abc.Sequence):
         self.pre_context = self._hunks[0].pre_context
         self.post_context = self._hunks[0].post_context
 
-    def __getitem__(self, idx: int) -> Hunk:  # type: ignore[override]
+    def __getitem__(self, idx: int) -> Hunk:  
         return self._hunks[idx]
 
     def __len__(self) -> int:
@@ -532,8 +532,8 @@ def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str =
 
 class PatchManager:
     def __init__(self, text_a: str, text_b: str, context: int = 0, by_letter: bool = False, replace_invisible: bool = False) -> None:
-        self.a = text_a.splitlines(True)  # type: Union[str, List[str]]
-        self.b = text_b.splitlines(True)  # type: Union[str, List[str]]
+        self.a = text_a.splitlines(True)  
+        self.b = text_b.splitlines(True)  
 
         # groups and hunk have same order (one hunk correspond to one group).
         s = difflib.SequenceMatcher(None, self.a, self.b)
@@ -601,7 +601,7 @@ class PatchManager:
 
         if self.context:
             # Determine if two hunks are connected by self.context
-            super_hunk = []  # type: List[Hunk]
+            super_hunk = []  
             super_hunks = [super_hunk]
             for hunk in hunks:
                 # self.context * 2, because if self.context is 2 the hunks
