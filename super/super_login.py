@@ -75,7 +75,7 @@ class Login:
                 k: v[:100] if isinstance(v, str) and len(v) > 100 else v
                 for k, v in params.items()
                 if k not in no_url
-                
+
             }
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
@@ -124,7 +124,7 @@ class Login:
             req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
             data = self.parse_data(req0)
             return data
-        
+
         try:
             req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
             data = self.parse_data(req0)
@@ -281,5 +281,8 @@ class Login:
 
         if "printdata" in sys.argv:
             printe.output(data)
+
+        if data.get("servedby"):
+            data["servedby"] = ""
 
         return data
