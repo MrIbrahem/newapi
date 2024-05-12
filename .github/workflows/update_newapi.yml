@@ -1,9 +1,9 @@
 name: Open URL on Successful Merge
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - main
 
 jobs:
   open-url:
@@ -14,7 +14,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Open URL on successful merge
-      if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
       run: |
         curl -L -f -S -s https://himo.toolforge.org/update.php?api=1 > curl_output.txt || echo "Curl request failed with status code $?"
         curl -L -f -S -s https://mdwiki.toolforge.org/update_md.php?api=1 > curl_api.txt || echo "Curl request failed with status code $?"
