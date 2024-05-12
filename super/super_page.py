@@ -327,7 +327,7 @@ class MainPage:
             "maxlag": "3",
             # "prop": "info",
             "generator": "backlinks",
-            "redirects": 1,
+            # "redirects": 1,
             # 'gblfilterredir': 'redirects',
             "gbltitle": self.title,
             "gblnamespace": ns,

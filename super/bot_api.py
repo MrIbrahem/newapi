@@ -358,7 +358,7 @@ class NEW_API:
             "action": "query",
             "format": "json",
             "prop": "langlinks",
-            # "redirects": 1,
+            # "redirects":1,
             # "normalize": 1,
             "lllimit": "max",
             "utf8": 1,
