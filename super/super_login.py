@@ -87,6 +87,12 @@ class Login:
         text = ""
         try:
             data = req0.json()
+
+            if data.get("error", {}).get("*", "").find("mailing list") > -1:
+                data["error"]["*"] = ""
+            if data.get("servedby"):
+                data["servedby"] = ""
+
             return data
         except Exception:
             text = str(req0.text).strip()
@@ -281,8 +287,5 @@ class Login:
 
         if "printdata" in sys.argv:
             printe.output(data)
-
-        if data.get("servedby"):
-            data["servedby"] = ""
 
         return data
