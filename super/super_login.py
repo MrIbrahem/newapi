@@ -71,8 +71,9 @@ class Login:
         """
         if print_test[1] or "printurl" in sys.argv:
             no_url = ["lgpassword", "format"]
+            no_remove = ["titles", "title"]
             pams2 = {
-                k: v[:100] if isinstance(v, str) and len(v) > 100 else v
+                k: v[:100] if isinstance(v, str) and len(v) > 100 and k not in no_remove else v
                 for k, v in params.items()
                 if k not in no_url
 
@@ -277,7 +278,7 @@ class Login:
             Invalid = error.get("info", "")
             code = error.get("code", "")
             # ---
-            test_print(f"<<red>> super_login(post): error: {error}")
+            printe.output(f"<<red>> super_login(post): error: {error}")
             # ---
             if Invalid == "Invalid CSRF token." and CSRF:
                 pywikibot.output(f'<<red>> ** error "Invalid CSRF token.".\n{self.r3_token} ')

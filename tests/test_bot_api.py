@@ -45,7 +45,8 @@ class testmybot:
 
     def test5(self):
         '''Get_langlinks_for_list'''
-        ex = self.api_new.Get_langlinks_for_list(["طواف العالم للدراجات 2023", "كريس فروم"])
+        lista = ['Amanda Seales', 'Aria Mia Loberti', 'Rachel Sennott', 'Bassam Tariq', 'Darius Marder', 'Elvira Lind', 'Shaka King', 'Dev Hynes', 'Michael Stipe', 'Raveena Aurora', 'Tommy Genesis', 'Vic Mensa', 'Becca Balint', 'Earl Blumenauer', 'Sanford Bishop', 'Suzanne Bonamici', 'Greg Casar', 'Jason Crow', 'Diana DeGette', 'Chris Deluzio', 'Mark DeSaulnier', 'Debbie Dingell', 'Veronica Escobar', 'Valerie Foushee', 'John Garamendi', 'Chuy García', 'Raúl Grijalva', 'Josh Harder', 'Chrissy Houlahan', 'Dan Kildee', 'Greg Landsman', 'Summer Lee', 'Teresa Leger Fernandez', 'Zoe Lofgren', 'Seth Magaziner', 'Betty McCollum', 'Morgan McGarvey', 'Kweisi Mfume', 'Donald Payne Jr.', 'Chellie Pingree', 'Pat Ryan (politician)', 'Jamie Raskin', 'Delia Ramirez', 'Mary Gay Scanlon', 'Jan Schakowsky', 'Terri Sewell', 'Brad Sherman', 'Mikie Sherrill', 'Paul Tonko', 'Lauren Underwood', 'Gabe Vasquez', 'Nydia Velázquez', 'Bonnie Watson Coleman']
+        ex = self.api_new.Get_langlinks_for_list(lista, targtsitecode="ar")
         return ex
 
     def test6(self):

@@ -338,21 +338,16 @@ class NEW_API:
         # ---
         return results
 
-    def Get_langlinks_for_list(self, titles, targtsitecode="", numbes=50):
+    def Get_langlinks_for_list(self, titles, targtsitecode="", numbes=40):
         # ---
-        printe.output(f'bot_api.Get_langlinks_for_list for "{len(titles)} pages"')
+        printe.output(f'bot_api.Get_langlinks_for_list for "{len(titles)} pages". in wiki:{self.lang}')
         # ---
         if targtsitecode.endswith("wiki"):
             targtsitecode = targtsitecode[:-4]
         # ---
-        if self.lang != "ar":
-            numbes = 100
-        # ---
-        find_targtsitecode = 0
-        # ---
-        normalized = {}
-        # ---
-        table = {}
+        #  error: {'code': 'toomanyvalues', 'info': 'Too many values supplied for parameter "titles". The limit is 50.', 'parameter': 'titles', 'limit': 50, 'lowlimit': 50, 'highlimit': 500, '*': ''}
+        # if self.lang != "ar":
+        numbes = 50
         # ---
         params = {
             "action": "query",
@@ -369,34 +364,48 @@ class NEW_API:
             params["lllang"] = targtsitecode
             printe.output(f'params["lllang"] = {targtsitecode}')
         # ---
+        find_targtsitecode = 0
+        normalized = {}
+        table = {}
+        # ---
         for i in range(0, len(titles), numbes):
-            titles_1 = titles[i : i + numbes]
             # ---
-            params["titles"] = "|".join(titles_1)
+            group = titles[i: i + numbes]
+            # ---
+            printe.output(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
+            # ---
+            params["titles"] = "|".join(group)
             # ---
             json1 = self.post_params(params)
             # ---
             if not json1:
+                printe.output('bot_api.Get_langlinks_for_list json1 is empty')
                 continue
             # ---
+            _error = json1.get("error", {})
+            # ---
+            # print("json1:")
+            # print(json1)
+            # ---
             norma = json1.get("query", {}).get("normalized", {})
+            # ---
             for red in norma:
                 normalized[red["to"]] = red["from"]
             # ---
             query_pages = json1.get("query", {}).get("pages", {})
+            # ---
             for _, kk in query_pages.items():
-                if "title" in kk:
-                    titlle = kk.get("title", "")
-                    titlle = normalized.get(titlle, titlle)
+                titlle = kk.get("title", "")
+                # ---
+                titlle = normalized.get(titlle, titlle)
+                # ---
+                table[titlle] = {}
+                # ---
+                for lang in kk.get("langlinks", []):
+                    table[titlle][lang["lang"]] = lang["*"]
                     # ---
-                    table[titlle] = {}
-                    # ---
-                    for lang in kk.get("langlinks", []):
-                        table[titlle][lang["lang"]] = lang["*"]
-                        # ---
-                        if lang["lang"] == targtsitecode:
-                            find_targtsitecode += 1
-                    # ---
+                    if lang["lang"] == targtsitecode:
+                        find_targtsitecode += 1
         # ---
         printe.output(f'bot_api.Get_langlinks_for_list find "{len(table)}" in table,find_targtsitecode:{targtsitecode}:{find_targtsitecode}')
         # ---
