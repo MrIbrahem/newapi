@@ -20,7 +20,6 @@ from difflib import _format_range_unified as format_range_unified
 from itertools import zip_longest
 from collections.abc import Iterable, Sequence
 
-# ---
 
 _category_cf = frozenset(
     [
@@ -238,6 +237,9 @@ def get_color_table():
     return color_table
 
 
+color_table = get_color_table()
+
+
 def output(textm):
     """
     Prints the given text with color formatting.
@@ -252,7 +254,6 @@ def output(textm):
     if "noprint" in sys.argv:
         return
 
-    color_table = get_color_table()
     # Define a pattern for color tags
     _color_pat = r"((:?\w+|previous);?(:?\w+|previous)?)"
     # Compile a regex for color tags
@@ -308,6 +309,10 @@ def output(textm):
 
     # Print the final colored text
     print(toprint)
+
+
+def error(text):
+    output(f"<<red>> {str(text)} <<default>>")
 
 
 def replace_invisible(text):
@@ -415,7 +420,7 @@ class Hunk:
         """Color diff lines."""
         diff = iter(self.diff)
 
-        fmt = ""  
+        fmt = ""
         line1, line2 = "", next(diff)
         for line in diff:
             fmt, line1, line2 = line1, line2, line
@@ -516,7 +521,7 @@ class _Superhunk(abc.Sequence):
         self.pre_context = self._hunks[0].pre_context
         self.post_context = self._hunks[0].post_context
 
-    def __getitem__(self, idx: int) -> Hunk:  
+    def __getitem__(self, idx: int) -> Hunk:
         return self._hunks[idx]
 
     def __len__(self) -> int:
@@ -532,8 +537,8 @@ def get_header_text(a_rng: tuple[int, int], b_rng: tuple[int, int], affix: str =
 
 class PatchManager:
     def __init__(self, text_a: str, text_b: str, context: int = 0, by_letter: bool = False, replace_invisible: bool = False) -> None:
-        self.a = text_a.splitlines(True)  
-        self.b = text_b.splitlines(True)  
+        self.a = text_a.splitlines(True)
+        self.b = text_b.splitlines(True)
 
         # groups and hunk have same order (one hunk correspond to one group).
         s = difflib.SequenceMatcher(None, self.a, self.b)
@@ -601,7 +606,7 @@ class PatchManager:
 
         if self.context:
             # Determine if two hunks are connected by self.context
-            super_hunk = []  
+            super_hunk = []
             super_hunks = [super_hunk]
             for hunk in hunks:
                 # self.context * 2, because if self.context is 2 the hunks
@@ -662,7 +667,6 @@ def showDiff(text_a: str, text_b: str, context: int = 0) -> None:
 
 
 if __name__ == "__main__":
-    color_table = get_color_table()
     line = ""
     numb = 0
     for co, cac in color_table.items():

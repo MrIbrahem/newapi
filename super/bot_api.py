@@ -372,7 +372,7 @@ class NEW_API:
             # ---
             group = titles[i: i + numbes]
             # ---
-            printe.output(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
+            # printe.output(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
             # ---
             params["titles"] = "|".join(group)
             # ---
