@@ -7,7 +7,7 @@ from newapi.page import NEW_API
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
-# newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='', three_houers=False)
+# newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
 # usercont = api_new.UserContribs(user, limit=5000, namespace="*", ucshow="")
 # l_links  = api_new.Get_langlinks_for_list(titles, targtsitecode="", numbes=50)
 # text_w   = api_new.expandtemplates(text)
@@ -281,7 +281,7 @@ class NEW_API:
         # ---
         return results
 
-    def Get_Newpages(self, limit=5000, namespace="0", rcstart="", user="", three_houers=False):
+    def Get_Newpages(self, limit=5000, namespace="0", rcstart="", user="", three_houers= False):
         # ---
         if three_houers:
             dd = datetime.datetime.utcnow() - timedelta(hours=3)
@@ -316,12 +316,6 @@ class NEW_API:
         Main_table = [x["title"] for x in json1]
         # ---
         printe.output(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
-        # ---
-        if three_houers:
-            arsite = pywikibot.Site("ar", "wikipedia")
-            # ---
-            Main_table = [pywikibot.Page(arsite, x) for x in Main_table]
-            # ---
         # ---
         return Main_table
 

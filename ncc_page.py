@@ -45,7 +45,7 @@ from newapi.ncc_page import NEW_API
 # pages    = api_new.Find_pages_exists_or_not(liste)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
-# newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='', three_houers=False)
+# newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
 # usercont = api_new.UserContribs(user, limit=5000, namespace="*", ucshow="")
 # l_links  = api_new.Get_langlinks_for_list(titles, targtsitecode="", numbes=50)
 # text_w   = api_new.expandtemplates(text)
