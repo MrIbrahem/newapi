@@ -51,7 +51,7 @@ import wikitextparser as wtp
 from newapi import printe
 from newapi import txtlib
 from newapi import botEdit
-from newapi.super.ar_err import find_edit_error 
+from newapi.super.ar_err import find_edit_error
 print_test = { 1: False }
 # ---
 Edit_summary_line = { 1: ' -Edit summary: %s:' }
@@ -718,8 +718,9 @@ class MainPage:
                     printe.showDiff(self.text, self.newtext)
                 else:
                     printe.output('showDiff error..')
-                    printe.output(f'diference in bytes: {len(self.newtext) - len(self.text)}')
-                    printe.output(f'length of text: {len(self.text)}, length of newtext: {len(self.newtext)}')
+            # ---
+            printe.output(f'diference in bytes: {len(self.newtext) - len(self.text):,}')
+            printe.output(f'len of text: {len(self.text):,}, len of newtext: {len(self.newtext):,}')
             # ---
             printe.output(Edit_summary_line[1] % self.summary)
             # ---
