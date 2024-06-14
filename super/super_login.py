@@ -6,6 +6,7 @@
 # login = bot.Log_to_wiki()
 # json1 = bot.post(params, Type="post", addtoken=False)
 # ---
+import os
 import inspect
 import sys
 import time
@@ -16,6 +17,8 @@ import traceback
 from warnings import warn
 import pywikibot
 from newapi import printe
+
+file_name = os.path.basename(__file__)
 
 print_test = {1: False}
 User_tables = {"mdwiki": {}, "wikidata": {}, "wikipedia": {}, "nccommons": {}}
@@ -204,7 +207,7 @@ class Login:
             pywikibot.output("CRITICAL:")
             return False
 
-        printe.output(f"<<green>> {__file__} login Success")
+        printe.output(f"<<green>> {file_name} login Success")
 
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
         r33 = self.make_response(r3_params)

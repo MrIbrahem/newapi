@@ -24,14 +24,14 @@ User_tables = {
     "password": useraccount.password
 }
 # ---
-himo_file = __file__.replace('\\', '/').split("/")[-1]
+pyy_file = __file__.replace('\\', '/').split("/")[-1]
 # ---
-if "workibrahem" in sys.argv or himo_file == "himopage.py":
+if "workibrahem" in sys.argv or pyy_file == "himopage.py":
     User_tables['username'] = useraccount.hiacc
     User_tables['password'] = useraccount.hipass
     super_page.Edit_summary_line[1] = ' -Edit summary: %s: (will be removed)'
     # ---
-    print(f"{himo_file} use Mr. Ibrahem account.")
+    print(f"{pyy_file} use Mr. Ibrahem account.")
     # ---
 # ---
 # xxxxxxxxxxx

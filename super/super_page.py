@@ -52,6 +52,10 @@ from newapi import printe
 from newapi import txtlib
 from newapi import botEdit
 from newapi.super.ar_err import find_edit_error
+
+import os
+file_name = os.path.basename(__file__)
+
 print_test = { 1: False }
 # ---
 Edit_summary_line = { 1: ' -Edit summary: %s:' }
@@ -728,7 +732,7 @@ class MainPage:
             # ---
             if sa == "a":
                 printe.output('<<lightgreen>> ---------------------------------')
-                printe.output(f'<<lightgreen>> {__file__} save all without asking.')
+                printe.output(f'<<lightgreen>> {file_name} save all without asking.')
                 printe.output('<<lightgreen>> ---------------------------------')
                 Save_Edit_Pages[1] = True
             # ---

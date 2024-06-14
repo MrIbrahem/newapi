@@ -40,6 +40,9 @@ from datetime import timedelta
 
 from newapi import printe
 
+import os
+file_name = os.path.basename(__file__)
+
 change_codes = {"nb": "no", "bat_smg": "bat-smg", "be_x_old": "be-tarask", "be-x-old": "be-tarask", "cbk_zam": "cbk-zam", "fiu_vro": "fiu-vro", "map_bms": "map-bms", "nds_nl": "nds-nl", "roa_rup": "roa-rup", "zh_classical": "zh-classical", "zh_min_nan": "zh-min-nan", "zh_yue": "zh-yue"}
 yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
 Save_Edit_Pages = { 1: False }
@@ -681,7 +684,7 @@ class NEW_API:
             # ---
             if sa == "a":
                 printe.output('<<lightgreen>> ---------------------------------')
-                printe.output(f'<<lightgreen>> {__file__} save all without asking.')
+                printe.output(f'<<lightgreen>> {file_name} save all without asking.')
                 printe.output('<<lightgreen>> ---------------------------------')
                 Save_Edit_Pages[1] = True
             # ---
