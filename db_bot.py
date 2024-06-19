@@ -43,6 +43,11 @@ class LiteDB:
 
         self.db[table_name].insert(data, ignore=True, pk="id")
 
+    def insert_all(self, table_name, datalist, prnt=True):
+        if prnt:
+            print(f"inserting {len(datalist)} rows")
+        self.db[table_name].insert_all(datalist, ignore=True, pk="id")
+
     def get_data(self, table_name):
         return self.db[table_name].rows
 

@@ -27,9 +27,11 @@ seasons_by_lang = {}
 ar_lag = {1: 3}
 login_lang = {1: True}
 
+
 def test_print(s):
     if "test_print" in sys.argv:
         printe.output(s)
+
 
 def warn_err(err):
     """
@@ -75,12 +77,7 @@ class Login:
         if print_test[1] or "printurl" in sys.argv:
             no_url = ["lgpassword", "format"]
             no_remove = ["titles", "title"]
-            pams2 = {
-                k: v[:100] if isinstance(v, str) and len(v) > 100 and k not in no_remove else v
-                for k, v in params.items()
-                if k not in no_url
-
-            }
+            pams2 = {k: v[:100] if isinstance(v, str) and len(v) > 100 and k not in no_remove else v for k, v in params.items() if k not in no_url}
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
 
@@ -230,6 +227,9 @@ class Login:
         if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
 
+        if self.family == "nccommons" and params.get("bot"):
+            del params["bot"]
+
         if "workibrahem" in sys.argv:
             params["summary"] = ""
 
@@ -254,7 +254,6 @@ class Login:
             params["minor"] = self.Bot_or_himo
 
         if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
-
             if not self.r3_token:
                 self.r3_token = tokens_by_lang.get(self.lang, "")
 
