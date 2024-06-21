@@ -28,6 +28,13 @@ class LiteDB:
         # Create table if it doesn't exist
         self.db[table_name].create(fields, pk=pk, if_not_exists=True, ignore=True, **kwargs)
 
+    def query(self, sql):
+        # return self.db.query(sql)
+        return [r for r in self.db.execute(sql).fetchall()]
+
+    def update(self, sql):
+        self.db.executescript(sql)
+
     def show_tables(self):
         tabs = self.db.table_names()
         for tab in tabs:
@@ -42,17 +49,26 @@ class LiteDB:
                 return
 
         self.db[table_name].insert(data, ignore=True, pk="id")
+        del data
 
     def insert_all(self, table_name, datalist, prnt=True):
         if prnt:
             print(f"inserting {len(datalist)} rows")
         self.db[table_name].insert_all(datalist, ignore=True, pk="id")
+        del datalist
 
     def get_data(self, table_name):
         return self.db[table_name].rows
 
     def select(self, table_name, args):
         where = " and ".join([f"{k} = '{v}'" for k, v in args.items()])
+        lista = []
+        for row in self.db[table_name].rows_where(where):
+            lista.append(row)
+        return lista
+
+    def select_or(self, table_name, args):
+        where = " or ".join([f"{k} = '{v}'" for k, v in args.items()])
         lista = []
         for row in self.db[table_name].rows_where(where):
             lista.append(row)

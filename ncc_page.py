@@ -80,9 +80,9 @@ if dir2.startswith('I:'):
 config = configparser.ConfigParser()
 config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
-print(f"{dir2}/confs/nccommons_user.ini")
+# print(f"{dir2}/confs/nccommons_user.ini")
 # ---
-print(list(config["DEFAULT"].keys()))
+# print(list(config["DEFAULT"].keys()))
 # ---
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
