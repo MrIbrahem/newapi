@@ -612,7 +612,7 @@ class MainPage:
         parsed = wtp.parse(self.text)
         wikilinks = parsed.wikilinks
         # ---
-        printe.output(f'wikilinks:{str(wikilinks)}')
+        # printe.output(f'wikilinks:{str(wikilinks)}')
         # ---
         for x in wikilinks:
             print(x.title)

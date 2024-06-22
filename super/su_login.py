@@ -135,7 +135,7 @@ class Login:
 
         color = colors.get(self.lang, "")
 
-        printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
+        # printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
 
         r2_params = {
             "format": "json",
@@ -179,7 +179,7 @@ class Login:
             pywikibot.output("CRITICAL:")
             return False
 
-        printe.output(f"<<green>> {file_name} login Success")
+        # printe.output(f"<<green>> {file_name} login Success")
 
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
         r33 = self.make_response(r3_params)

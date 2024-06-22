@@ -226,7 +226,7 @@ class NEW_API:
 
     def Get_All_pages(self, start="", namespace="0", limit="max", apfilterredir="", limit_all=0):
         # ---
-        printe.output(f"Get_All_pages for start:{start}, limit:{limit},namespace:{namespace},apfilterredir:{apfilterredir}")
+        test_print(f"Get_All_pages for start:{start}, limit:{limit},namespace:{namespace},apfilterredir:{apfilterredir}")
         # ---
         params = {"action": "query", "format": "json", "list": "allpages", "apnamespace": namespace, "aplimit": limit, "apfilterredir": "nonredirects", "formatversion": 1}
         # ---
@@ -241,11 +241,11 @@ class NEW_API:
         # ---
         newp = self.post_continue(params, "query", _p_="allpages", p_empty=[], Max=limit_all)
         # ---
-        printe.output(f"<<lightpurple>> --- Get_All_pages : find {len(newp)} pages.")
+        test_print(f"<<lightpurple>> --- Get_All_pages : find {len(newp)} pages.")
         # ---
         Main_table = [x["title"] for x in newp]
         # ---
-        printe.output(f"len of Main_table {len(Main_table)}.")
+        test_print(f"len of Main_table {len(Main_table)}.")
         # ---
         printe.output(f"bot_api.py Get_All_pages : find {len(Main_table)} pages.")
         # ---
@@ -253,7 +253,7 @@ class NEW_API:
 
     def Search(self, value="", ns="*", offset="", srlimit="max", RETURN_dict=False, addparams=None):
         # ---
-        printe.output(f'bot_api.Search for "{value}",ns:{ns}')
+        test_print(f'bot_api.Search for "{value}",ns:{ns}')
         # ---
         if not srlimit:
             srlimit = "max"
@@ -280,7 +280,7 @@ class NEW_API:
             else:
                 results.append(pag["title"])
         # ---
-        printe.output(f'bot_api.Search find "{len(search)}" all result: {len(results)}')
+        test_print(f'bot_api.Search find "{len(search)}" all result: {len(results)}')
         # ---
         return results
 
@@ -318,7 +318,7 @@ class NEW_API:
         # ---
         Main_table = [x["title"] for x in json1]
         # ---
-        printe.output(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
+        test_print(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
         # ---
         return Main_table
 
@@ -337,7 +337,7 @@ class NEW_API:
 
     def Get_langlinks_for_list(self, titles, targtsitecode="", numbes=40):
         # ---
-        printe.output(f'bot_api.Get_langlinks_for_list for "{len(titles)} pages". in wiki:{self.lang}')
+        test_print(f'bot_api.Get_langlinks_for_list for "{len(titles)} pages". in wiki:{self.lang}')
         # ---
         if targtsitecode.endswith("wiki"):
             targtsitecode = targtsitecode[:-4]
@@ -359,7 +359,7 @@ class NEW_API:
         # ---
         if targtsitecode:
             params["lllang"] = targtsitecode
-            printe.output(f'params["lllang"] = {targtsitecode}')
+            test_print(f'params["lllang"] = {targtsitecode}')
         # ---
         find_targtsitecode = 0
         normalized = {}
@@ -369,7 +369,7 @@ class NEW_API:
             # ---
             group = titles[i: i + numbes]
             # ---
-            # printe.output(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
+            # test_print(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
             # ---
             params["titles"] = "|".join(group)
             # ---
@@ -536,7 +536,7 @@ class NEW_API:
         # ---
         results = self.post_continue(params, "query", _p_="querypage", p_empty=[], Max=Max)
         # ---
-        printe.output(f"querypage_list len(results) = {len(results)}")
+        test_print(f"querypage_list len(results) = {len(results)}")
         # ---
         return results
 
@@ -555,7 +555,7 @@ class NEW_API:
             params["reason"] = reason
         # ---
         if old_title == to:
-            printe.output(f"<<lightred>>** old_title == to {to} ")
+            test_print(f"<<lightred>>** old_title == to {to} ")
             return False
         # ---
         if not self.save_move and "ask" in sys.argv:
@@ -571,7 +571,7 @@ class NEW_API:
                 printe.output("<<red>> bot_api: wrong answer")
                 return False
             # ---
-            printe.output(f"<<lightgreen>> answer: {sa in yes_answer}")
+            test_print(f"<<lightgreen>> answer: {sa in yes_answer}")
         # ---
         data = self.post_params(params)
         # { "move": { "from": "d", "to": "d2", "reason": "wrong", "redirectcreated": true, "moveoverredirect": false } }
@@ -621,7 +621,7 @@ class NEW_API:
 
     def Get_template_pages(self, title, namespace="*", Max=10000):
         # ---
-        printe.output(f'Get_template_pages for template:"{title}", limit:"{Max}",namespace:"{namespace}"')
+        test_print(f'Get_template_pages for template:"{title}", limit:"{Max}",namespace:"{namespace}"')
         # ---
         params = {
             "action": "query",
@@ -647,7 +647,7 @@ class NEW_API:
         if not title.startswith("File:"):
             title = f"File:{title}"
         # ---
-        printe.output(f'Get_image_url for file:"{title}":')
+        test_print(f'Get_image_url for file:"{title}":')
         # ---
         params = {"action": "query", "format": "json", "prop": "imageinfo", "titles": title, "iiprop": "url", "formatversion": "2"}
         # ---
@@ -704,7 +704,7 @@ class NEW_API:
             printe.output('** Add_To_Bottom2 ..  text == ""')
             return False
         # ---
-        printe.output(f"** Add_To_Bottom2 .. [[{title}]] ")
+        test_print(f"** Add_To_Bottom2 .. [[{title}]] ")
         # printe.showDiff("", text)
         # ---
         ask = self.ask_put(newtext=text, text="")

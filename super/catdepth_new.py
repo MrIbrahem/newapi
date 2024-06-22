@@ -236,7 +236,7 @@ class CategoryDepth:
             # ---
             depth_done += 1
             # ---
-            printe.output(f"<<yellow>> work in subcats: {len(new_list)}, depth:{depth_done}/{self.depth}:")
+            # printe.output(f"<<yellow>> work in subcats: {len(new_list)}, depth:{depth_done}/{self.depth}:")
             # ---
             for cat in tqdm.tqdm(new_list):
                 # ---
