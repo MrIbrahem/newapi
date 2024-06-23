@@ -117,7 +117,11 @@ class NEW_API:
         # ---
         results = p_empty
         # ---
-        while continue_params != {} or len(results) == 0:
+        d = 0
+        # ---
+        while continue_params != {} or d == 0:
+            # ---
+            d += 1
             # ---
             if continue_params:
                 # params = {**params, **continue_params}
