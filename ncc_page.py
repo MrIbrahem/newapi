@@ -72,10 +72,10 @@ catdepth_new.FAMILY = "nccommons"
 Dir = str(Path(__file__).parents[0])
 # ---
 dir2 = Dir.replace('\\', '/')
-dir2 = dir2.split('/pybot/')[0]
+dir2 = dir2.split('/nccbot/')[0]
 # ---
 if dir2.startswith('I:'):
-    dir2 = 'I:/mdwiki'
+    dir2 = 'I:/ncc'
 # ---
 config = configparser.ConfigParser()
 config.read(f"{dir2}/confs/nccommons_user.ini")
