@@ -186,7 +186,7 @@ class CategoryDepth:
 
     def get_cat_new(self, cac):
         # ---
-        print("get_cat_new")
+        # print("get_cat_new")
         # ---
         params = self.params
         params["gcmtitle"] = cac
