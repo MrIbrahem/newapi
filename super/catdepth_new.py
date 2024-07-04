@@ -22,10 +22,14 @@ ns_list = {"0": "", "1": "نقاش", "2": "مستخدم", "3": "نقاش الم�
 
 
 class CategoryDepth:
-    def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, props=None, only_titles=False, **kwargs):
+    def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, props=None, only_titles=False, printtest=False, **kwargs):
         # ---
         props = [props] if isinstance(props, str) else props
         # ---
+        self.gcmlimit = kwargs.get("gcmlimit") or 1000
+        self.no_props = kwargs.get("no_props") or False
+        # ---
+        self.printtest = printtest
         self.props = props or []
         self.title = title
         self.no_gcmsort = no_gcmsort
@@ -62,23 +66,11 @@ class CategoryDepth:
     def post_params(self, params):
         return self.log.post(params, addtoken=True)
 
-    def make_params(self):
+    def params_work(self, params):
         t_props = ["revisions"] if not self.no_gcmsort else []
         # ---
-        params = {
-            "action": "query",
-            "format": "json",
-            "utf8": 1,
-            "generator": "categorymembers",
-            "gcmprop": "title",
-            # "prop": "revisions",
-            "gcmtype": "page|subcat",
-            "gcmlimit": "1000",
-            "formatversion": "1",
-            "gcmsort": "timestamp",
-            "gcmdir": "newer",
-            # "rvprop": "timestamp",
-        }
+        if self.no_props:
+            t_props = []
         # ---
         if self.no_gcmsort:
             del params["gcmsort"]
@@ -108,19 +100,41 @@ class CategoryDepth:
         # ---
         # print('gcmtype::', params["gcmtype"])
         # ---
-        for x in self.props:
-            if x not in t_props:
-                t_props.append(x)
+        if not self.no_props:
+            for x in self.props:
+                if x not in t_props:
+                    t_props.append(x)
+            # ---
+            if len(t_props) > 0:
+                params["prop"] = "|".join(t_props)
+            # ---
+            if "categories" in params["prop"]:
+                # params["clprop"] = "hidden"
+                params["cllimit"] = "max"
+            # ---
+            if "revisions" in params["prop"]:
+                params["rvprop"] = "timestamp"
         # ---
-        if len(t_props) > 0:
-            params["prop"] = "|".join(t_props)
+        return params
+
+    def make_params(self):
         # ---
-        if "categories" in params["prop"]:
-            # params["clprop"] = "hidden"
-            params["cllimit"] = "max"
+        params = {
+            "action": "query",
+            "format": "json",
+            "utf8": 1,
+            "generator": "categorymembers",
+            "gcmprop": "title",
+            # "prop": "revisions",
+            "gcmtype": "page|subcat",
+            "gcmlimit": self.gcmlimit,
+            "formatversion": "1",
+            "gcmsort": "timestamp",
+            "gcmdir": "newer",
+            # "rvprop": "timestamp",
+        }
         # ---
-        if "revisions" in params["prop"]:
-            params["rvprop"] = "timestamp"
+        params = self.params_work(params)
         # ---
         self.params = params
 
