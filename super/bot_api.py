@@ -6,6 +6,7 @@ from newapi.page import NEW_API
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
+# all_pages= api_new.Get_All_pages_generator(start="", namespace="0", limit="max", filterredir="", ppprop="", limit_all=100000)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
 # newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
 # usercont = api_new.UserContribs(user, limit=5000, namespace="*", ucshow="")
@@ -72,7 +73,7 @@ class NEW_API:
         self.log = login_def(self.lang, family=self.family)
 
     def Login_to_wiki(self):
-        # ---
+        # ---0
         self.log.log_to_wiki_1()
 
     def handel_err(self, error, function):
@@ -156,7 +157,7 @@ class NEW_API:
                 test_print("post_continue, data is empty. break")
                 break
             # ---
-            test_print(f'post_continue, len:{len(data)}, all: {len(results)}')
+            test_print(f"post_continue, len:{len(data)}, all: {len(results)}")
             # ---
             if Max <= len(results) and len(results) > 1:
                 test_print(f"post_continue, {Max=} <= {len(results)=}. break")
@@ -235,13 +236,14 @@ class NEW_API:
         # ---
         return table
 
-    def Get_All_pages(self, start="", namespace="0", limit="max", apfilterredir="", limit_all=100000):
+    def Get_All_pages(self, start="", namespace="0", limit="max", apfilterredir="", ppprop="", limit_all=100000):
         # ---
         test_print(f"Get_All_pages for start:{start}, limit:{limit},namespace:{namespace},apfilterredir:{apfilterredir}")
         # ---
         params = {
             "action": "query",
             "format": "json",
+            "prop": "pageprops",
             "list": "allpages",
             "apnamespace": namespace,
             "aplimit": limit,
@@ -251,6 +253,9 @@ class NEW_API:
         # ---
         if str(namespace) in ["*", "", "all"]:
             del params["apnamespace"]
+        # ---
+        if ppprop:
+            params["ppprop"] = ppprop
         # ---
         if apfilterredir in ["redirects", "all", "nonredirects"]:
             params["apfilterredir"] = apfilterredir
@@ -267,6 +272,46 @@ class NEW_API:
         test_print(f"len of Main_table {len(Main_table)}.")
         # ---
         printe.output(f"bot_api.py Get_All_pages : find {len(Main_table)} pages.")
+        # ---
+        return Main_table
+
+    def Get_All_pages_generator(self, start="", namespace="0", limit="max", filterredir="", ppprop="", limit_all=100000):
+        # ---
+        test_print(f"Get_All_pages_generator for start:{start}, limit:{limit},namespace:{namespace},filterredir:{filterredir}")
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "pageprops",
+            "generator": "allpages",
+            "gapnamespace": namespace,
+            "gaplimit": limit,
+            "formatversion": 2,
+            # "ppprop": "unlinkedwikibase_id",
+            "utf8": 1,
+        }
+        # ---
+        if str(namespace) in ["*", "", "all"]:
+            del params["gapnamespace"]
+        # ---
+        if ppprop:
+            params["ppprop"] = ppprop
+        # ---
+        if filterredir in ["redirects", "all", "nonredirects"]:
+            params["gapfilterredir"] = filterredir
+        # ---
+        if start:
+            params["gapfrom"] = start
+        # ---
+        newp = self.post_continue(params, "query", _p_="pages", p_empty=[], Max=limit_all)
+        # ---
+        test_print(f"<<lightpurple>> --- Get_All_pages_generator : find {len(newp)} pages.")
+        # ---
+        Main_table = {x["title"]: x for x in newp}
+        # ---
+        test_print(f"len of Main_table {len(Main_table)}.")
+        # ---
+        printe.output(f"bot_api.py Get_All_pages_generator : find {len(Main_table)} pages.")
         # ---
         return Main_table
 
