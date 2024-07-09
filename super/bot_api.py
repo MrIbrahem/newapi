@@ -6,6 +6,7 @@ from newapi.page import NEW_API
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
+# all_pages= api_new.Get_All_pages_generator(start="", namespace="0", limit="max", filterredir="", ppprop="", limit_all=100000)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
 # newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
 # usercont = api_new.UserContribs(user, limit=5000, namespace="*", ucshow="")
@@ -17,6 +18,7 @@ from newapi.page import NEW_API
 # logs     = api_new.get_logs(title)
 # wantedcategories  = api_new.querypage_list(qppage='Wantedcategories|Wantedfiles', qplimit="max", Max=5000)
 # pages  = api_new.Get_template_pages(title, namespace="*", Max=10000)
+# pages_props  = api_new.pageswithprop(pwppropname="unlinkedwikibase_id", Max=None)
 # img_url  = api_new.Get_image_url(title)
 # added    = api_new.Add_To_Bottom(text, summary, title, poss="Head|Bottom")
 
@@ -41,14 +43,17 @@ from datetime import timedelta
 from newapi import printe
 
 import os
+
 file_name = os.path.basename(__file__)
 
 change_codes = {"nb": "no", "bat_smg": "bat-smg", "be_x_old": "be-tarask", "be-x-old": "be-tarask", "cbk_zam": "cbk-zam", "fiu_vro": "fiu-vro", "map_bms": "map-bms", "nds_nl": "nds-nl", "roa_rup": "roa-rup", "zh_classical": "zh-classical", "zh_min_nan": "zh-min-nan", "zh_yue": "zh-yue"}
 yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
-Save_Edit_Pages = { 1: False }
+Save_Edit_Pages = {1: False}
+
 
 def login_def(lang, family):
     return {}
+
 
 def test_print(s):
     if "test_print" in sys.argv:
@@ -68,8 +73,8 @@ class NEW_API:
         self.log = login_def(self.lang, family=self.family)
 
     def Login_to_wiki(self):
-        # ---
-        self.log.Log_to_wiki()
+        # ---0
+        self.log.log_to_wiki_1()
 
     def handel_err(self, error, function):
         # ---
@@ -105,10 +110,13 @@ class NEW_API:
     def post_params(self, params, addtoken=False, files=None):
         return self.log.post(params, addtoken=addtoken, files=files)
 
-    def post_continue(self, params, action, _p_="pages", p_empty=None, Max=50000, first=False, _p_2="", _p_2_empty=None):
+    def post_continue(self, params, action, _p_="pages", p_empty=None, Max=500000, first=False, _p_2="", _p_2_empty=None):
         # ---
         if not isinstance(Max, int) and Max.isdigit():
             Max = int(Max)
+        # ---
+        if Max == 0:
+            Max = 500000
         # ---
         continue_params = {}
         # ---
@@ -149,7 +157,7 @@ class NEW_API:
                 test_print("post_continue, data is empty. break")
                 break
             # ---
-            # test_print(f'post_continue, len:{len(data)}, all: {len(results)}')
+            test_print(f"post_continue, len:{len(data)}, all: {len(results)}")
             # ---
             if Max <= len(results) and len(results) > 1:
                 test_print(f"post_continue, {Max=} <= {len(results)=}. break")
@@ -228,14 +236,26 @@ class NEW_API:
         # ---
         return table
 
-    def Get_All_pages(self, start="", namespace="0", limit="max", apfilterredir="", limit_all=0):
+    def Get_All_pages(self, start="", namespace="0", limit="max", apfilterredir="", ppprop="", limit_all=100000):
         # ---
         test_print(f"Get_All_pages for start:{start}, limit:{limit},namespace:{namespace},apfilterredir:{apfilterredir}")
         # ---
-        params = {"action": "query", "format": "json", "list": "allpages", "apnamespace": namespace, "aplimit": limit, "apfilterredir": "nonredirects", "formatversion": 1}
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "pageprops",
+            "list": "allpages",
+            "apnamespace": namespace,
+            "aplimit": limit,
+            "apfilterredir": "nonredirects",
+            "formatversion": 1,
+        }
         # ---
         if str(namespace) in ["*", "", "all"]:
             del params["apnamespace"]
+        # ---
+        if ppprop:
+            params["ppprop"] = ppprop
         # ---
         if apfilterredir in ["redirects", "all", "nonredirects"]:
             params["apfilterredir"] = apfilterredir
@@ -252,6 +272,46 @@ class NEW_API:
         test_print(f"len of Main_table {len(Main_table)}.")
         # ---
         printe.output(f"bot_api.py Get_All_pages : find {len(Main_table)} pages.")
+        # ---
+        return Main_table
+
+    def Get_All_pages_generator(self, start="", namespace="0", limit="max", filterredir="", ppprop="", limit_all=100000):
+        # ---
+        test_print(f"Get_All_pages_generator for start:{start}, limit:{limit},namespace:{namespace},filterredir:{filterredir}")
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "pageprops",
+            "generator": "allpages",
+            "gapnamespace": namespace,
+            "gaplimit": limit,
+            "formatversion": 2,
+            # "ppprop": "unlinkedwikibase_id",
+            "utf8": 1,
+        }
+        # ---
+        if str(namespace) in ["*", "", "all"]:
+            del params["gapnamespace"]
+        # ---
+        if ppprop:
+            params["ppprop"] = ppprop
+        # ---
+        if filterredir in ["redirects", "all", "nonredirects"]:
+            params["gapfilterredir"] = filterredir
+        # ---
+        if start:
+            params["gapfrom"] = start
+        # ---
+        newp = self.post_continue(params, "query", _p_="pages", p_empty=[], Max=limit_all)
+        # ---
+        test_print(f"<<lightpurple>> --- Get_All_pages_generator : find {len(newp)} pages.")
+        # ---
+        Main_table = {x["title"]: x for x in newp}
+        # ---
+        test_print(f"len of Main_table {len(Main_table)}.")
+        # ---
+        printe.output(f"bot_api.py Get_All_pages_generator : find {len(Main_table)} pages.")
         # ---
         return Main_table
 
@@ -288,7 +348,7 @@ class NEW_API:
         # ---
         return results
 
-    def Get_Newpages(self, limit=5000, namespace="0", rcstart="", user="", three_houers= False):
+    def Get_Newpages(self, limit=5000, namespace="0", rcstart="", user="", three_houers=False):
         # ---
         if three_houers:
             dd = datetime.datetime.utcnow() - timedelta(hours=3)
@@ -371,7 +431,7 @@ class NEW_API:
         # ---
         for i in range(0, len(titles), numbes):
             # ---
-            group = titles[i: i + numbes]
+            group = titles[i : i + numbes]
             # ---
             # test_print(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
             # ---
@@ -380,7 +440,7 @@ class NEW_API:
             json1 = self.post_params(params)
             # ---
             if not json1:
-                printe.output('bot_api.Get_langlinks_for_list json1 is empty')
+                printe.output("bot_api.Get_langlinks_for_list json1 is empty")
                 continue
             # ---
             _error = json1.get("error", {})
@@ -479,7 +539,6 @@ class NEW_API:
 
     def querypage_list(self, qppage="Wantedcategories", qplimit=None, Max=None):
         # ---
-        Max = Max or 5000
         params = {
             "action": "query",
             "format": "json",
@@ -674,22 +733,22 @@ class NEW_API:
     def ask_put(self, nodiff=False, newtext="", text=""):
         yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
         # ---
-        if 'ask' in sys.argv and not Save_Edit_Pages[1]:
+        if "ask" in sys.argv and not Save_Edit_Pages[1]:
             # ---
             if "nodiff" not in sys.argv and not nodiff:
-                if len(newtext) < 70000 and len(text) < 70000 or 'diff' in sys.argv:
+                if len(newtext) < 70000 and len(text) < 70000 or "diff" in sys.argv:
                     printe.showDiff(text, newtext)
                 else:
-                    printe.output('showDiff error..')
-                    printe.output(f'diference in bytes: {len(newtext) - len(text)}')
-                    printe.output(f'length of text: {len(text)}, length of newtext: {len(newtext)}')
+                    printe.output("showDiff error..")
+                    printe.output(f"diference in bytes: {len(newtext) - len(text)}")
+                    printe.output(f"length of text: {len(text)}, length of newtext: {len(newtext)}")
             # ---
-            sa = pywikibot.input('<<lightyellow>>bot_api.py: save (yes, no)?')
+            sa = pywikibot.input("<<lightyellow>>bot_api.py: save (yes, no)?")
             # ---
             if sa == "a":
-                printe.output('<<lightgreen>> ---------------------------------')
-                printe.output(f'<<lightgreen>> {file_name} save all without asking.')
-                printe.output('<<lightgreen>> ---------------------------------')
+                printe.output("<<lightgreen>> ---------------------------------")
+                printe.output(f"<<lightgreen>> {file_name} save all without asking.")
+                printe.output("<<lightgreen>> ---------------------------------")
                 Save_Edit_Pages[1] = True
             # ---
             if sa not in yes_answer:
@@ -737,8 +796,33 @@ class NEW_API:
             return True
         # ---
         if error != {}:
-            er = self.handel_err(error, function='Add_To_Bottom')
+            er = self.handel_err(error, function="Add_To_Bottom")
             # ---
             return er
         # ---
         return True
+
+    def pageswithprop(self, pwppropname="unlinkedwikibase_id", pwplimit=None, Max=None):
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "list": "pageswithprop",
+            "utf8": 1,
+            "formatversion": "2",
+            "pwplimit": "max",
+            "pwppropname": "unlinkedwikibase_id",
+            "pwpprop": "title|value",
+        }
+        # ---
+        if pwplimit and pwplimit.isdigit():
+            params["pwplimit"] = pwplimit
+        # ---
+        if pwppropname != "":
+            params["pwppropname"] = pwppropname
+        # ---
+        results = self.post_continue(params, "query", _p_="pageswithprop", p_empty=[], Max=Max)
+        # ---
+        test_print(f"pageswithprop len(results) = {len(results)}")
+        # ---
+        return results

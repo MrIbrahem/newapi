@@ -28,6 +28,21 @@ ar_lag = {1: 3}
 login_lang = {1: True}
 
 
+def default_user_agent():
+    tool = os.getenv("HOME")
+    if tool:
+        # "/data/project/mdwiki"
+        tool = tool.split("/")[-1]
+    else:
+        tool = "himo"
+    # ---
+    li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
+    # ---
+    printe.output(f"default_user_agent: {li}")
+    # ---
+    return li
+
+
 def test_print(s):
     if "test_print" in sys.argv:
         printe.output(s)
@@ -52,6 +67,7 @@ class Login:
         self.family = family
         self.r3_token = ""
         self.url_o_print = ""
+        self.user_agent = default_user_agent()
 
         User_tables.setdefault(self.family, {"username": "", "password": ""})
         tokens_by_lang.setdefault(self.lang, "")
@@ -115,6 +131,14 @@ class Login:
 
         return {}
 
+    def post_it(self, params, files, timeout):
+        headers = {
+            "User-Agent": self.user_agent,
+        }
+        req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+        data = self.parse_data(req0)
+        return data
+
     def make_response(self, params, files=None, timeout=30):
         """
         Make a POST request to the API endpoint.
@@ -128,13 +152,11 @@ class Login:
 
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
-            data = self.parse_data(req0)
+            data = self.post_it(params, files, timeout)
             return data
 
         try:
-            req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout)
-            data = self.parse_data(req0)
+            data = self.post_it(params, files, timeout)
             return data
 
         except requests.exceptions.ReadTimeout:
