@@ -53,46 +53,39 @@ from newapi.ncc_page import NEW_API
 # revisions= api_new.get_revisions(title)
 
 """
-
-# ---
+import os
 import configparser
 from pathlib import Path
 
-# ---
 from newapi.super import super_login
 from newapi.super import bot_api
 from newapi.super import super_page
 from newapi.super import catdepth_new
 
-# ---
-
 catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "nccommons"
 
-Dir = str(Path(__file__).parents[0])
+dir2 = os.getenv("HOME")
+# print(f"HOME:{dir2}")
 # ---
-dir2 = Dir.replace('\\', '/')
-dir2 = dir2.split('/nccbot/')[0]
-# ---
-if dir2.startswith('I:'):
-    dir2 = 'I:/ncc'
+if not dir2:
+    Dir = str(Path(__file__).parents[0])
+    # ---
+    dir2 = Dir.replace("\\", "/")
+    dir2 = dir2.split("/nccbot/")[0]
+    # ---
+    if dir2.startswith("I:"):
+        dir2 = "I:/ncc"
 # ---
 config = configparser.ConfigParser()
 config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
-# print(f"{dir2}/confs/nccommons_user.ini")
-# ---
-# print(list(config["DEFAULT"].keys()))
-# ---
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
 # ---
-User_tables = {
-    "username": username,
-    "password": password
-}
+User_tables = {"username": username, "password": password}
 # ---
-super_login.User_tables['nccommons'] = User_tables
+super_login.User_tables["nccommons"] = User_tables
 # ---
 Login = super_login.Login
 # ---
@@ -110,7 +103,7 @@ CatDepthLogin = catdepth_new.login_wiki
 
 
 def test():
-    '''
+    """
     page      = MainPage(title, 'www', family='nccommons')
     exists    = page.exists()
     text      = page.get_text()
@@ -122,24 +115,24 @@ def test():
     templates = page.get_templates()
     save_page = page.save(newtext='', summary='', nocreate=1, minor='')
     create    = page.Create(text='', summary='')
-    '''
+    """
     # ---
-    page = MainPage("Bilateral mesial temporal polymicrogyria (Radiopaedia 76456-88181 Axial SWI)", 'www', family='nccommons')
+    page = MainPage("Bilateral mesial temporal polymicrogyria (Radiopaedia 76456-88181 Axial SWI)", "www", family="nccommons")
     # ---
     text = page.get_text()
     print(text)
 
     # ---
-    print('---------------------------')
-    cat_members = CatDepth('Category:Atlasdermatologico', sitecode='www', family="nccommons", ns="all")
-    print('cat_members:')
+    print("---------------------------")
+    cat_members = CatDepth("Category:Atlasdermatologico", sitecode="www", family="nccommons", ns="all")
+    print("cat_members:")
     print(len(cat_members))
     # ---
     # sort cat_members
     cat_members = dict(sorted(cat_members.items()))
     # ---
     for x in cat_members:
-        if not x.startswith('File:'):
+        if not x.startswith("File:"):
             print(x)
     # ---
     # ex = page.page_backlinks()
@@ -156,10 +149,8 @@ def test():
     # save = page.save(newtext='')
 
 
-# ---
-if __name__ == '__main__':
+if __name__ == "__main__":
     # python3 core8/pwb.py newapi/ncc_page
     super_page.print_test[1] = True
     super_login.print_test[1] = True
     test()
-# ---
