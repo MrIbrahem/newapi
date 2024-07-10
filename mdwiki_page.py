@@ -55,7 +55,7 @@ User_tables = {
 # ---
 # xxxxxxxxxxx
 # ---
-
+user_agent = su_login.default_user_agent()
 # ---
 su_login.User_tables["mdwiki"] = User_tables
 # ---

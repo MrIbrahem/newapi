@@ -36,6 +36,8 @@ if "workibrahem" in sys.argv or pyy_file == "himopage.py":
 # ---
 # xxxxxxxxxxx
 # ---
+user_agent = super_login.default_user_agent()
+# ---
 super_login.User_tables["wikipedia"] = User_tables
 super_login.User_tables["wikidata"] = User_tables
 # ---

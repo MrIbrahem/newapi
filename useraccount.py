@@ -9,6 +9,7 @@ if not os.path.isdir(project):
 # ---
 config = configparser.ConfigParser()
 config.read(f"{project}/user.ini")
+
 DEFAULT = config['DEFAULT']
 
 username = config['DEFAULT']['botusername']
@@ -28,6 +29,8 @@ mdwiki_pass = config['DEFAULT']['mdwiki_pass']
 
 qs_token = config['DEFAULT']['qs_token']
 qs_tokenbot = config['DEFAULT']['qs_tokenbot']
+
+user_agent = config['DEFAULT']['user_agent']
 
 if "workibrahem" in sys.argv:
     username = hiacc
