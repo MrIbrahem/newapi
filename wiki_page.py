@@ -46,7 +46,7 @@ if "botuser" in sys.argv:
 # ---
 # xxxxxxxxxxx
 # ---
-
+user_agent = super_login.default_user_agent()
 # ---
 super_login.User_tables["wikipedia"] = User_tables
 # ---

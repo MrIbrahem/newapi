@@ -38,7 +38,7 @@ def default_user_agent():
     # ---
     li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
     # ---
-    printe.output(f"default_user_agent: {li}")
+    # printe.output(f"default_user_agent: {li}")
     # ---
     return li
 
@@ -246,7 +246,7 @@ class Login:
         """
         Filter out unnecessary parameters.
         """
-        if self.family == "wikipedia" and params.get("summary") and self.username.find("bot") == -1:
+        if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
 
         if self.family == "nccommons" and params.get("bot"):

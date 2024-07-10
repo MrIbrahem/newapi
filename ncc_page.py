@@ -82,6 +82,8 @@ config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
+
+user_agent = super_login.default_user_agent()
 # ---
 User_tables = {"username": username, "password": password}
 # ---
