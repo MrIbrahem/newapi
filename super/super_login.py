@@ -135,7 +135,8 @@ class Login:
         headers = {
             "User-Agent": self.user_agent,
         }
-        req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+        # ---
+        req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
         data = self.parse_data(req0)
         return data
 
