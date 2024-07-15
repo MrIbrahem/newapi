@@ -12,11 +12,11 @@ User_tables = {
     "password": f"{useraccount.password}213"
 }
 # ---
-from newapi.super import super_login1
+from newapi.super import super_login
 
-super_login1.User_tables['wikipedia'] = User_tables
+super_login.User_tables['wikipedia'] = User_tables
 # ---
-Login = super_login1.Login
+Login = super_login.Login
 # ---
 bot = Login('en', family='wikipedia')
 login = bot.Log_to_wiki()

@@ -18,7 +18,7 @@ super_login.User_tables['wikipedia'] = User_tables
 # ---
 Login = super_login.Login
 # ---
-bot = Login('axxr', family='wikipedia')
+bot = Login('ar', family='wikipedia')
 login = bot.Log_to_wiki()
 # ---
 params = {

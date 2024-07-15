@@ -9,9 +9,9 @@ from newapi.page import MainPage
 
 # ---
 # page = MainPage("فريدريش تسيمرمان", 'ar')
-page = MainPage("وب:ملعب", 'ar')
+page = MainPage("وب:ملعب", "ar")
 # ---
-'''
+"""
 exists	  = page.exists()
 if not exists: return
 # ---
@@ -39,19 +39,19 @@ flagged     = page.is_flagged()
 timestamp   = page.get_timestamp()
 user	    = page.get_user()
 purge	    = page.purge()
-'''
+"""
 
 # ---
 text = page.get_text()
-# print(xs)
+print(text)
 # ---
-# ex = page.get_wiki_links_from_text()
-# print('---------------------------')
-# print(f'get_wiki_links_from_text:{ex}')
+ex = page.get_wiki_links_from_text()
+print("---------------------------")
+print(f"get_wiki_links_from_text:{ex}")
 # ---
-# hidden_categories= page.get_hidden_categories()
-# print('---------------------------')
-# print(f'hidden_categories:{hidden_categories}')
+hidden_categories = page.get_hidden_categories()
+print("---------------------------")
+print(f"hidden_categories:{hidden_categories}")
 # ---
 newtext = "تجربة!\n" * 5
 # ---

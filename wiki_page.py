@@ -33,16 +33,10 @@ from newapi.super import catdepth_new
 from mdpy.bots import user_account_new
 
 # ---
-User_tables = {
-    "username": user_account_new.my_username,
-    "password": user_account_new.my_password
-}
+User_tables = {"username": user_account_new.my_username, "password": user_account_new.my_password}
 # ---
 if "botuser" in sys.argv:
-    User_tables = {
-        "username": user_account_new.bot_username,
-        "password": user_account_new.bot_password
-    }
+    User_tables = {"username": user_account_new.bot_username, "password": user_account_new.bot_password}
 # ---
 # xxxxxxxxxxx
 # ---
@@ -66,7 +60,7 @@ CatDepthLogin = catdepth_new.login_wiki
 
 
 def test():
-    '''
+    """
     page      = MainPage(title, 'ar', family='wikipedia')
     exists    = page.exists()
     text      = page.get_text()
@@ -78,19 +72,21 @@ def test():
     templates = page.get_templates()
     save_page = page.save(newtext='', summary='', nocreate=1, minor='')
     create    = page.Create(text='', summary='')
-    '''
+    """
     # ---
-    page = MainPage("تصنيف:اليمن", 'ar', family='wikipedia')
+    page = MainPage("تصنيف:اليمن", "ar", family="wikipedia")
     # ---
     text = page.get_text()
     print(text)
     # ---
-    page2 = MainPage("Yemen", 'en', family='wikipedia')
+    page2 = MainPage("Category:Yemen", "en", family="wikipedia")
     # ---
+    text2 = page2.get_text()
+    print(text2)
     # ---
     ex = page.page_backlinks()
-    print('---------------------------')
-    print(f'page_backlinks:{ex}')
+    print("---------------------------")
+    print(f"page_backlinks:{ex}")
 
     # ---
     # hidden_categories= page.get_hidden_categories()
@@ -107,8 +103,7 @@ def test():
     # pages   = api_new.Get_Newpages()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # python3 core8/pwb.py newapi/wiki_page
     super_page.print_test[1] = True
-    super_login.print_test[1] = True
     test()

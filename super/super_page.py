@@ -53,13 +53,15 @@ from newapi import printe
 from newapi import txtlib
 from newapi import botEdit
 from newapi.super.ar_err import find_edit_error
-
+# from newapi.super.super_login import Login
 
 file_name = os.path.basename(__file__)
 
 print_test = {1: False}
 # ---
 Edit_summary_line = {1: " -Edit summary: %s:"}
+# ---
+User_tables = {}
 # ---
 not_loged_m = {1: ""}
 Save_Edit_Pages = {1: False}
@@ -78,6 +80,21 @@ change_codes = {
     "zh_min_nan": "zh-min-nan",
     "zh_yue": "zh-yue",
 }
+
+
+def default_user_agent():
+    tool = os.getenv("HOME")
+    if tool:
+        # "/data/project/mdwiki"
+        tool = tool.split("/")[-1]
+    else:
+        tool = "himo"
+    # ---
+    li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
+    # ---
+    # printe.output(f"default_user_agent: {li}")
+    # ---
+    return li
 
 
 def warn_err(err):
