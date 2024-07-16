@@ -9,20 +9,39 @@ import time
 import sys
 import tqdm
 from newapi import printe
+from newapi.super.super_login import Login
 
 SITECODE = "en"
 FAMILY = "wikipedia"
 
+User_tables = {}
 
-def login_def(lang, family):
-    return {}
+ns_list = {
+    "0": "",
+    "1": "نقاش",
+    "2": "مستخدم",
+    "3": "نقاش المستخدم",
+    "4": "ويكيبيديا",
+    "5": "نقاش ويكيبيديا",
+    "6": "ملف",
+    "7": "نقاش الملف",
+    "10": "قالب",
+    "11": "نقاش القالب",
+    "12": "مساعدة",
+    "13": "نقاش المساعدة",
+    "14": "تصنيف",
+    "15": "نقاش التصنيف",
+    "100": "بوابة",
+    "101": "نقاش البوابة",
+    "828": "وحدة",
+    "829": "نقاش الوحدة",
+}
 
 
-ns_list = {"0": "", "1": "نقاش", "2": "مستخدم", "3": "نقاش المستخدم", "4": "ويكيبيديا", "5": "نقاش ويكيبيديا", "6": "ملف", "7": "نقاش الملف", "10": "قالب", "11": "نقاش القالب", "12": "مساعدة", "13": "نقاش المساعدة", "14": "تصنيف", "15": "نقاش التصنيف", "100": "بوابة", "101": "نقاش البوابة", "828": "وحدة", "829": "نقاش الوحدة"}
-
-
-class CategoryDepth:
+class CategoryDepth(Login):
     def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, props=None, only_titles=False, printtest=False, **kwargs):
+        # ---
+        super().__init__(sitecode, family)
         # ---
         props = [props] if isinstance(props, str) else props
         # ---
@@ -33,8 +52,6 @@ class CategoryDepth:
         self.props = props or []
         self.title = title
         self.no_gcmsort = no_gcmsort
-        # ---
-        self.log = login_def(sitecode, family=family)
         # ---
         self.only_titles = only_titles
         self.onlyns = onlyns
@@ -58,13 +75,15 @@ class CategoryDepth:
         self.params = {}
         self.make_params()
 
-        # return self.subcatquery_(title)
+        if User_tables != {}:
+            for f, tab in User_tables.items():
+                self.add_User_tables(f, tab)
+        # ---
+        self.username = User_tables[self.family]["username"]
+        self.password = User_tables[self.family]["password"]
 
     def Login_to_wiki(self):
-        self.log.Log_to_wiki()
-
-    def post_params(self, params):
-        return self.log.post(params, addtoken=True)
+        self.log_to_wiki_1()
 
     def params_work(self, params):
         t_props = ["revisions"] if not self.no_gcmsort else []
@@ -337,4 +356,4 @@ def login_wiki(sitecode=SITECODE, family=FAMILY):
     # ---
     bot = CategoryDepth("", sitecode=sitecode, family=family)
     # ---
-    bot.log.log_to_wiki_1()
+    bot.log_to_wiki_1()

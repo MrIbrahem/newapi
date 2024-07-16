@@ -36,23 +36,16 @@ if login_done_lang[1] != code:
 """
 # ---
 import sys
-import pywikibot
 import datetime
 from datetime import timedelta
-
 from newapi import printe
+from newapi.super.botapi_bots.bot import BOTS_APIS
+from newapi.super.super_login import Login
+from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
-import os
-
-file_name = os.path.basename(__file__)
+User_tables = {}
 
 change_codes = {"nb": "no", "bat_smg": "bat-smg", "be_x_old": "be-tarask", "be-x-old": "be-tarask", "cbk_zam": "cbk-zam", "fiu_vro": "fiu-vro", "map_bms": "map-bms", "nds_nl": "nds-nl", "roa_rup": "roa-rup", "zh_classical": "zh-classical", "zh_min_nan": "zh-min-nan", "zh_yue": "zh-yue"}
-yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
-Save_Edit_Pages = {1: False}
-
-
-def login_def(lang, family):
-    return {}
 
 
 def test_print(s):
@@ -60,8 +53,10 @@ def test_print(s):
         printe.output(s)
 
 
-class NEW_API:
+class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
     def __init__(self, lang, family="wikipedia"):
+        # ---
+        super().__init__(lang, family)
         # ---
         self.lang = change_codes.get(lang) or lang
         # ---
@@ -70,110 +65,16 @@ class NEW_API:
         self.family = family
         self.endpoint = f"https://{lang}.{family}.org/w/api.php"
         # ---
-        self.log = login_def(self.lang, family=self.family)
+        if User_tables != {}:
+            for f, tab in User_tables.items():
+                self.add_User_tables(f, tab)
+        # ---
+        self.username = User_tables[self.family]["username"]
+        self.password = User_tables[self.family]["password"]
 
     def Login_to_wiki(self):
         # ---
-        # self.log.log_to_wiki_1()
-        self.log.Log_to_wiki()
-
-    def handel_err(self, error, function):
-        # ---
-        # {'error': {'code': 'articleexists', 'info': 'The article you tried to create has been created already.', '*': 'See https://ar.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.'}, 'servedby': 'mw1425'}
-        # ---
-        err_code = error.get("code", "")
-        err_info = error.get("info", "")
-        # ---
-        printe.output(f"<<lightred>>{function} ERROR: <<defaut>>code:{err_code}.")
-        # ---["protectedpage", 'تأخير البوتات 3 ساعات', False]
-        if err_code == "abusefilter-disallowed":
-            # ---
-            # oioioi = {'error': {'code': 'abusefilter-disallowed', 'info': 'This', 'abusefilter': {'id': '169', 'description': 'تأخير البوتات 3 ساعات', 'actions': ['disallow']}, '*': 'See https'}, 'servedby': 'mw1374'}
-            # ---
-            abusefilter = error.get("abusefilter", "")
-            description = abusefilter.get("description", "")
-            printe.output(f"<<lightred>> ** abusefilter-disallowed: {description} ")
-            if description in ["تأخير البوتات 3 ساعات", "تأخير البوتات 3 ساعات- 3 من 3", "تأخير البوتات 3 ساعات- 1 من 3", "تأخير البوتات 3 ساعات- 2 من 3"]:
-                return False
-            return description
-        # ---
-        if err_code == "protectedpage":
-            printe.output("<<lightred>> ** protectedpage. ")
-            # return "protectedpage"
-            return False
-        # ---
-        if err_code == "articleexists":
-            printe.output("<<lightred>> ** article already created. ")
-            return "articleexists"
-        # ---
-        printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}.")
-
-    def post_params(self, params, addtoken=False, files=None):
-        return self.log.post(params, addtoken=addtoken, files=files)
-
-    def post_continue(self, params, action, _p_="pages", p_empty=None, Max=500000, first=False, _p_2="", _p_2_empty=None):
-        # ---
-        if not isinstance(Max, int) and Max.isdigit():
-            Max = int(Max)
-        # ---
-        if Max == 0:
-            Max = 500000
-        # ---
-        continue_params = {}
-        # ---
-        p_empty = p_empty or []
-        _p_2_empty = _p_2_empty or []
-        # ---
-        results = p_empty
-        # ---
-        d = 0
-        # ---
-        while continue_params != {} or d == 0:
-            # ---
-            d += 1
-            # ---
-            if continue_params:
-                # params = {**params, **continue_params}
-                params.update(continue_params)
-            # ---
-            json1 = self.post_params(params)
-            # ---
-            if not json1:
-                test_print("post_continue, json1 is empty. break")
-                break
-            # ---
-            continue_params = json1.get("continue", {})
-            # ---
-            data = json1.get(action, {}).get(_p_, p_empty)
-            # ---
-            if _p_ == "querypage":
-                data = data.get("results", [])
-            elif first:
-                if isinstance(data, list) and len(data) > 0:
-                    data = data[0]
-                    if _p_2:
-                        data = data.get(_p_2, _p_2_empty)
-            # ---
-            if not data:
-                test_print("post_continue, data is empty. break")
-                break
-            # ---
-            test_print(f"post_continue, len:{len(data)}, all: {len(results)}")
-            # ---
-            if Max <= len(results) and len(results) > 1:
-                test_print(f"post_continue, {Max=} <= {len(results)=}. break")
-                break
-            # ---
-            if isinstance(results, list):
-                results.extend(data)
-            else:
-                print(f"{type(results)=}")
-                print(f"{type(data)=}")
-                results = {**results, **data}
-        # ---
-        test_print(f"post_continue, {len(results)=}")
-        # ---
-        return results
+        self.log_to_wiki_1()
 
     def Find_pages_exists_or_not(self, liste, get_redirect=False, noprint=False):
         # ---
@@ -194,7 +95,12 @@ class NEW_API:
             if not noprint:
                 printe.output(f"Find_pages_exists_or_not : {done}/{len(liste)}")
             # ---
-            params = {"action": "query", "titles": "|".join(titles), "prop": "info", "formatversion": 2}
+            params = {
+                "action": "query",
+                "titles": "|".join(titles),
+                "prop": "info",
+                "formatversion": 2,
+            }
             # ---
             json1 = self.post_params(params)
             # ---
@@ -323,7 +229,15 @@ class NEW_API:
         if not srlimit:
             srlimit = "max"
         # ---
-        params = {"action": "query", "format": "json", "list": "search", "srsearch": value, "srnamespace": 0, "srlimit": srlimit, "formatversion": 1}
+        params = {
+            "action": "query",
+            "format": "json",
+            "list": "search",
+            "srsearch": value,
+            "srnamespace": 0,
+            "srlimit": srlimit,
+            "formatversion": 1,
+        }
         # ---
         if ns:
             params["srnamespace"] = ns
@@ -389,7 +303,19 @@ class NEW_API:
 
     def UserContribs(self, user, limit=5000, namespace="*", ucshow=""):
         # ---
-        params = {"action": "query", "format": "json", "list": "usercontribs", "ucdir": "older", "ucnamespace": namespace, "uclimit": "max", "ucuser": user, "utf8": 1, "bot": 1, "ucprop": "title", "formatversion": 1}
+        params = {
+            "action": "query",
+            "format": "json",
+            "list": "usercontribs",
+            "ucdir": "older",
+            "ucnamespace": namespace,
+            "uclimit": "max",
+            "ucuser": user,
+            "utf8": 1,
+            "bot": 1,
+            "ucprop": "title",
+            "formatversion": 1,
+        }
         # ---
         if ucshow:
             params["ucshow"] = ucshow
@@ -473,22 +399,16 @@ class NEW_API:
         # ---
         return table
 
-    def expandtemplates(self, text):
-        # ---
-        params = {"action": "expandtemplates", "format": "json", "text": text, "prop": "wikitext", "formatversion": 2}
-        # ---
-        data = self.post_params(params)
-        # ---
-        if not data:
-            return text
-        # ---
-        newtext = data.get("expandtemplates", {}).get("wikitext") or text
-        # ---
-        return newtext
-
     def get_logs(self, title):
         # ---
-        params = {"action": "query", "format": "json", "list": "logevents", "ledir": "newer", "letitle": title, "formatversion": 2}
+        params = {
+            "action": "query",
+            "format": "json",
+            "list": "logevents",
+            "ledir": "newer",
+            "letitle": title,
+            "formatversion": 2,
+        }
         # ---
         data = self.post_params(params)
         # ---
@@ -499,25 +419,16 @@ class NEW_API:
         # ---
         return logevents
 
-    def Parse_Text(self, line, title):
-        # ---
-        params = {"action": "parse", "prop": "wikitext", "text": line, "title": title, "pst": 1, "contentmodel": "wikitext", "utf8": 1, "formatversion": 2}
-        # ---
-        # {"parse": {"title": "كريس فروم", "pageid": 2639244, "wikitext": "{{subst:user:Mr._Ibrahem/line2|Q76|P31}}", "psttext": "\"Q76\":{\n\"P31\":\"إنسان\"\n\n\n\n\n},"}}
-        # ---
-        data = self.post_params(params)
-        # ---
-        if not data:
-            return ""
-        # ---
-        textnew = data.get("parse", {}).get("psttext", "")
-        # ---
-        textnew = textnew.replace("\\n\\n", "")
-        # ---
-        return textnew
-
     def get_extlinks(self, title):
-        params = {"action": "query", "format": "json", "prop": "extlinks", "titles": title, "utf8": 1, "ellimit": "max", "formatversion": 2}
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "extlinks",
+            "titles": title,
+            "utf8": 1,
+            "ellimit": "max",
+            "formatversion": 2,
+        }
         # ---
         results = self.post_continue(params, "query", "pages", [], first=True, _p_2="extlinks", _p_2_empty=[])
         # ---
@@ -527,7 +438,17 @@ class NEW_API:
 
     def get_revisions(self, title, rvprop="comment|timestamp|user|content|ids", options=None):
         # ---
-        params = {"action": "query", "format": "json", "prop": "revisions", "titles": title, "utf8": 1, "rvprop": "comment|timestamp|user|content|ids", "rvdir": "newer", "rvlimit": "max", "formatversion": 2}
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "revisions",
+            "titles": title,
+            "utf8": 1,
+            "rvprop": "comment|timestamp|user|content|ids",
+            "rvdir": "newer",
+            "rvlimit": "max",
+            "formatversion": 2,
+        }
         # ---
         params["rvprop"] = rvprop or "comment|timestamp|user|content|ids"
         # ---
@@ -604,85 +525,6 @@ class NEW_API:
         # ---
         return results
 
-    def move(self, old_title, to, reason="", noredirect=False, movesubpages=False):
-        # ---
-        printe.output(f"<<lightyellow>> def move [[{old_title}]] to [[{to}]] ")
-        # ---
-        params = {"action": "move", "format": "json", "from": old_title, "to": to, "movetalk": 1, "formatversion": 2}
-        # ---
-        if noredirect:
-            params["noredirect"] = 1
-        if movesubpages:
-            params["movesubpages"] = 1
-        # ---
-        if reason:
-            params["reason"] = reason
-        # ---
-        if old_title == to:
-            test_print(f"<<lightred>>** old_title == to {to} ")
-            return False
-        # ---
-        if not self.save_move and "ask" in sys.argv:
-            sa = pywikibot.input(f"<<lightyellow>>bot_api: Do you move page:[[{old_title}]] to [[{to}]]? ([y]es, [N]o, [a]ll)?")
-            # ---
-            if sa == "a":
-                printe.output("<<lightgreen>> ---------------------------------")
-                printe.output("<<lightgreen>> bot_api.py move all without asking.")
-                printe.output("<<lightgreen>> ---------------------------------")
-                self.save_move = True
-            # ---
-            if sa not in yes_answer:
-                printe.output("<<red>> bot_api: wrong answer")
-                return False
-            # ---
-            test_print(f"<<lightgreen>> answer: {sa in yes_answer}")
-        # ---
-        data = self.post_params(params)
-        # { "move": { "from": "d", "to": "d2", "reason": "wrong", "redirectcreated": true, "moveoverredirect": false } }
-        # ---
-        if not data:
-            printe.output("no data")
-            return ""
-        # ---
-        _expend_data = {
-            "move": {
-                "from": "User:Mr. Ibrahem",
-                "to": "User:Mr. Ibrahem/x",
-                "reason": "wrong title",
-                "redirectcreated": True,
-                "moveoverredirect": False,
-                "talkmove-errors": [{"message": "content-not-allowed-here", "params": ["Structured Discussions board", "User talk:Mr. Ibrahem/x", "main"], "code": "contentnotallowedhere", "type": "error"}, {"message": "flow-error-allowcreation-flow-create-board", "params": [], "code": "flow-error-allowcreation-flow-create-board", "type": "error"}],
-                "subpages": {"errors": [{"message": "cant-move-subpages", "params": [], "code": "cant-move-subpages", "type": "error"}]},
-                "subpages-talk": {"errors": [{"message": "cant-move-subpages", "params": [], "code": "cant-move-subpages", "type": "error"}]},
-            }
-        }
-        # ---
-        move_done = data.get("move", {})
-        error = data.get("error", {})
-        error_code = error.get("code", "")  # missingtitle
-        # ---
-        # elif "Please choose another name." in r4:
-        # ---
-        if move_done:
-            printe.output("<<lightgreen>>** true.")
-            return True
-        # ---
-        if error:
-            if error_code == "ratelimited":
-                printe.output("<<red>> move ratelimited:")
-                return self.move(old_title, to, reason=reason, noredirect=noredirect, movesubpages=movesubpages)
-
-            if error_code == "articleexists":
-                printe.output("<<red>> articleexists")
-                return "articleexists"
-
-            printe.output("<<red>> error")
-            printe.output(error)
-
-            return False
-        # ---
-        return False
-
     def Get_template_pages(self, title, namespace="*", Max=10000):
         # ---
         test_print(f'Get_template_pages for template:"{title}", limit:"{Max}",namespace:"{namespace}"')
@@ -713,7 +555,14 @@ class NEW_API:
         # ---
         test_print(f'Get_image_url for file:"{title}":')
         # ---
-        params = {"action": "query", "format": "json", "prop": "imageinfo", "titles": title, "iiprop": "url", "formatversion": "2"}
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "imageinfo",
+            "titles": title,
+            "iiprop": "url",
+            "formatversion": "2",
+        }
         # ---
         results = self.post_params(params)
         # ---
@@ -730,78 +579,6 @@ class NEW_API:
         printe.output(f"Get_image_url: image url: {url}")
         # ---
         return url
-
-    def ask_put(self, nodiff=False, newtext="", text=""):
-        yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
-        # ---
-        if "ask" in sys.argv and not Save_Edit_Pages[1]:
-            # ---
-            if "nodiff" not in sys.argv and not nodiff:
-                if len(newtext) < 70000 and len(text) < 70000 or "diff" in sys.argv:
-                    printe.showDiff(text, newtext)
-                else:
-                    printe.output("showDiff error..")
-                    printe.output(f"diference in bytes: {len(newtext) - len(text)}")
-                    printe.output(f"length of text: {len(text)}, length of newtext: {len(newtext)}")
-            # ---
-            sa = pywikibot.input("<<lightyellow>>bot_api.py: save (yes, no)?")
-            # ---
-            if sa == "a":
-                printe.output("<<lightgreen>> ---------------------------------")
-                printe.output(f"<<lightgreen>> {file_name} save all without asking.")
-                printe.output("<<lightgreen>> ---------------------------------")
-                Save_Edit_Pages[1] = True
-            # ---
-            if sa not in yes_answer:
-                printe.output("wrong answer")
-                return False
-        # ---
-        return True
-
-    def Add_To_Bottom(self, text, summary, title, poss="Head|Bottom"):
-        # ---
-        if not title.strip():
-            printe.output('** Add_To_Bottom2 ..  title == ""')
-            return False
-        # ---
-        if not text.strip():
-            printe.output('** Add_To_Bottom2 ..  text == ""')
-            return False
-        # ---
-        test_print(f"** Add_To_Bottom2 .. [[{title}]] ")
-        # printe.showDiff("", text)
-        # ---
-        ask = self.ask_put(newtext=text, text="")
-        # ---
-        if ask is False:
-            return False
-        # ---
-        params = {"action": "edit", "format": "json", "title": title, "summary": summary, "notminor": 1, "nocreate": 1, "utf8": 1}
-        # ---
-        if poss == "Head":
-            params["prependtext"] = f"{text.strip()}\n"
-        else:
-            params["appendtext"] = f"\n{text.strip()}"
-        # ---
-        results = self.post_params(params)
-        # ---
-        if not results:
-            return ""
-        # ---
-        error = results.get("error", {})
-        data = results.get("edit", {})
-        result = data.get("result", "")
-        # ---
-        if result == "Success":
-            printe.output("<<lightgreen>>** true.")
-            return True
-        # ---
-        if error != {}:
-            er = self.handel_err(error, function="Add_To_Bottom")
-            # ---
-            return er
-        # ---
-        return True
 
     def pageswithprop(self, pwppropname="unlinkedwikibase_id", pwplimit=None, Max=None):
         # ---

@@ -63,23 +63,26 @@ class Login:
     """
 
     def __init__(self, lang, family="wikipedia"):
-        print("class Login:")
+        print(f"class Login:{lang=}")
         self.lang = lang
         self.family = family
         self.r3_token = ""
         self.url_o_print = ""
         self.user_agent = default_user_agent()
 
-        User_tables.setdefault(self.family, {"username": "", "password": ""})
+        # User_tables.setdefault(self.family, {"username": "", "password": ""})
         tokens_by_lang.setdefault(self.lang, "")
         seasons_by_lang.setdefault(self.lang, requests.Session())
 
-        self.username = User_tables[self.family]["username"]
-        self.password = User_tables[self.family]["password"]
+        self.username = ""  # User_tables[self.family]["username"]
+        self.password = ""  # User_tables[self.family]["password"]
 
-        self.Bot_or_himo = 1 if "bot" not in self.username else ""
+        self.Bot_or_himo = ""  # 1 if "bot" not in self.username else ""
 
         self.endpoint = f"https://{self.lang}.{self.family}.org/w/api.php"
+
+    def add_User_tables(self, family, table):
+        User_tables[family] = table
 
     def Log_to_wiki(self):
         """
@@ -184,7 +187,7 @@ class Login:
 
         color = colors.get(self.lang, "")
 
-        # printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
+        printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
 
         r2_params = {
             "format": "json",
@@ -266,6 +269,9 @@ class Login:
         return params
 
     def post(self, params, Type="get", addtoken=False, CSRF=True, files=None):
+        return self.post_params(params, Type=Type, addtoken=addtoken, CSRF=CSRF, files=files)
+
+    def post_params(self, params, Type="get", addtoken=False, CSRF=True, files=None):
         """
         Make a POST request to the API endpoint with authentication token.
         """
@@ -310,7 +316,7 @@ class Login:
                 pywikibot.output(f'<<red>> ** error "Invalid CSRF token.".\n{self.r3_token} ')
                 self.r3_token = ""
                 self.log_to_wiki_1()
-                return self.post(params, Type=Type, addtoken=addtoken, CSRF=False)
+                return self.post_params(params, Type=Type, addtoken=addtoken, CSRF=False)
 
         if "printdata" in sys.argv:
             printe.output(data)

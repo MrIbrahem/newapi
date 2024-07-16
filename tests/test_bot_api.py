@@ -1,5 +1,6 @@
 """
 
+python3 core8/pwb.py newapi/tests/test_bot_api test:12
 python3 core8/pwb.py newapi/tests/test_bot_api test:4
 python3 core8/pwb.py newapi/tests/test_bot_api test:44
 python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
@@ -7,6 +8,7 @@ python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
 """
 import sys
 import time
+sys.argv.append("ask")
 
 from newapi.page import NEW_API
 
@@ -113,7 +115,8 @@ class testmybot:
 
     def test8(self):
         """get_extlinks"""
-        ex = self.api_new.get_extlinks("اليمن")
+        api_new = NEW_API("ar", family="wikipedia")
+        ex = api_new.get_extlinks("اليمن")
         return ex
 
     def test9(self):
@@ -123,15 +126,40 @@ class testmybot:
 
     def test10(self):
         """Get_template_pages"""
-        self.api_new = NEW_API("ar", family="wikipedia")
-        ex = self.api_new.Get_template_pages("قالب:طواف العالم للدراجات", namespace="*", Max=10000)
+        api_new = NEW_API("ar", family="wikipedia")
+        ex = api_new.Get_template_pages("قالب:طواف العالم للدراجات", namespace="*", Max=10000)
         return ex
+
+    def test11(self):
+        """move"""
+        api_new = NEW_API("ar", family="wikipedia")
+        move_it = api_new.move("الصفحة_الرئيسة", "الصفحة_الرئيسة2", reason="test!", noredirect=False, movesubpages=False)
+        return move_it
+
+    def test12(self):
+        """Add_To_Bottom"""
+        api_new = NEW_API("ar", family="wikipedia")
+        move_it = api_new.Add_To_Bottom("x", "x", "الصفحة_الرئيسة")
+        return move_it
 
     def start(self):
         # ---
         defs1 = {}
         # ---
-        defs = {1: self.test1, 2: self.test2, 3: self.test3, 4: self.test4, 5: self.test5, 6: self.test6, 7: self.test7, 8: self.test8, 9: self.test9, 10: self.test10}
+        defs = {
+            1: self.test1,
+            2: self.test2,
+            3: self.test3,
+            4: self.test4,
+            5: self.test5,
+            6: self.test6,
+            7: self.test7,
+            8: self.test8,
+            9: self.test9,
+            10: self.test10,
+            11: self.test11,
+            12: self.test12,
+        }
         # ---
         for arg in sys.argv:
             arg, _, value = arg.partition(":")
@@ -180,7 +208,9 @@ class testmybot:
                 else:
                     printe.output(result)
             # ---
-            printe.output(f"{len(result)=}")
+            if result:
+                printe.output(f"{len(result)=}")
+            # ---
             printe.output("=====================")
             printe.output(f"<<lightyellow>> test: {def_name} end...")
             printe.output("time.sleep(1)")

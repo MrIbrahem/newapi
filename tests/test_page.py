@@ -8,8 +8,8 @@ python3 core8/pwb.py newapi/tests/test_page
 from newapi.page import MainPage
 
 # ---
-# page = MainPage("فريدريش تسيمرمان", 'ar')
-page = MainPage("وب:ملعب", "ar")
+page = MainPage("فريدريش تسيمرمان", 'ar')
+# page = MainPage("وب:ملعب", "ar")
 # ---
 """
 exists	  = page.exists()
@@ -43,16 +43,22 @@ purge	    = page.purge()
 
 # ---
 text = page.get_text()
-print(text)
+print("---------------------------")
+print(f"text:{len(text)=}")
 # ---
 ex = page.get_wiki_links_from_text()
 print("---------------------------")
-print(f"get_wiki_links_from_text:{ex}")
+print(f"get_wiki_links_from_text:{len(ex)=}")
 # ---
 hidden_categories = page.get_hidden_categories()
 print("---------------------------")
-print(f"hidden_categories:{hidden_categories}")
+print(f"hidden_categories:{len(hidden_categories)=}")
 # ---
+backlinks = page.page_backlinks()
+print("---------------------------")
+print(f"backlinks:{len(backlinks)=}")
+# ---
+
 newtext = "تجربة!\n" * 5
 # ---
 save = page.save(newtext=newtext)
