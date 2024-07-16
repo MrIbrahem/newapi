@@ -81,6 +81,12 @@ class Login:
 
         self.endpoint = f"https://{self.lang}.{self.family}.org/w/api.php"
 
+    def add_User_tables(self, family, table):
+        if self.family == family:
+            User_tables[family] = table
+            self.username = User_tables[self.family]["username"]
+            self.password = User_tables[self.family]["password"]
+
     def Log_to_wiki(self):
         """
         Log in to the wiki.
