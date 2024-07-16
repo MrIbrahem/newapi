@@ -73,8 +73,9 @@ class NEW_API:
         self.log = login_def(self.lang, family=self.family)
 
     def Login_to_wiki(self):
-        # ---0
-        self.log.log_to_wiki_1()
+        # ---
+        # self.log.log_to_wiki_1()
+        self.log.Log_to_wiki()
 
     def handel_err(self, error, function):
         # ---

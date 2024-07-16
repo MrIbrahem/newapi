@@ -48,10 +48,7 @@ catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "mdwiki"
 
 # ---
-User_tables = {
-    "username": user_account_new.my_username,
-    "password": user_account_new.mdwiki_pass
-}
+User_tables = {"username": user_account_new.my_username, "password": user_account_new.mdwiki_pass}
 # ---
 # xxxxxxxxxxx
 # ---
@@ -75,7 +72,7 @@ CatDepthLogin = catdepth_new.login_wiki
 
 
 def test():
-    '''
+    """
     page      = MainPage(title, 'www', family='mdwiki')
     exists    = page.exists()
     text      = page.get_text()
@@ -87,9 +84,9 @@ def test():
     templates = page.get_templates()
     save_page = page.save(newtext='', summary='', nocreate=1, minor='')
     create    = page.Create(text='', summary='')
-    '''
+    """
     # ---
-    page = MainPage("User:Mr. Ibrahem/sandbox", 'www', family='mdwiki')
+    page = MainPage("User:Mr. Ibrahem/sandbox", "www", family="mdwiki")
     # ---
     text = page.get_text()
     print(text)
@@ -106,14 +103,14 @@ def test():
     # print(f'page_links:{red}')
     # ---
     # save = page.save(newtext=text + "\n{}")
-    api_new = NEW_API('www', family='mdwiki')
+    api_new = NEW_API("www", family="mdwiki")
     # login   = api_new.Login_to_wiki()
     # pages   = api_new.Find_pages_exists_or_not(liste)
     pages = api_new.Get_Newpages(limit=5000)
 
 
 # ---
-if __name__ == '__main__':
+if __name__ == "__main__":
     # python3 core8/pwb.py newapi/mdwiki_page
     su_page.print_test[1] = True
     su_login.print_test[1] = True

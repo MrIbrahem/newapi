@@ -4,7 +4,7 @@
 # ---
 # bot   = Login(lang, family="wikipedia")
 # login = bot.Log_to_wiki()
-# json1 = bot.post(params, Type="post", addtoken=False)
+# json1 = bot.post_params(params, Type="post", addtoken=False, files=None)
 # ---
 import os
 import inspect
@@ -63,6 +63,7 @@ class Login:
     """
 
     def __init__(self, lang, family="wikipedia"):
+        print("class Login:")
         self.lang = lang
         self.family = family
         self.r3_token = ""
@@ -135,7 +136,8 @@ class Login:
         headers = {
             "User-Agent": self.user_agent,
         }
-        req0 = seasons_by_lang[self.lang].post(self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+        # ---
+        req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
         data = self.parse_data(req0)
         return data
 

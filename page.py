@@ -19,17 +19,14 @@ from newapi.super import catdepth_new
 from newapi.super import super_login
 
 # ---
-User_tables = {
-    "username": useraccount.username,
-    "password": useraccount.password
-}
+User_tables = {"username": useraccount.username, "password": useraccount.password}
 # ---
-pyy_file = __file__.replace('\\', '/').split("/")[-1]
+pyy_file = __file__.replace("\\", "/").split("/")[-1]
 # ---
 if "workibrahem" in sys.argv or pyy_file == "himopage.py":
-    User_tables['username'] = useraccount.hiacc
-    User_tables['password'] = useraccount.hipass
-    super_page.Edit_summary_line[1] = ' -Edit summary: %s: (will be removed)'
+    User_tables["username"] = useraccount.hiacc
+    User_tables["password"] = useraccount.hipass
+    super_page.Edit_summary_line[1] = " -Edit summary: %s: (will be removed)"
     # ---
     print(f"{pyy_file} use Mr. Ibrahem account.")
     # ---
@@ -57,7 +54,7 @@ CatDepthLogin = catdepth_new.login_wiki
 
 
 def test():
-    '''
+    """
     page      = MainPage(title, 'ar', family='wikipedia')
     exists    = page.exists()
     text      = page.get_text()
@@ -69,9 +66,9 @@ def test():
     templates = page.get_templates()
     save_page = page.save(newtext='', summary='', nocreate=1, minor='')
     create    = page.Create(text='', summary='')
-    '''
+    """
     # ---
-    page = MainPage("تصنيف:اليمن", 'ar', family='wikipedia')
+    page = MainPage("تصنيف:اليمن", "ar", family="wikipedia")
     # ---
     text = page.get_text()
     print(text)
@@ -85,7 +82,7 @@ def test():
     # print('---------------------------')
     # print(f'hidden_categories:{hidden_categories}')
     # ---
-    cat_members = CatDepth("Association football players by nationality", sitecode='en', family="wikipedia", depth=0, ns="14")
+    cat_members = CatDepth("Association football players by nationality", sitecode="en", family="wikipedia", depth=0, ns="14")
     # ---
     # print(cat_members)
     for cat in cat_members:
@@ -98,7 +95,7 @@ def test():
 
 
 # ---
-if __name__ == '__main__':
+if __name__ == "__main__":
     # python3 core8/pwb.py newapi/page
     super_page.print_test[1] = True
     super_login.print_test[1] = True
