@@ -241,6 +241,9 @@ class LOGIN_HELPS:
         if not session:
             self.make_new_session()
         # ---
+        if not self.username_in:
+            return {}
+        # ---
         req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
         # ---
         if not req0:
