@@ -8,6 +8,8 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 from pathlib import Path
 from newapi import printe
 
+# from ratelimiter import RateLimiter
+# limiter = RateLimiter(max_calls=1, period=1)
 # ---
 tocken_dir = Path(__file__).parent / "r3_tokens"
 # ---
@@ -34,8 +36,11 @@ def dump_r3_token(lang, family, username, r3_token):
     # ---
     file = get_file_name(lang, family, username)
     # ---
-    with open(file, "w") as f:
-        f.write(r3_token)
+    try:
+        with open(file, "w") as f:
+            f.write(r3_token)
+    except Exception as e:
+        printe.output(e)
     # ---
     return ""
 
