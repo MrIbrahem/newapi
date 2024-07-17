@@ -145,7 +145,8 @@ class LOGIN_HELPS:
         # ---
 
         # ---
-        return self.get_r3token()
+        # return self.get_r3token()
+        return True
 
     def get_r3token(self):
         r3_token = get_r3_token(self.lang, self.family, self.username)
