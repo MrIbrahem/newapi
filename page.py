@@ -1,56 +1,74 @@
-r"""
+"""
+Usage:
 
 from newapi.page import CatDepth, CatDepthLogin
 # CatDepthLogin(sitecode="en", family="wikipedia")
 # cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[])
 
-match long ref:
-    <ref[^>]*>[^<>]+<\/ref>
-
-short ref:
-    <ref[^>/]*\s*/\s*>
+from newapi.wiki_page import MainPage, NEW_API
+# api_new = NEW_API('en', family='wikipedia')
+# login    = api_new.Login_to_wiki()
+# move_it  = api_new.move(old_title, to, reason="", noredirect=False, movesubpages=False)
+# pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
+# json1    = api_new.post_params(params, addtoken=False)
+# pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
+# search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
+# newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
+# usercont = api_new.UserContribs(user, limit=5000, namespace="*", ucshow="")
+# l_links  = api_new.Get_langlinks_for_list(titles, targtsitecode="", numbes=50)
+# text_w   = api_new.expandtemplates(text)
+# subst    = api_new.Parse_Text('{{subst:page_name}}', title)
+# extlinks = api_new.get_extlinks(title)
+# revisions= api_new.get_revisions(title)
+# logs     = api_new.get_logs(title)
+# wantedcats  = api_new.querypage_list(qppage='Wantedcategories', qplimit="max", Max=5000)
+# pages  = api_new.Get_template_pages(title, namespace="*", Max=10000)
 """
 # ---
+import os
 import sys
-from newapi import useraccount
-from newapi.super import super_page
 from newapi.super import bot_api
+from newapi.super import super_page
 from newapi.super import catdepth_new
-from newapi.super import super_login
+
+from newapi import useraccount
 
 # ---
-User_tables = {"username": useraccount.username, "password": useraccount.password}
+tool = os.getenv("HOME")
+if tool:
+    tool = tool.split("/")[-1]
 # ---
 pyy_file = __file__.replace("\\", "/").split("/")[-1]
 # ---
-if "workibrahem" in sys.argv or pyy_file == "himopage.py":
-    User_tables["username"] = useraccount.hiacc
-    User_tables["password"] = useraccount.hipass
+User_tables = {
+    "username": useraccount.username,
+    "password": useraccount.password,
+}
+# ---
+if "workibrahem" in sys.argv:
+    User_tables = {
+        "username": useraccount.hiacc,
+        "password": useraccount.hipass,
+    }
     super_page.Edit_summary_line[1] = " -Edit summary: %s: (will be removed)"
     # ---
-    print(f"{pyy_file} use Mr. Ibrahem account.")
-    # ---
+    print(f"{pyy_file} use {User_tables['username']} account.")
 # ---
-# xxxxxxxxxxx
+user_agent = super_page.default_user_agent()
 # ---
-user_agent = super_login.default_user_agent()
+super_page.User_tables["wikipedia"] = User_tables
+bot_api.User_tables["wikipedia"] = User_tables
+catdepth_new.User_tables["wikipedia"] = User_tables
 # ---
-super_login.User_tables["wikipedia"] = User_tables
-super_login.User_tables["wikidata"] = User_tables
-# ---
-Login = super_login.Login
-# ---
-bot_api.login_def = Login
-super_page.login_def = Login
-catdepth_new.login_def = Login
+super_page.User_tables["wikidata"] = User_tables
+bot_api.User_tables["wikidata"] = User_tables
+catdepth_new.User_tables["wikidata"] = User_tables
 # ---
 NEW_API = bot_api.NEW_API
 MainPage = super_page.MainPage
 change_codes = super_page.change_codes
 CatDepth = catdepth_new.subcatquery
 CatDepthLogin = catdepth_new.login_wiki
-# ---
-# xxxxxxxxxxx
 
 
 def test():
@@ -71,12 +89,22 @@ def test():
     page = MainPage("تصنيف:اليمن", "ar", family="wikipedia")
     # ---
     text = page.get_text()
-    print(text)
+    print(f"{len(text)=}")
 
     # ---
     # ex = page.page_backlinks()
     # print('---------------------------')
     # print(f'page_backlinks:{ex}')
+    page2 = MainPage("Category:Yemen", "en", family="wikipedia")
+    # ---
+    text2 = page2.get_text()
+    print(f"{len(text2)=}")
+    # ---
+    page_backlinks = page.page_backlinks()
+    print("---------------------------")
+    print(f"{len(page_backlinks)=}")
+
+    # ---
     # ---
     # hidden_categories= page.get_hidden_categories()
     # print('---------------------------')
@@ -84,20 +112,19 @@ def test():
     # ---
     cat_members = CatDepth("Association football players by nationality", sitecode="en", family="wikipedia", depth=0, ns="14")
     # ---
-    # print(cat_members)
-    for cat in cat_members:
-        print(f"'{cat}':'[[{cat}]],")
+    print(f"{len(cat_members)=}")
     # ---
-    # red = page.page_links()
-    # print(f'page_links:{red}')
+    red = page.page_links()
+    print(f"{len(red)=}")
     # ---
     # save = page.save(newtext='')
+    # api_new = NEW_API('en', family='wikipedia')
+    # login   = api_new.Login_to_wiki()
+    # pages   = api_new.Find_pages_exists_or_not(liste)
+    # pages   = api_new.Get_Newpages()
 
 
-# ---
 if __name__ == "__main__":
     # python3 core8/pwb.py newapi/page
-    super_page.print_test[1] = True
-    super_login.print_test[1] = True
+    # super_page.print_test[1] = True
     test()
-# ---

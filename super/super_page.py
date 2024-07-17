@@ -44,16 +44,19 @@ purge       = page.purge()
 
 """
 import os
+import pywikibot
 import inspect
 from warnings import warn
-import pywikibot
 import sys
 import wikitextparser as wtp
 from newapi import printe
 from newapi import txtlib
 from newapi import botEdit
-from newapi.super.ar_err import find_edit_error
-# from newapi.super.super_login import Login
+
+from newapi.super.page_bots.ar_err import find_edit_error
+from newapi.super.page_bots.bot import APIS
+from newapi.super.super_login import Login
+from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 file_name = os.path.basename(__file__)
 
@@ -103,12 +106,12 @@ def warn_err(err):
     return f"\ndef {nn}(): {err}"
 
 
-def login_def(lang, family):
-    return {}
-
-
-class MainPage:
+class MainPage(Login, APIS, HANDEL_ERRORS):
     def __init__(self, title, lang, family="wikipedia"):
+        print(f"class MainPage: {lang=}")
+        # ---
+        super().__init__(lang, family)
+        # ---
         self.title = title
         # ---
         self.lang = change_codes.get(lang) or lang
@@ -117,7 +120,6 @@ class MainPage:
         self.endpoint = f"https://{lang}.{family}.org/w/api.php"
         # ---
         self.userinfo = {}
-        self.username = ""
         self.Exists = ""
         self.is_redirect = ""
         self.is_Disambig = False
@@ -158,21 +160,84 @@ class MainPage:
         self.ns = False
         self.newtext = ""
         # ---
-        self.log = login_def(self.lang, family=self.family)
+        if User_tables != {}:
+            for f, tab in User_tables.items():
+                self.add_User_tables(f, tab)
+        # ---
+        self.username = User_tables[self.family]["username"]
+        self.password = User_tables[self.family]["password"]
+
+        self.Bot_or_himo = 1 if "bot" not in self.username else ""
         # ---
         if self.lang not in ["", not_loged_m[1]]:
             # ---
-            self.log.Log_to_wiki()
+            self.Log_to_wiki()
             # ---
             not_loged_m[1] = self.lang
-            # ---
-            self.username = self.log.username
 
-    def post_params(self, params, addtoken=False, files=None):
-        return self.log.post(params, addtoken=addtoken, files=files)
+    def ask_put(self, nodiff=False, ASK=False):
+        yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
+        # ---
+        if "ask" in sys.argv and not Save_Edit_Pages[1] or print_test[1] or ASK:
+            # ---
+            if "nodiff" not in sys.argv and not nodiff:
+                if len(self.newtext) < 70000 and len(self.text) < 70000 or "diff" in sys.argv:
+                    printe.showDiff(self.text, self.newtext)
+                else:
+                    printe.output("showDiff error..")
+            # ---
+            printe.output(f"diference in bytes: {len(self.newtext) - len(self.text):,}")
+            printe.output(f"len of text: {len(self.text):,}, len of newtext: {len(self.newtext):,}")
+            # ---
+            printe.output(Edit_summary_line[1] % self.summary)
+            # ---
+            sa = pywikibot.input(f"<<lightyellow>>page.py: Do you want to accept these changes? (yes, no): for page {self.lang}:{self.title} user:{self.username}")
+            # ---
+            if sa == "a":
+                printe.output("<<lightgreen>> ---------------------------------")
+                printe.output(f"<<lightgreen>> {file_name} save all without asking.")
+                printe.output("<<lightgreen>> ---------------------------------")
+                Save_Edit_Pages[1] = True
+            # ---
+            if sa not in yes_answer:
+                printe.output("wrong answer")
+                return False
+        # ---
+        return True
+
+    def false_edit(self):
+        # self.newtext
+        # self.text
+        # ---
+        if self.ns != 0 or "nofa" in sys.argv:
+            return False
+        # ---
+        if not self.text:
+            self.text = self.get_text()
+        # ---
+        # If the new edit will remove 90% of the text, return False
+        if len(self.newtext) < 0.1 * len(self.text):
+            pywikibot.output("<<lightred>> Traceback (most recent call last):")
+            pywikibot.output(f"Edit will remove 90% of the text. {len(self.newtext)} < 0.1 * {len(self.text)}")
+            pywikibot.output(f"title: {self.title}, summary: {self.summary}")
+            pywikibot.output("CRITICAL:")
+            return True
+        # ---
+        if self.lang == "ar" and self.ns == 0:
+            if find_edit_error(self.text, self.newtext):
+                return True
+        # ---
+        return False
 
     def get_text(self, redirects=False):
-        params = {"action": "query", "prop": "revisions|pageprops|flagged", "titles": self.title, "ppprop": "wikibase_item", "rvprop": "timestamp|content|user|ids", "rvslots": "*"}  # pageprops  # revisions  # revisions
+        params = {
+            "action": "query",
+            "prop": "revisions|pageprops|flagged",
+            "titles": self.title,
+            "ppprop": "wikibase_item",
+            "rvprop": "timestamp|content|user|ids",
+            "rvslots": "*",
+        }  # pageprops  # revisions  # revisions
         # ---
         if redirects:
             params["redirects"] = 1
@@ -286,92 +351,13 @@ class MainPage:
         # ---
         self.info["done"] = True
 
-    def post_continue(self, params, action, _p_, p_empty, Max=50000):
-        # ---
-        if not isinstance(Max, int) and Max.isdigit():
-            Max = int(Max)
-        # ---
-        results = p_empty
-        # ---
-        continue_params = {}
-        # ---
-        d = 0
-        # ---
-        while continue_params != {} or d == 0:
-            # ---
-            d += 1
-            # ---
-            if continue_params:
-                # params = {**params, **continue_params}
-                params.update(continue_params)
-            # ---
-            json1 = self.post_params(params)
-            # ---
-            if not json1:
-                break
-            # ---
-            continue_params = json1.get("continue", {})
-            # ---
-            data = json1.get(action, {}).get(_p_, p_empty)
-            # ---
-            if not data:
-                break
-            # ---
-            # printe.output(f'post_continue, len:{len(data)}, all: {len(results)}')
-            # ---
-            if Max <= len(results) and len(results) > 1:
-                break
-            # ---
-            if isinstance(results, list):
-                results.extend(data)
-            else:
-                results = {**results, **data}
-        # ---
-        return results
-
-    def page_backlinks(self, ns=0):
-        params = {
-            "action": "query",
-            "maxlag": "3",
-            # "prop": "info",
-            "generator": "backlinks",
-            # "redirects": 1,
-            # 'gblfilterredir': 'redirects',
-            "gbltitle": self.title,
-            "gblnamespace": ns,
-            "gbllimit": "max",
-            "formatversion": "2",
-            "gblredirect": 1,
-        }
-        # ---
-        # x = { 'batchcomplete': True, 'limits': { 'backlinks': 2500 }, 'query': { 'redirects': [{ 'from': 'فريدريش زيمرمان', 'to': 'فريدريش تسيمرمان' }], 'pages': [{ 'pageid': 2941285, 'ns': 0, 'title': 'فولفغانغ شويبله' }, { 'pageid': 4783977, 'ns': 0, 'title': 'وزارة الشؤون الرقمية والنقل' }, { 'pageid': 5218323, 'ns': 0, 'title': 'فريدريش تسيمرمان' }, { 'pageid': 6662649, 'ns': 0, 'title': 'غونتر كراوزه' }] } }
-        # ---
-        # data = self.post_params(params)
-        # pages = data.get("query", {}).get("pages", [])
-        # ---
-        pages = self.post_continue(params, "query", "pages", [])
-        # ---
-        back_links = [x for x in pages if x["title"] != self.title]
-        # ---
-        self.back_links = back_links
-        # ---
-        return self.back_links
-
-    def page_links(self):
-        params = {"action": "parse", "prop": "links", "formatversion": "2", "page": self.title}
-        # data = self.post_params(params)
-        # data = data.get('parse', {}).get('links', [])
-        # ---
-        data = self.post_continue(params, "parse", "links", [])
-        # ---
-        # [{'ns': 14, 'title': 'تصنيف:مقالات بحاجة لشريط بوابات', 'exists': True}, {'ns': 14, 'title': 'تصنيف:مقالات بحاجة لصندوق معلومات', 'exists': False}]
-        # ---
-        self.links = data
-        # ---
-        return self.links
-
     def get_text_html(self):
-        params = {"action": "parse", "page": self.title, "formatversion": "2", "prop": "text"}
+        params = {
+            "action": "parse",
+            "page": self.title,
+            "formatversion": "2",
+            "prop": "text",
+        }
         # ---
         data = self.post_params(params)
         # ---
@@ -383,7 +369,12 @@ class MainPage:
 
     def get_redirect_target(self):
         # ---
-        params = {"action": "query", "titles": self.title, "prop": "info", "redirects": 1}
+        params = {
+            "action": "query",
+            "titles": self.title,
+            "prop": "info",
+            "redirects": 1,
+        }
         # ---
         data = self.post_params(params)
         # ---
@@ -465,74 +456,27 @@ class MainPage:
         self.extlinks = liste1
         return liste1
 
-    def get_revisions(self, rvprops=[]):
+    def get_userinfo(self):
+        if len(self.userinfo) == 0:
+            params = {
+                "action": "query",
+                "format": "json",
+                "list": "users",
+                "formatversion": "2",
+                "usprop": "groups",
+                "ususers": self.user,
+            }
+            # ---
+            data = self.post_params(params)
+            # ---
+            # _userinfo_ = { "id": 229481, "name": "Mr. Ibrahem", "groups": ["editor", "reviewer", "rollbacker", "*", "user", "autoconfirmed"] }
+            # ---
+            ff = data.get("query", {}).get("users", [{}])
+            # ---
+            if ff:
+                self.userinfo = ff[0]
         # ---
-        rvprop = [
-            "comment",
-            "timestamp",
-            "user",
-            # "content",
-            "ids",
-        ]
-        # ---
-        for x in rvprops:
-            if x not in rvprop:
-                rvprop.append(x)
-        # ---
-        params = {
-            "action": "query",
-            "format": "json",
-            "prop": "revisions",
-            "titles": self.title,
-            "utf8": 1,
-            "formatversion": "2",
-            "rvdir": "newer",
-            "rvslots": "*",
-            "rvlimit": "max",
-            # "rvprop": "comment|timestamp|user|content|ids",
-            "rvprop": "|".join(rvprop),
-        }
-        # ---
-        _revisions = self.post_continue(params, "query", "pages", [])
-        # ---
-        revisions = []
-        # ---
-        for x in _revisions:
-            revisions.extend(x["revisions"])
-        # ---
-        self.revisions = revisions
-        # ---
-        return revisions
-
-    def purge(self):
-        # ---
-        params = {"action": "purge", "forcelinkupdate": 1, "forcerecursivelinkupdate": 1, "titles": self.title}
-        # ---
-        data = self.post_params(params, addtoken=True)
-        # ---
-        if not data:
-            printe.output("<<lightred>> ** purge error. ")
-            return False
-        # ---
-        title2 = self.title
-        # ---
-        #  'normalized': [{'from': 'وب:ملعب', 'to': 'ويكيبيديا:ملعب'}]}
-        # ---
-        for x in data.get("normalized", []):
-            # printe.output(f"normalized from {x['from']} to {x['to']}")
-            if x["from"] == self.title:
-                title2 = x["to"]
-                break
-        # ---
-        for t in data.get("purge", []):
-            # t = [{'ns': 4, 'title': 'ويكيبيديا:ملعب', 'purged': '', 'linkupdate': ''}]
-            ti = t["title"]
-            if title2 == ti and "purged" in t:
-                return True
-            if "missing" in t:
-                printe.output(f"page \"{t['title']}\" missing")
-                return "missing"
-        return False
+        return self.userinfo
 
     def isRedirect(self):
         # ---
@@ -599,8 +543,8 @@ class MainPage:
         # ---
         # printe.output(f'wikilinks:{str(wikilinks)}')
         # ---
-        for x in wikilinks:
-            print(x.title)
+        # for x in wikilinks:
+        #     print(x.title)
         # ---
         return wikilinks
 
@@ -669,113 +613,11 @@ class MainPage:
             self.get_text()
         return self.user
 
-    def get_userinfo(self):
-        if len(self.userinfo) == 0:
-            params = {"action": "query", "format": "json", "list": "users", "formatversion": "2", "usprop": "groups", "ususers": self.user}
-            # ---
-            data = self.post_params(params)
-            # ---
-            # _userinfo_ = { "id": 229481, "name": "Mr. Ibrahem", "groups": ["editor", "reviewer", "rollbacker", "*", "user", "autoconfirmed"] }
-            # ---
-            ff = data.get("query", {}).get("users", [{}])
-            # ---
-            if ff:
-                self.userinfo = ff[0]
-        # ---
-        return self.userinfo
-
     def get_templates(self):
         if not self.text:
             self.text = self.get_text()
         self.templates = txtlib.extract_templates_and_params(self.text)
         return self.templates
-
-    def ask_put(self, nodiff=False, ASK=False):
-        yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
-        # ---
-        if "ask" in sys.argv and not Save_Edit_Pages[1] or print_test[1] or ASK:
-            # ---
-            if "nodiff" not in sys.argv and not nodiff:
-                if len(self.newtext) < 70000 and len(self.text) < 70000 or "diff" in sys.argv:
-                    printe.showDiff(self.text, self.newtext)
-                else:
-                    printe.output("showDiff error..")
-            # ---
-            printe.output(f"diference in bytes: {len(self.newtext) - len(self.text):,}")
-            printe.output(f"len of text: {len(self.text):,}, len of newtext: {len(self.newtext):,}")
-            # ---
-            printe.output(Edit_summary_line[1] % self.summary)
-            # ---
-            sa = pywikibot.input(f"<<lightyellow>>page.py: Do you want to accept these changes? (yes, no): for page {self.lang}:{self.title} user:{self.username}")
-            # ---
-            if sa == "a":
-                printe.output("<<lightgreen>> ---------------------------------")
-                printe.output(f"<<lightgreen>> {file_name} save all without asking.")
-                printe.output("<<lightgreen>> ---------------------------------")
-                Save_Edit_Pages[1] = True
-            # ---
-            if sa not in yes_answer:
-                printe.output("wrong answer")
-                return False
-        # ---
-        return True
-
-    def handel_err(self, error, function):
-        # ---
-        # {'error': {'code': 'articleexists', 'info': 'The article you tried to create has been created already.', '*': 'See https://ar.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.'}, 'servedby': 'mw1425'}
-        # ---
-        err_code = error.get("code", "")
-        err_info = error.get("info", "")
-        # ---
-        tt = f"<<lightred>>{function} ERROR: <<defaut>>code:{err_code}."
-        printe.output(tt)
-        # warn(warn_err(tt), UserWarning)
-        # ---["protectedpage", 'تأخير البوتات 3 ساعات', False]
-        if err_code == "abusefilter-disallowed":
-            # ---
-            # oioioi = {'error': {'code': 'abusefilter-disallowed', 'info': 'This', 'abusefilter': {'id': '169', 'description': 'تأخير البوتات 3 ساعات', 'actions': ['disallow']}, '*': 'See https'}, 'servedby': 'mw1374'}
-            # ---
-            abusefilter = error.get("abusefilter", "")
-            description = abusefilter.get("description", "")
-            printe.output(f"<<lightred>> ** abusefilter-disallowed: {description} ")
-            if description in ["تأخير البوتات 3 ساعات", "تأخير البوتات 3 ساعات- 3 من 3", "تأخير البوتات 3 ساعات- 1 من 3", "تأخير البوتات 3 ساعات- 2 من 3"]:
-                return False
-            return description
-        # ---
-        if err_code == "protectedpage":
-            printe.output("<<lightred>> ** protectedpage. ")
-            # return "protectedpage"
-            return False
-        # ---
-        if err_code == "articleexists":
-            printe.output("<<lightred>> ** article already created. ")
-            return "articleexists"
-        # ---
-        printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}.")
-
-    def false_edit(self):
-        # self.newtext
-        # self.text
-        # ---
-        if self.ns != 0 or "nofa" in sys.argv:
-            return False
-        # ---
-        if not self.text:
-            self.text = self.get_text()
-        # ---
-        # If the new edit will remove 90% of the text, return False
-        if len(self.newtext) < 0.1 * len(self.text):
-            pywikibot.output("<<lightred>> Traceback (most recent call last):")
-            pywikibot.output(f"Edit will remove 90% of the text. {len(self.newtext)} < 0.1 * {len(self.text)}")
-            pywikibot.output(f"title: {self.title}, summary: {self.summary}")
-            pywikibot.output("CRITICAL:")
-            return True
-        # ---
-        if self.lang == "ar" and self.ns == 0:
-            if find_edit_error(self.text, self.newtext):
-                return True
-        # ---
-        return False
 
     def save(self, newtext="", summary="", nocreate=1, minor="", tags="", nodiff=False, ASK=False):
         # ---
@@ -842,6 +684,41 @@ class MainPage:
             # ---
             return er
         # ---
+        return False
+
+    def purge(self):
+        # ---
+        params = {
+            "action": "purge",
+            "forcelinkupdate": 1,
+            "forcerecursivelinkupdate": 1,
+            "titles": self.title,
+        }
+        # ---
+        data = self.post_params(params, addtoken=True)
+        # ---
+        if not data:
+            printe.output("<<lightred>> ** purge error. ")
+            return False
+        # ---
+        title2 = self.title
+        # ---
+        #  'normalized': [{'from': 'وب:ملعب', 'to': 'ويكيبيديا:ملعب'}]}
+        # ---
+        for x in data.get("normalized", []):
+            # printe.output(f"normalized from {x['from']} to {x['to']}")
+            if x["from"] == self.title:
+                title2 = x["to"]
+                break
+        # ---
+        for t in data.get("purge", []):
+            # t = [{'ns': 4, 'title': 'ويكيبيديا:ملعب', 'purged': '', 'linkupdate': ''}]
+            ti = t["title"]
+            if title2 == ti and "purged" in t:
+                return True
+            if "missing" in t:
+                printe.output(f"page \"{t['title']}\" missing")
+                return "missing"
         return False
 
     def Create(self, text="", summary=""):
