@@ -10,31 +10,6 @@ page      = ncc_MainPage(title, 'www', family='nccommons')
 exists    = page.exists()
 if not exists: return
 # ---
-page_edit = page.can_edit()
-if not page_edit: return
-# ---
-if page.isRedirect() :  return
-# target = page.get_redirect_target()
-# ---
-text        = page.get_text()
-ns          = page.namespace()
-links       = page.page_links()
-categories  = page.get_categories(with_hidden=False)
-langlinks   = page.get_langlinks()
-wiki_links  = page.get_wiki_links_from_text()
-refs        = page.Get_tags(tag='ref')# for x in ref: name, contents = x.name, x.contents
-words       = page.get_words()
-templates   = page.get_templates()
-save_page   = page.save(newtext='', summary='', nocreate=1, minor='')
-create      = page.Create(text='', summary='')
-# ---
-back_links  = page.page_backlinks()
-text_html   = page.get_text_html()
-hidden_categories= page.get_hidden_categories()
-flagged     = page.is_flagged()
-timestamp   = page.get_timestamp()
-user        = page.get_user()
-purge       = page.purge()
 '''
 
 
@@ -56,11 +31,10 @@ from newapi.ncc_page import NEW_API
 import os
 import configparser
 from pathlib import Path
-
-from newapi.super import super_login
 from newapi.super import bot_api
 from newapi.super import super_page
 from newapi.super import catdepth_new
+
 
 catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "nccommons"
@@ -83,17 +57,17 @@ config.read(f"{dir2}/confs/nccommons_user.ini")
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
 
-user_agent = super_login.default_user_agent()
 # ---
-User_tables = {"username": username, "password": password}
+User_tables = {
+    "username": username,
+    "password": password,
+}
 # ---
-super_login.User_tables["nccommons"] = User_tables
+user_agent = super_page.default_user_agent()
 # ---
-Login = super_login.Login
-# ---
-bot_api.login_def = Login
-super_page.login_def = Login
-catdepth_new.login_def = Login
+super_page.User_tables["nccommons"] = User_tables
+bot_api.User_tables["nccommons"] = User_tables
+catdepth_new.User_tables["nccommons"] = User_tables
 # ---
 NEW_API = bot_api.NEW_API
 MainPage = super_page.MainPage
@@ -154,5 +128,4 @@ def test():
 if __name__ == "__main__":
     # python3 core8/pwb.py newapi/ncc_page
     super_page.print_test[1] = True
-    super_login.print_test[1] = True
     test()

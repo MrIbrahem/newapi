@@ -38,33 +38,31 @@ purge       = page.purge()
 '''
 """
 # ---
-from newapi.super import super_login as su_login
+import sys
 from newapi.super import bot_api
-from newapi.super import super_page as su_page
-from mdpy.bots import user_account_new
+from newapi.super import super_page
 from newapi.super import catdepth_new
+
+from mdpy.bots import user_account_new
 
 catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "mdwiki"
 
 # ---
-User_tables = {"username": user_account_new.my_username, "password": user_account_new.mdwiki_pass}
+User_tables = {
+    "username": user_account_new.my_username,
+    "password": user_account_new.mdwiki_pass,
+}
 # ---
-# xxxxxxxxxxx
+user_agent = super_page.default_user_agent()
 # ---
-user_agent = su_login.default_user_agent()
-# ---
-su_login.User_tables["mdwiki"] = User_tables
-# ---
-Login = su_login.Login
-# ---
-bot_api.login_def = Login
-su_page.login_def = Login
-catdepth_new.login_def = Login
+super_page.User_tables["mdwiki"] = User_tables
+bot_api.User_tables["mdwiki"] = User_tables
+catdepth_new.User_tables["mdwiki"] = User_tables
 # ---
 NEW_API = bot_api.NEW_API
-MainPage = su_page.MainPage
-change_codes = su_page.change_codes
+MainPage = super_page.MainPage
+change_codes = super_page.change_codes
 CatDepth = catdepth_new.subcatquery
 CatDepthLogin = catdepth_new.login_wiki
 # ---
@@ -112,6 +110,5 @@ def test():
 # ---
 if __name__ == "__main__":
     # python3 core8/pwb.py newapi/mdwiki_page
-    su_page.print_test[1] = True
-    su_login.print_test[1] = True
+    super_page.print_test[1] = True
     test()
