@@ -5,15 +5,21 @@ from newapi.super.login_bots.bot import LOGIN_HELPS
 Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recent login attempts. Please wait 5 minutes before trying again.'}}
 
 """
+import os
 import inspect
 import time
 import requests
 from warnings import warn
+from http.cookiejar import MozillaCookieJar
 
 import pywikibot
 from newapi import printe
 from newapi.super.login_bots.r3_token_bot import get_r3_token, dump_r3_token
 
+from newapi.super.login_bots.cookies_bot import get_file_name, dump_cookies
+
+# cookies = get_cookies(lang, family, username)
+# dump_cookies(lang, family, username, cookies)
 seasons_by_lang = {}
 User_tables = {}
 
@@ -30,6 +36,9 @@ def warn_err(err):
 class LOGIN_HELPS:
     def __init__(self):
         print("class LOGIN_HELPS:")
+        self.cookie_jar = False
+        self.session = requests.Session()
+        self.username_in = ""
 
     def add_User_tables(self, family, table):
         if self.family == family:
@@ -38,6 +47,28 @@ class LOGIN_HELPS:
             self.password = table["password"]
 
     def make_new_r3_token(self):
+        r3_params = {"format": "json", "action": "query", "meta": "tokens"}
+
+        try:
+            r33 = self.post_it(r3_params)
+        except Exception as e:
+            pywikibot.output("<<red>> Traceback (most recent call last):")
+            pywikibot.output(e)
+            pywikibot.output("CRITICAL:")
+
+        if not r33:
+            _exceptions_ = [
+                """('Connection aborted.', OSError("(104, "ECONNRESET")"))""",
+            ]
+            return False
+
+        csrftoken = r33.get("query", {}).get("tokens", {}).get("csrftoken", "")
+        # ---
+        dump_r3_token(self.lang, self.family, self.username, csrftoken)
+        # ---
+        return csrftoken
+
+    def log_in(self):
         """
         Log in to the wiki and get authentication token.
         """
@@ -61,29 +92,9 @@ class LOGIN_HELPS:
 
         if success:
             printe.output("<<green>> new_api login Success")
+            return True
         else:
             return False
-
-        r3_params = {"format": "json", "action": "query", "meta": "tokens"}
-
-        try:
-            r33 = self.post_it(r3_params)
-        except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
-
-        if not r33:
-            _exceptions_ = [
-                """('Connection aborted.', OSError("(104, "ECONNRESET")"))""",
-            ]
-            return False
-
-        csrftoken = r33.get("query", {}).get("tokens", {}).get("csrftoken", "")
-        # ---
-        dump_r3_token(self.lang, self.family, self.username, csrftoken)
-        # ---
-        return csrftoken
 
     def get_logintoken(self):
         r1_params = {
@@ -96,14 +107,16 @@ class LOGIN_HELPS:
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
 
         try:
-            r11 = self.post_it(r1_params)
+            # r11 = self.post_it(r1_params)
+            r11 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r1_params)
+            jsson1 = r11.json()
         except Exception as e:
             pywikibot.output("<<red>> Traceback (most recent call last):")
             pywikibot.output(e)
             pywikibot.output("CRITICAL:")
             return {}
 
-        return r11.get("query", {}).get("tokens", {}).get("logintoken", "")
+        return jsson1.get("query", {}).get("tokens", {}).get("logintoken", "")
 
     def get_login_result(self, logintoken):
         r2_params = {
@@ -117,7 +130,9 @@ class LOGIN_HELPS:
         r22 = {}
 
         try:
-            r22 = self.post_it(r2_params)
+            # r22 = self.post_it(r2_params)
+            req = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r2_params)
+            r22 = req.json()
         except Exception as e:
             pywikibot.output("<<red>> Traceback (most recent call last):")
             pywikibot.output(e)
@@ -139,13 +154,13 @@ class LOGIN_HELPS:
         pywikibot.output("CRITICAL:")
         return False
 
-    def log_to_wiki_1(self):
+    def log_to_wiki_1(self, do=False):
         # ---
         # return self.make_new_r3_token()
         # ---
-
+        if do:
+            return self.get_r3token()
         # ---
-        # return self.get_r3token()
         return True
 
     def get_r3token(self):
@@ -156,14 +171,82 @@ class LOGIN_HELPS:
         # ---
         return r3_token
 
+    def loged_in(self):
+        params = {
+            "format": "json",
+            "action": "query",
+            "meta": "userinfo",
+            "uiprop": "groups|rights",
+        }
+
+        json1 = {}
+
+        try:
+            r22 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params)
+            json1 = r22.json()
+            # print(json1)
+        except Exception as e:
+            pywikibot.output("<<red>> Traceback (most recent call last):")
+            pywikibot.output(e)
+            pywikibot.output("CRITICAL:")
+        # ---
+        # {'batchcomplete': '', 'query': {'userinfo': {'id': 593870, 'name': 'Mr.Ibrahembot', 'groups': ['bot', 'editor', '*', 'user', 'autoconfirmed'], 'rights': ['apihighlimits', 'editautoreviewprotected', 'editeditorprotected', 'ipblock-exempt', 'noratelimit', 'bot', 'autoconfirmed', 'editsemiprotected', 'nominornewtalk', 'autopatrol', 'suppressredirect', 'writeapi', 'autoreview', 'sboverride', 'skipcaptcha', 'abusefilter-bypass-blocked-external-domains', 'review', 'unreviewedpages', 'patrolmarks', 'read', 'edit', 'createpage', 'createtalk', 'abusefilter-log-detail', 'abusefilter-view', 'abusefilter-log', 'flow-hide', 'flow-edit-title', 'move-rootuserpages', 'move-categorypages', 'minoredit', 'applychangetags', 'changetags', 'move', 'flow-edit-post', 'movestable']}}}
+        # ---
+        userinfo = json1.get("query", {}).get("userinfo", {})
+        # ---
+        if "anon" in userinfo:
+            return False
+        # ---
+        # print(userinfo)
+        # ---
+        self.username_in = userinfo.get("name", "")
+        # ---
+        return True
+
+    def make_new_session(self):
+        # ---
+        # self.session = requests.Session()
+        # ---
+        seasons_by_lang[self.lang] = requests.Session()
+        # ---
+        cookies_file = get_file_name(self.lang, self.family, self.username)
+        # ---
+        self.cookie_jar = MozillaCookieJar(cookies_file)
+        # ---
+        if os.path.exists(cookies_file):
+            print("Load cookies from file, including session cookies")
+            self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
+            print("We have %d cookies" % len(self.cookie_jar))
+        # ---
+        seasons_by_lang[self.lang].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        # ---
+        if self.loged_in():
+            print("Already logged in as " + self.username_in)
+        else:
+            self.log_in()
+        # ---
+        # r3_token = self.make_new_r3_token()
+        # ---
+        self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
+        # ---
+        # return seasons_by_lang[self.lang]
+
     def post_it(self, params, files=None, timeout=30):
         headers = {
             "User-Agent": self.user_agent,
         }
         # ---
-        seasons_by_lang.setdefault(self.lang, requests.Session())
+        session = seasons_by_lang.get(self.lang)
+        # ---
+        if not session:
+            self.make_new_session()
         # ---
         req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+        # ---
+        if not req0:
+            return {}
+        # ---
+        # req0 = req0.json()
         # ---
         data = self.parse_data(req0)
         # ---

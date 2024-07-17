@@ -4,4 +4,5 @@ setuptools==65.5.0
 sqlite_utils==3.36
 tqdm==4.66.1
 wikitextparser==0.55.7
+mwclient
 ratelimiter

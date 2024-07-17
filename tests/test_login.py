@@ -20,7 +20,7 @@ bot = Login('ar', family='wikipedia')
 # ---
 bot.add_User_tables('wikipedia', User_tables)
 # ---
-login = bot.log_to_wiki_1()
+login = bot.make_new_session()
 # ---
 params = {
     'action': 'query',

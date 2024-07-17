@@ -4,3 +4,5 @@ page_old.py
 tests/super_login_old.py
 *.tmp.py
 *.txt
+super/login_bots/jar.py
+super/login_bots/mwclient.pyyy.py

@@ -8,11 +8,11 @@ python3 core8/pwb.py newapi/tests/test_page
 from newapi.page import MainPage
 
 # ---
-page = MainPage("فريدريش تسيمرمان", 'ar')
-# page = MainPage("وب:ملعب", "ar")
+pageen = MainPage("User:Mr. Ibrahem/sandbox", 'en')
+page = MainPage("وب:ملعب", "ar")
 # ---
+existsen	  = pageen.exists()
 """
-exists	  = page.exists()
 if not exists: return
 # ---
 page_edit = page.can_edit()
@@ -59,10 +59,10 @@ print("---------------------------")
 print(f"backlinks:{len(backlinks)=}")
 # ---
 
-newtext = "تجربة!\n" * 5
+newtext = "تجربة!\n" * 6
 # ---
 save = page.save(newtext=newtext)
 
 
-page2 = MainPage("وب:ملعب", "ar")
-save = page2.save(newtext=newtext)
+pageen.save(newtext="!!!")
+
