@@ -4,10 +4,11 @@ Python module for Wikimedia API:
 
 ```` python
 from newapi import super_login
-super_login.User_tables['wikipedia'] = {'username': '', 'password': ''}
 
 bot   = Login(lang, family='wikipedia')
-login = bot.Log_to_wiki()
+# ---
+bot.add_User_tables('wikipedia', {'username': '', 'password': ''})
+login = bot.log_to_wiki_1()
 json1 = bot.post(params, Type='post', addtoken=False)
 ````
 ### Pages.

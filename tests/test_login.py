@@ -14,12 +14,13 @@ User_tables = {
 # ---
 from newapi.super import super_login
 
-super_login.User_tables['wikipedia'] = User_tables
-# ---
 Login = super_login.Login
 # ---
 bot = Login('ar', family='wikipedia')
-login = bot.Log_to_wiki()
+# ---
+bot.add_User_tables('wikipedia', User_tables)
+# ---
+login = bot.log_to_wiki_1()
 # ---
 params = {
     'action': 'query',
@@ -32,5 +33,4 @@ params = {
 # ---
 json1 = bot.post(params, Type='post', addtoken=False)
 # ---
-print(json1)
-# ---
+print(f"{len(json1)=}")
