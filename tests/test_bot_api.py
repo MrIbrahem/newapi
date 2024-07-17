@@ -1,6 +1,6 @@
 """
 
-python3 core8/pwb.py newapi/tests/test_bot_api test:12
+python3 core8/pwb.py newapi/tests/test_bot_api
 python3 core8/pwb.py newapi/tests/test_bot_api test:4
 python3 core8/pwb.py newapi/tests/test_bot_api test:44
 python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
@@ -200,7 +200,7 @@ class testmybot:
             if result == "":
                 raise Exception("result == ''")
             # ---
-            if "noprr" not in sys.argv:
+            if "printresult" in sys.argv:
                 if isinstance(result, str):
                     printe.output(f"result:{result}")
                 elif isinstance(result, list):
@@ -216,8 +216,5 @@ class testmybot:
             printe.output("time.sleep(1)")
             time.sleep(1)
 
-
-# ---
 if __name__ == "__main__":
     testmybot().start()
-# ---

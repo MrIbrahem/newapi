@@ -62,4 +62,7 @@ print(f"backlinks:{len(backlinks)=}")
 newtext = "تجربة!\n" * 5
 # ---
 save = page.save(newtext=newtext)
-# ---
+
+
+page2 = MainPage("وب:ملعب", "ar")
+save = page2.save(newtext=newtext)
