@@ -21,6 +21,7 @@ from newapi.super.login_bots.cookies_bot import get_file_name, dump_cookies
 # cookies = get_cookies(lang, family, username)
 # dump_cookies(lang, family, username, cookies)
 seasons_by_lang = {}
+users_by_lang = {}
 User_tables = {}
 
 
@@ -50,7 +51,8 @@ class LOGIN_HELPS:
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
 
         try:
-            r33 = self.post_it(r3_params)
+            req = self.post_it(r3_params)
+            r33 = req.json()
         except Exception as e:
             pywikibot.output("<<red>> Traceback (most recent call last):")
             pywikibot.output(e)
@@ -107,7 +109,6 @@ class LOGIN_HELPS:
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
 
         try:
-            # r11 = self.post_it(r1_params)
             r11 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r1_params)
             jsson1 = r11.json()
         except Exception as e:
@@ -130,7 +131,6 @@ class LOGIN_HELPS:
         r22 = {}
 
         try:
-            # r22 = self.post_it(r2_params)
             req = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r2_params)
             r22 = req.json()
         except Exception as e:
@@ -141,6 +141,7 @@ class LOGIN_HELPS:
         success = r22.get("login", {}).get("result", "").lower() == "success"
         # ---
         if success:
+            self.loged_in()
             return True
         # ---
         reason = r22.get("login", {}).get("reason", "")
@@ -200,10 +201,13 @@ class LOGIN_HELPS:
         # print(userinfo)
         # ---
         self.username_in = userinfo.get("name", "")
+        users_by_lang[self.lang] = self.username_in
         # ---
         return True
 
     def make_new_session(self):
+        # ---
+        print("make_new_session:")
         # ---
         # self.session = requests.Session()
         # ---
@@ -237,11 +241,13 @@ class LOGIN_HELPS:
         }
         # ---
         session = seasons_by_lang.get(self.lang)
+        self.username_in = users_by_lang.get(self.lang, "")
         # ---
         if not session:
             self.make_new_session()
         # ---
         if not self.username_in:
+            printe.output("<<red>> no username_in.. ")
             return {}
         # ---
         params["assertuser"] = self.username
@@ -251,8 +257,4 @@ class LOGIN_HELPS:
         if not req0:
             return {}
         # ---
-        # req0 = req0.json()
-        # ---
-        data = self.parse_data(req0)
-        # ---
-        return data
+        return req0
