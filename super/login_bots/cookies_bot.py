@@ -6,14 +6,18 @@ from newapi.super.login_bots.cookies_bot import get_cookies
 
 """
 import os
+import stat
 from pathlib import Path
 from newapi import printe
 
-import stat
-
-tool = os.getenv("HOME")
 statgroup = stat.S_IRWXU | stat.S_IRWXG
-# ta_dir = Path(__file__).parent / "cookies"
+tool = os.getenv("HOME")
+# ---
+if not tool:
+    tool = Path(__file__).parent
+else:
+    tool = Path(tool)
+# ---
 ta_dir = tool / "cookies"
 # ---
 if not ta_dir.exists():
@@ -24,6 +28,7 @@ if not ta_dir.exists():
     os.chmod(ta_dir, statgroup)
 
 ta_tab = {}
+
 
 def get_file_name(lang, family, username):
     # ---

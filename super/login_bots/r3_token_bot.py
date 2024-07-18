@@ -11,13 +11,18 @@ def get_login_result(): Exception:{'login': {'result': 'Failed', 'reason': 'You 
 
 """
 import os
-from pathlib import Path
 import stat
+from pathlib import Path
 from newapi import printe
 
-tool = os.getenv("HOME")
 statgroup = stat.S_IRWXU | stat.S_IRWXG
-# token_dir = Path(__file__).parent / "r3_tokens"
+tool = os.getenv("HOME")
+# ---
+if not tool:
+    tool = Path(__file__).parent
+else:
+    tool = Path(tool)
+# ---
 token_dir = tool / "r3_tokens"
 # ---
 if not token_dir.exists():
