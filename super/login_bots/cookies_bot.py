@@ -7,13 +7,14 @@ from newapi.super.login_bots.cookies_bot import get_cookies
 """
 import os
 from pathlib import Path
-
 from newapi import printe
 
 import stat
 
+tool = os.getenv("HOME")
 statgroup = stat.S_IRWXU | stat.S_IRWXG
-ta_dir = Path(__file__).parent / "cookies"
+# ta_dir = Path(__file__).parent / "cookies"
+ta_dir = tool / "cookies"
 # ---
 if not ta_dir.exists():
     ta_dir.mkdir()

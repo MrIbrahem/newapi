@@ -245,6 +245,7 @@ class LOGIN_HELPS:
             return {}
         # ---
         params["assertuser"] = self.username
+        # ---
         req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
         # ---
         if not req0:

@@ -12,12 +12,13 @@ def get_login_result(): Exception:{'login': {'result': 'Failed', 'reason': 'You 
 """
 import os
 from pathlib import Path
+import stat
 from newapi import printe
 
-import stat
-
+tool = os.getenv("HOME")
 statgroup = stat.S_IRWXU | stat.S_IRWXG
-token_dir = Path(__file__).parent / "r3_tokens"
+# token_dir = Path(__file__).parent / "r3_tokens"
+token_dir = tool / "r3_tokens"
 # ---
 if not token_dir.exists():
     token_dir.mkdir()
@@ -27,6 +28,7 @@ if not token_dir.exists():
     os.chmod(token_dir, statgroup)
 
 token_tab = {}
+
 
 def get_file_name(lang, family, username):
     # ---
