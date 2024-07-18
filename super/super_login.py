@@ -118,7 +118,10 @@ class Login(LOGIN_HELPS):
                 data["servedby"] = ""
 
             return data
-        except Exception:
+        except Exception as e:
+            pywikibot.output("<<red>> Traceback (most recent call last):")
+            pywikibot.output(f"error:{e} when json.loads(response.text)")
+            pywikibot.output("CRITICAL:")
             text = str(req0.text).strip()
 
         valid_text = text.startswith("{") and text.endswith("}")
@@ -144,28 +147,39 @@ class Login(LOGIN_HELPS):
         """
         self.p_url(params)
 
+        data = {}
+
         if params.get("list") == "querypage":
             timeout = 60
 
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            data = self.post_it(params, files, timeout)
+            req = self.post_it(params, files, timeout)
+            # ---
+            if req:
+                data = self.parse_data(req)
+            # ---
             return data
+        # ---
+        req = None
+        # ---
 
         try:
-            data = self.post_it(params, files, timeout)
-            return data
+            req = self.post_it(params, files, timeout)
 
         except requests.exceptions.ReadTimeout:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
-            return {}
 
         except Exception as e:
             pywikibot.output("<<red>> Traceback (most recent call last):")
             # pywikibot.output(traceback.format_exc())
             pywikibot.output(e)
             pywikibot.output("CRITICAL:")
-            return {}
+        # ---
+        if req:
+            data = self.parse_data(req)
+        # ---
+        return data
 
     def filter_params(self, params):
         """
@@ -219,7 +233,7 @@ class Login(LOGIN_HELPS):
         data = self.make_response(params, files=files)
 
         if not data:
-            test_print("<<red>> super_login(post): not data. return {}.")
+            printe.output("<<red>> super_login(post): not data. return {}.")
             return {}
 
         error = data.get("error", {})
