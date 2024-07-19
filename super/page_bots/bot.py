@@ -8,7 +8,8 @@ from newapi.super.bots.post_helps import POST_HELPS
 
 class APIS(POST_HELPS):
     def __init__(self):
-        print("class APIS:")
+        # print("class APIS:")
+        pass
 
     def page_backlinks(self, ns=0):
         params = {

@@ -62,15 +62,12 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
         # ---
         self.save_move = False
         # ---
-        self.family = family
-        self.endpoint = f"https://{lang}.{family}.org/w/api.php"
+        # self.family = family
+        # self.endpoint = f"https://{lang}.{family}.org/w/api.php"
         # ---
         if User_tables != {}:
             for f, tab in User_tables.items():
                 self.add_User_tables(f, tab)
-        # ---
-        self.username = User_tables[self.family]["username"]
-        self.password = User_tables[self.family]["password"]
 
     def Login_to_wiki(self):
         # ---

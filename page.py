@@ -5,12 +5,11 @@ from newapi.page import CatDepth, CatDepthLogin
 # CatDepthLogin(sitecode="en", family="wikipedia")
 # cat_members = CatDepth(title, sitecode='en', family="wikipedia", depth=0, ns="all", nslist=[], without_lang="", with_lang="", tempyes=[])
 
-from newapi.wiki_page import MainPage, NEW_API
+from newapi.page import MainPage, NEW_API
 # api_new = NEW_API('en', family='wikipedia')
-# login    = api_new.Login_to_wiki()
+# json1    = api_new.post_params(params, addtoken=False)
 # move_it  = api_new.move(old_title, to, reason="", noredirect=False, movesubpages=False)
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
-# json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
 # newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
