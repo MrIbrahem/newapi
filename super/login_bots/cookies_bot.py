@@ -2,7 +2,6 @@
 
 from newapi.super.login_bots.cookies_bot import get_cookies
 # cookies = get_cookies(lang, family, username)
-# dump_cookies(lang, family, username, cookies)
 
 """
 import os
@@ -40,25 +39,6 @@ def get_file_name(lang, family, username):
     file = ta_dir / f"{family}_{lang}_{username}.txt"
     # ---
     return file
-
-
-def dump_cookies(lang, family, username, cookies):
-    # ---
-    ta_tab.setdefault(family, {}).setdefault(lang, {})
-    # ---
-    ta_tab[family][lang][username] = cookies
-    # ---
-    file = get_file_name(lang, family, username)
-    # ---
-    try:
-        with open(file, "w") as f:
-            f.write(cookies)
-            os.chmod(str(file), statgroup)
-    except Exception as e:
-        printe.output(e)
-    # ---
-    return ""
-
 
 def from_folder(lang, family, username):
     # ---
