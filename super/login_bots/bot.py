@@ -34,6 +34,12 @@ def warn_err(err):
     return f"\ndef {nn}(): {err}"
 
 
+def exception_err(e):
+    pywikibot.output("<<red>> Traceback (most recent call last):")
+    warn(warn_err(f"Exception:{str(e)}"), UserWarning)
+    pywikibot.output("CRITICAL:")
+
+
 class LOGIN_HELPS:
     def __init__(self):
         # print("class LOGIN_HELPS:")
@@ -60,9 +66,7 @@ class LOGIN_HELPS:
             req = self.post_it(r3_params)
             r33 = req.json()
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
 
         if not r33:
             _exceptions_ = [
@@ -118,9 +122,7 @@ class LOGIN_HELPS:
             r11 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r1_params)
             jsson1 = r11.json()
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
             return {}
 
         return jsson1.get("query", {}).get("tokens", {}).get("logintoken", "")
@@ -140,9 +142,7 @@ class LOGIN_HELPS:
             req = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r2_params)
             r22 = req.json()
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
         # ---
         success = r22.get("login", {}).get("result", "").lower() == "success"
         # ---
@@ -152,13 +152,11 @@ class LOGIN_HELPS:
         # ---
         reason = r22.get("login", {}).get("reason", "")
         # ---
-        pywikibot.output("<<red>> Traceback (most recent call last):")
-        warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
+        exception_err(r22)
         # ---
         if reason == "Incorrect username or password entered. Please try again.":
             pywikibot.output(f"user:{self.username}, pass:******")
         # ---
-        pywikibot.output("CRITICAL:")
         return False
 
     def log_to_wiki_1(self, do=False):
@@ -193,9 +191,7 @@ class LOGIN_HELPS:
             json1 = r22.json()
             # print(json1)
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
         # ---
         # {'batchcomplete': '', 'query': {'userinfo': {'id': 593870, 'name': 'Mr.Ibrahembot', 'groups': ['bot', 'editor', '*', 'user', 'autoconfirmed'], 'rights': ['apihighlimits', 'editautoreviewprotected', 'editeditorprotected', 'ipblock-exempt', 'noratelimit', 'bot', 'autoconfirmed', 'editsemiprotected', 'nominornewtalk', 'autopatrol', 'suppressredirect', 'writeapi', 'autoreview', 'sboverride', 'skipcaptcha', 'abusefilter-bypass-blocked-external-domains', 'review', 'unreviewedpages', 'patrolmarks', 'read', 'edit', 'createpage', 'createtalk', 'abusefilter-log-detail', 'abusefilter-view', 'abusefilter-log', 'flow-hide', 'flow-edit-title', 'move-rootuserpages', 'move-categorypages', 'minoredit', 'applychangetags', 'changetags', 'move', 'flow-edit-post', 'movestable']}}}
         # ---
@@ -224,9 +220,12 @@ class LOGIN_HELPS:
         self.cookie_jar = MozillaCookieJar(cookies_file)
         # ---
         if os.path.exists(cookies_file):
-            print("Load cookies from file, including session cookies")
-            self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
-            print("We have %d cookies" % len(self.cookie_jar))
+            print(f"Load cookies from file, including session cookies {cookies_file}")
+            try:
+                self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
+                print("We have %d cookies" % len(self.cookie_jar))
+            except Exception as e:
+                exception_err(e)
         # ---
         seasons_by_lang[self.lang].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
         # ---
@@ -280,10 +279,7 @@ class LOGIN_HELPS:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
 
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            # pywikibot.output(traceback.format_exc())
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
         # ---
         return req0
 
