@@ -18,7 +18,6 @@ import os
 import inspect
 import sys
 import json
-import requests
 import urllib.parse
 import traceback
 from warnings import warn
@@ -70,7 +69,7 @@ class Login(LOGIN_HELPS):
     """
 
     def __init__(self, lang, family="wikipedia"):
-        print(f"class Login:{lang=}")
+        # print(f"class Login:{lang=}")
 
         super().__init__()
 
@@ -79,11 +78,6 @@ class Login(LOGIN_HELPS):
         self.r3_token = ""
         self.url_o_print = ""
         self.user_agent = default_user_agent()
-
-        self.username = ""  # User_tables[self.family]["username"]
-        self.password = ""  # User_tables[self.family]["password"]
-
-        self.Bot_or_himo = ""  # 1 if "bot" not in self.username else ""
 
         self.endpoint = f"https://{self.lang}.{self.family}.org/w/api.php"
 
@@ -110,7 +104,10 @@ class Login(LOGIN_HELPS):
         """
         text = ""
         try:
-            data = req0.json()
+            if isinstance(req0, dict):
+                data = req0
+            else:
+                data = req0.json()
 
             if data.get("error", {}).get("*", "").find("mailing list") > -1:
                 data["error"]["*"] = ""
@@ -152,29 +149,7 @@ class Login(LOGIN_HELPS):
         if params.get("list") == "querypage":
             timeout = 60
 
-        if "dopost" in sys.argv:
-            printe.output("<<green>> dopost:::")
-            req = self.post_it(params, files, timeout)
-            # ---
-            if req:
-                data = self.parse_data(req)
-            # ---
-            return data
-        # ---
-        req = None
-        # ---
-
-        try:
-            req = self.post_it(params, files, timeout)
-
-        except requests.exceptions.ReadTimeout:
-            printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
-
-        except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            # pywikibot.output(traceback.format_exc())
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+        req = self.post_it(params, files, timeout)
         # ---
         if req:
             data = self.parse_data(req)
@@ -185,9 +160,6 @@ class Login(LOGIN_HELPS):
         """
         Filter out unnecessary parameters.
         """
-        if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
-            params["summary"] = ""
-
         if self.family == "nccommons" and params.get("bot"):
             del params["bot"]
 
@@ -211,11 +183,7 @@ class Login(LOGIN_HELPS):
         """
         params["format"] = "json"
         params["utf8"] = 1
-        params["bot"] = self.Bot_or_himo
         params["maxlag"] = ar_lag[1]
-
-        if "minor" in params and params["minor"] == "":
-            params["minor"] = self.Bot_or_himo
 
         if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
             if not self.r3_token:

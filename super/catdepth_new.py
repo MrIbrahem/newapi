@@ -78,9 +78,6 @@ class CategoryDepth(Login):
         if User_tables != {}:
             for f, tab in User_tables.items():
                 self.add_User_tables(f, tab)
-        # ---
-        self.username = User_tables[self.family]["username"]
-        self.password = User_tables[self.family]["password"]
 
     def Login_to_wiki(self):
         self.log_to_wiki_1()

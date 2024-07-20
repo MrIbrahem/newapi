@@ -20,7 +20,8 @@ def test_print(s):
 
 class BOTS_APIS(POST_HELPS):
     def __init__(self):
-        print("class APIS:")
+        # print("class APIS:")
+        super().__init__()
 
     def ask_put(self, nodiff=False, newtext="", text=""):
         yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]

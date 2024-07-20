@@ -5,6 +5,7 @@ from newapi.super.login_bots.bot import LOGIN_HELPS
 Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recent login attempts. Please wait 5 minutes before trying again.'}}
 
 """
+import sys
 import os
 import inspect
 import time
@@ -16,10 +17,9 @@ import pywikibot
 from newapi import printe
 from newapi.super.login_bots.r3_token_bot import get_r3_token, dump_r3_token
 
-from newapi.super.login_bots.cookies_bot import get_file_name, dump_cookies
+from newapi.super.login_bots.cookies_bot import get_file_name
 
 # cookies = get_cookies(lang, family, username)
-# dump_cookies(lang, family, username, cookies)
 seasons_by_lang = {}
 users_by_lang = {}
 User_tables = {}
@@ -34,29 +34,39 @@ def warn_err(err):
     return f"\ndef {nn}(): {err}"
 
 
+def exception_err(e):
+    pywikibot.output("<<red>> Traceback (most recent call last):")
+    warn(warn_err(f"Exception:{str(e)}"), UserWarning)
+    pywikibot.output("CRITICAL:")
+
+
 class LOGIN_HELPS:
     def __init__(self):
-        print("class LOGIN_HELPS:")
+        # print("class LOGIN_HELPS:")
         self.cookie_jar = False
         self.session = requests.Session()
+        self.username = ""
+        self.password = ""
         self.username_in = ""
+        self.Bot_or_himo = 0
+        self.user_table_done = False
 
     def add_User_tables(self, family, table):
         if self.family == family:
+            self.user_table_done = True
             User_tables[family] = table
             self.username = table["username"]
             self.password = table["password"]
+            self.Bot_or_himo = 1 if "bot" not in self.username else ""
 
     def make_new_r3_token(self):
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
-
+        r33 = {}
         try:
             req = self.post_it(r3_params)
             r33 = req.json()
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
 
         if not r33:
             _exceptions_ = [
@@ -107,14 +117,12 @@ class LOGIN_HELPS:
         }
 
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
-
+        jsson1 = {}
         try:
             r11 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r1_params)
             jsson1 = r11.json()
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
             return {}
 
         return jsson1.get("query", {}).get("tokens", {}).get("logintoken", "")
@@ -134,9 +142,7 @@ class LOGIN_HELPS:
             req = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r2_params)
             r22 = req.json()
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
         # ---
         success = r22.get("login", {}).get("result", "").lower() == "success"
         # ---
@@ -146,13 +152,11 @@ class LOGIN_HELPS:
         # ---
         reason = r22.get("login", {}).get("reason", "")
         # ---
-        pywikibot.output("<<red>> Traceback (most recent call last):")
-        warn(warn_err(f"Exception:{str(r22)}"), UserWarning)
+        exception_err(r22)
         # ---
         if reason == "Incorrect username or password entered. Please try again.":
             pywikibot.output(f"user:{self.username}, pass:******")
         # ---
-        pywikibot.output("CRITICAL:")
         return False
 
     def log_to_wiki_1(self, do=False):
@@ -187,9 +191,7 @@ class LOGIN_HELPS:
             json1 = r22.json()
             # print(json1)
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(e)
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
         # ---
         # {'batchcomplete': '', 'query': {'userinfo': {'id': 593870, 'name': 'Mr.Ibrahembot', 'groups': ['bot', 'editor', '*', 'user', 'autoconfirmed'], 'rights': ['apihighlimits', 'editautoreviewprotected', 'editeditorprotected', 'ipblock-exempt', 'noratelimit', 'bot', 'autoconfirmed', 'editsemiprotected', 'nominornewtalk', 'autopatrol', 'suppressredirect', 'writeapi', 'autoreview', 'sboverride', 'skipcaptcha', 'abusefilter-bypass-blocked-external-domains', 'review', 'unreviewedpages', 'patrolmarks', 'read', 'edit', 'createpage', 'createtalk', 'abusefilter-log-detail', 'abusefilter-view', 'abusefilter-log', 'flow-hide', 'flow-edit-title', 'move-rootuserpages', 'move-categorypages', 'minoredit', 'applychangetags', 'changetags', 'move', 'flow-edit-post', 'movestable']}}}
         # ---
@@ -218,14 +220,17 @@ class LOGIN_HELPS:
         self.cookie_jar = MozillaCookieJar(cookies_file)
         # ---
         if os.path.exists(cookies_file):
-            print("Load cookies from file, including session cookies")
-            self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
-            print("We have %d cookies" % len(self.cookie_jar))
+            print(f"Load cookies from file, including session cookies {cookies_file}")
+            try:
+                self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
+                print("We have %d cookies" % len(self.cookie_jar))
+            except Exception as e:
+                exception_err(e)
         # ---
         seasons_by_lang[self.lang].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
         # ---
         if self.loged_in():
-            print("Already logged in as " + self.username_in)
+            printe.output("<<green>> Already logged in as " + self.username_in)
         else:
             self.log_in()
         # ---
@@ -235,12 +240,54 @@ class LOGIN_HELPS:
         # ---
         # return seasons_by_lang[self.lang]
 
-    def post_it(self, params, files=None, timeout=30):
+    def params_w(self, params):
+        if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
+            params["summary"] = ""
+
+        params["bot"] = self.Bot_or_himo
+        if "minor" in params and params["minor"] == "":
+            params["minor"] = self.Bot_or_himo
+
+        params["assertuser"] = self.username
+
+        return params
+
+    def post_it_2(self, params, files=None, timeout=30):
         headers = {
             "User-Agent": self.user_agent,
         }
         # ---
+        if not self.user_table_done:
+            printe.output("<<green>> user_table_done == False!")
+            printe.output("<<green>> user_table_done == False!")
+            printe.output("<<green>> user_table_done == False!")
+            # do error
+            if "raise" in sys.argv:
+                raise Exception("user_table_done == False!")
+        # ---
+        if "dopost" in sys.argv:
+            printe.output("<<green>> dopost:::")
+            req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            return req0
+        # ---
+        req0 = None
+        # ---
+        try:
+            req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+
+        except requests.exceptions.ReadTimeout:
+            printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
+
+        except Exception as e:
+            exception_err(e)
+        # ---
+        return req0
+
+    def post_it(self, params, files=None, timeout=30):
+        params = self.params_w(params)
+        # ---
         session = seasons_by_lang.get(self.lang)
+        # ---
         self.username_in = users_by_lang.get(self.lang, "")
         # ---
         if not session:
@@ -250,9 +297,7 @@ class LOGIN_HELPS:
             printe.output("<<red>> no username_in.. ")
             return {}
         # ---
-        params["assertuser"] = self.username
-        # ---
-        req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+        req0 = self.post_it_2(params, files=files, timeout=timeout)
         # ---
         if not req0:
             return {}

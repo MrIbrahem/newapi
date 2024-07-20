@@ -164,11 +164,6 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             for f, tab in User_tables.items():
                 self.add_User_tables(f, tab)
         # ---
-        self.username = User_tables[self.family]["username"]
-        self.password = User_tables[self.family]["password"]
-
-        self.Bot_or_himo = 1 if "bot" not in self.username else ""
-        # ---
         if self.lang not in ["", not_loged_m[1]]:
             # ---
             self.Log_to_wiki()
@@ -191,7 +186,7 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             # ---
             printe.output(Edit_summary_line[1] % self.summary)
             # ---
-            sa = pywikibot.input(f"<<lightyellow>>page.py: Do you want to accept these changes? (yes, no): for page {self.lang}:{self.title} user:{self.username}")
+            sa = pywikibot.input(f"<<lightyellow>>page.py: Do you want to accept these changes? (yes, no): for page {self.lang}:{self.title}?")
             # ---
             if sa == "a":
                 printe.output("<<lightgreen>> ---------------------------------")
