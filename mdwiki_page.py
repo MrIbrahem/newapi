@@ -87,7 +87,7 @@ def test():
     page = MainPage("User:Mr. Ibrahem/sandbox", "www", family="mdwiki")
     # ---
     text = page.get_text()
-    print(text)
+    print(f"{len(text)=}")
     # ---
     # ex = page.page_backlinks()
     # print('---------------------------')
@@ -110,5 +110,5 @@ def test():
 # ---
 if __name__ == "__main__":
     # python3 core8/pwb.py newapi/mdwiki_page
-    super_page.print_test[1] = True
+    # super_page.print_test[1] = True
     test()

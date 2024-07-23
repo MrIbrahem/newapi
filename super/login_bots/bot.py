@@ -120,9 +120,17 @@ class LOGIN_HELPS:
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         jsson1 = {}
         try:
-            r11 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r1_params)
+            r11 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r1_params, headers=self.headers)
+            if r11.status_code == 403:
+                printe.output(f"newapi/page.py: 403 Server Error: Server Hangup for url: {self.endpoint}")
+        except Exception as e:
+            exception_err(e)
+            return {}
+
+        try:
             jsson1 = r11.json()
         except Exception as e:
+            print(r11.text)
             exception_err(e)
             return {}
 
@@ -140,7 +148,7 @@ class LOGIN_HELPS:
         r22 = {}
 
         try:
-            req = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r2_params)
+            req = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r2_params, headers=self.headers)
             r22 = req.json()
         except Exception as e:
             exception_err(e)
@@ -153,7 +161,7 @@ class LOGIN_HELPS:
         # ---
         reason = r22.get("login", {}).get("reason", "")
         # ---
-        exception_err(r22)
+        # exception_err(r22)
         # ---
         if reason == "Incorrect username or password entered. Please try again.":
             pywikibot.output(f"user:{self.username}, pass:******")
@@ -188,7 +196,7 @@ class LOGIN_HELPS:
         json1 = {}
 
         try:
-            r22 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params)
+            r22 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, headers=self.headers)
             json1 = r22.json()
             # print(json1)
         except Exception as e:
@@ -199,7 +207,7 @@ class LOGIN_HELPS:
         # ---
         userinfo = json1.get("query", {}).get("userinfo", {})
         # ---
-        print(json1)
+        # print(json1)
         # ---
         if "anon" in userinfo:
             return False
@@ -266,9 +274,6 @@ class LOGIN_HELPS:
         return params
 
     def post_it_2(self, params, files=None, timeout=30):
-        headers = {
-            "User-Agent": self.user_agent,
-        }
         # ---
         if not self.user_table_done:
             printe.output("<<green>> user_table_done == False!")
@@ -280,13 +285,13 @@ class LOGIN_HELPS:
         # ---
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
             return req0
         # ---
         req0 = None
         # ---
         try:
-            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
 
         except requests.exceptions.ReadTimeout:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
