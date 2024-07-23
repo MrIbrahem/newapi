@@ -111,7 +111,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         if params.get("list") == "querypage":
             timeout = 60
         # ---
-        req = self.post_it_parse_data(params, files, timeout)
+        req = self.post_it(params, files, timeout)
         # ---
         if req:
             data = self.parse_data(req)
@@ -120,7 +120,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         # ---
         error = data.get("error", {})
         if error != {}:
-            er = self.handel_err(error, "")
+            er = self.handel_err(error, "", params=params)
             # ---
             return er
         # ---
@@ -155,14 +155,15 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         params["utf8"] = 1
         params["maxlag"] = ar_lag[1]
 
-        if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
-            if not self.r3_token:
-                self.r3_token = self.get_r3token()
+        # if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
+        if not self.r3_token:
+            # self.r3_token = self.get_r3token()
+            self.r3_token = self.make_new_r3_token()
 
-            if not self.r3_token:
-                warn(warn_err('self.r3_token == "" '), UserWarning)
+        if not self.r3_token:
+            warn(warn_err('self.r3_token == "" '), UserWarning, stacklevel=2)
 
-            params["token"] = self.r3_token
+        params["token"] = self.r3_token
 
         params = self.filter_params(params)
 

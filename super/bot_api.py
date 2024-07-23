@@ -56,6 +56,8 @@ def test_print(s):
 class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
     def __init__(self, lang, family="wikipedia"):
         # ---
+        self.username = ""
+        # ---
         super().__init__(lang, family)
         # ---
         self.lang = change_codes.get(lang) or lang
@@ -68,7 +70,8 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
         if User_tables != {}:
             for f, tab in User_tables.items():
                 self.add_User_tables(f, tab)
-
+    def get_username(self):
+        return self.username
     def Login_to_wiki(self):
         # ---
         self.log_to_wiki_1()
@@ -261,43 +264,39 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
         return results
 
     def Get_Newpages(self, limit=5000, namespace="0", rcstart="", user="", three_houers=False):
-        # ---
         if three_houers:
             dd = datetime.datetime.utcnow() - timedelta(hours=3)
-            # ---
             rcstart = dd.strftime("%Y-%m-%dT%H:%M:00.000Z")
-        # ---
+        
         params = {
             "action": "query",
             "format": "json",
             "list": "recentchanges",
-            # "rcdir": "newer",
             "rcnamespace": namespace,
             "rclimit": "max",
             "utf8": 1,
             "rctype": "new",
             "formatversion": 2,
         }
-        # ---
+        
         if rcstart:
             params["rcstart"] = rcstart
         if user:
             params["rcuser"] = user
-        # ---
+        
         if (isinstance(limit, str) and limit.isdigit()) or isinstance(limit, int):
             limit = int(limit)
             params["rclimit"] = limit
         else:
             limit = 5000
-        # ---
+        
         json1 = self.post_continue(params, "query", _p_="recentchanges", p_empty=[], Max=limit)
-        # ---
+        
         Main_table = [x["title"] for x in json1]
-        # ---
+        
         test_print(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
-        # ---
+        
         return Main_table
-
     def UserContribs(self, user, limit=5000, namespace="*", ucshow=""):
         # ---
         params = {
@@ -309,7 +308,7 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
             "uclimit": "max",
             "ucuser": user,
             "utf8": 1,
-            "bot": 1,
+            # "bot": 1,
             "ucprop": "title",
             "formatversion": 1,
         }

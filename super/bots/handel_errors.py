@@ -2,6 +2,7 @@
 from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 """
+import sys
 from newapi import printe
 
 
@@ -10,7 +11,7 @@ class HANDEL_ERRORS:
         printe("class HANDEL_ERRORS:")
         pass
 
-    def handel_err(self, error, function=""):
+    def handel_err(self, error: dict, function: str = "", params: dict = None):
         # ---
         # {'error': {'code': 'articleexists', 'info': 'The article you tried to create has been created already.', '*': 'See https://ar.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.'}, 'servedby': 'mw1425'}
         # ---
@@ -32,6 +33,10 @@ class HANDEL_ERRORS:
                 return False
             return description
         # ---
+        if err_code == "no-such-entity":
+            printe.output("<<lightred>> ** no-such-entity. ")
+            return False
+        # ---
         if err_code == "protectedpage":
             printe.output("<<lightred>> ** protectedpage. ")
             # return "protectedpage"
@@ -41,4 +46,7 @@ class HANDEL_ERRORS:
             printe.output("<<lightred>> ** article already created. ")
             return "articleexists"
         # ---
-        printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}.")
+        printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}, {params=}")
+        # ---
+        if "raise" in sys.argv:
+            raise Exception(error)

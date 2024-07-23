@@ -110,6 +110,8 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
     def __init__(self, title, lang, family="wikipedia"):
         print(f"class MainPage: {lang=}")
         # ---
+        self.username = ""
+        # ---
         super().__init__(lang, family)
         # ---
         self.title = title
@@ -186,7 +188,7 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             # ---
             printe.output(Edit_summary_line[1] % self.summary)
             # ---
-            sa = pywikibot.input(f"<<lightyellow>>page.py: Do you want to accept these changes? (yes, no): for page {self.lang}:{self.title}?")
+            sa = pywikibot.input(f"<<lightyellow>>page.py: Do you want to accept these changes? (yes, no): for page {self.lang}:{self.title}? {self.username=}")
             # ---
             if sa == "a":
                 printe.output("<<lightgreen>> ---------------------------------")
@@ -675,7 +677,7 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             return True
         # ---
         if error != {}:
-            er = self.handel_err(error, function="Save")
+            er = self.handel_err(error, function="Save",  params=params)
             # ---
             return er
         # ---
@@ -764,7 +766,7 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             return True
         # ---
         if error != {}:
-            er = self.handel_err(error, function="Create")
+            er = self.handel_err(error, function="Create", params=params)
             # ---
             return er
             # ---

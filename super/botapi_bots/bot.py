@@ -22,6 +22,7 @@ def test_print(s):
 class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
     def __init__(self):
         # print("class APIS:")
+        self.username = ""
         super().__init__()
 
     def ask_put(self, nodiff=False, newtext="", text=""):
@@ -37,7 +38,7 @@ class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
                     printe.output(f"diference in bytes: {len(newtext) - len(text)}")
                     printe.output(f"length of text: {len(text)}, length of newtext: {len(newtext)}")
             # ---
-            sa = pywikibot.input("<<lightyellow>>bot_api.py: save (yes, no)?")
+            sa = pywikibot.input(f"<<lightyellow>>bot_api.py: save (yes, no)? {self.username=}")
             # ---
             if sa == "a":
                 printe.output("<<lightgreen>> ---------------------------------")
@@ -89,7 +90,6 @@ class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
         if not results:
             return ""
         # ---
-        error = results.get("error", {})
         data = results.get("edit", {})
         result = data.get("result", "")
         # ---
@@ -97,8 +97,10 @@ class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
             printe.output("<<lightgreen>>** true.")
             return True
         # ---
+        error = results.get("error", {})
+        # ---
         if error != {}:
-            er = self.handel_err(error, function="Add_To_Bottom")
+            er = self.handel_err(error, function="Add_To_Bottom", params=params)
             # ---
             return er
         # ---
@@ -130,7 +132,7 @@ class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
             return False
         # ---
         if not self.save_move and "ask" in sys.argv:
-            sa = pywikibot.input(f"<<lightyellow>>bot_api: Do you move page:[[{old_title}]] to [[{to}]]? ([y]es, [N]o, [a]ll)?")
+            sa = pywikibot.input(f"<<lightyellow>>bot_api: Do you move page:[[{old_title}]] to [[{to}]]? ([y]es, [N]o, [a]ll)? {self.username=}")
             # ---
             if sa == "a":
                 printe.output("<<lightgreen>> ---------------------------------")
