@@ -90,13 +90,14 @@ class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
         if not results:
             return ""
         # ---
-        error = results.get("error", {})
         data = results.get("edit", {})
         result = data.get("result", "")
         # ---
         if result == "Success":
             printe.output("<<lightgreen>>** true.")
             return True
+        # ---
+        error = results.get("error", {})
         # ---
         if error != {}:
             er = self.handel_err(error, function="Add_To_Bottom", params=params)

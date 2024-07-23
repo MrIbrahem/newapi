@@ -111,7 +111,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         if params.get("list") == "querypage":
             timeout = 60
         # ---
-        req = self.post_it_parse_data(params, files, timeout)
+        req = self.post_it(params, files, timeout)
         # ---
         if req:
             data = self.parse_data(req)
