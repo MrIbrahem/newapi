@@ -56,6 +56,8 @@ def test_print(s):
 class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
     def __init__(self, lang, family="wikipedia"):
         # ---
+        self.username = ""
+        # ---
         super().__init__(lang, family)
         # ---
         self.lang = change_codes.get(lang) or lang
@@ -68,7 +70,8 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
         if User_tables != {}:
             for f, tab in User_tables.items():
                 self.add_User_tables(f, tab)
-
+    def get_username(self):
+        return self.username
     def Login_to_wiki(self):
         # ---
         self.log_to_wiki_1()
@@ -309,7 +312,7 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
             "uclimit": "max",
             "ucuser": user,
             "utf8": 1,
-            "bot": 1,
+            # "bot": 1,
             "ucprop": "title",
             "formatversion": 1,
         }
