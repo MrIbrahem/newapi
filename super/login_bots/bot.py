@@ -102,7 +102,7 @@ class LOGIN_HELPS:
         """
         Log in to the wiki and get authentication token.
         """
-        time.sleep(0.5)
+        # time.sleep(0.5)
 
         colors = {"ar": "yellow", "en": "lightpurple"}
 
@@ -285,7 +285,7 @@ class LOGIN_HELPS:
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 
-        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wd"):
+        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wd") or self.family == "wikidata":
             params["assertuser"] = self.username
 
         return params
