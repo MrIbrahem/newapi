@@ -102,7 +102,7 @@ class LOGIN_HELPS:
         """
         Log in to the wiki and get authentication token.
         """
-        time.sleep(0.5)
+        # time.sleep(0.5)
 
         colors = {"ar": "yellow", "en": "lightpurple"}
 
