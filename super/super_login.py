@@ -120,7 +120,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         # ---
         error = data.get("error", {})
         if error != {}:
-            er = self.handel_err(error)
+            er = self.handel_err(error, "")
             # ---
             return er
         # ---
