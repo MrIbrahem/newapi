@@ -36,7 +36,7 @@ def warn_err(err):
 
 def exception_err(e):
     pywikibot.output("<<red>> Traceback (most recent call last):")
-    warn(warn_err(f"Exception:{str(e)}"), UserWarning)
+    warn(warn_err(f"Exception:{str(e)}"), UserWarning, stacklevel=2)
     pywikibot.output("CRITICAL:")
 
 
@@ -52,6 +52,7 @@ class LOGIN_HELPS:
         self.user_table_done = False
 
     def add_User_tables(self, family, table):
+        print(f"add_User_tables: {family=}")
         if self.family == family:
             self.user_table_done = True
             User_tables[family] = table
@@ -192,15 +193,16 @@ class LOGIN_HELPS:
             # print(json1)
         except Exception as e:
             exception_err(e)
+            return False
         # ---
         # {'batchcomplete': '', 'query': {'userinfo': {'id': 593870, 'name': 'Mr.Ibrahembot', 'groups': ['bot', 'editor', '*', 'user', 'autoconfirmed'], 'rights': ['apihighlimits', 'editautoreviewprotected', 'editeditorprotected', 'ipblock-exempt', 'noratelimit', 'bot', 'autoconfirmed', 'editsemiprotected', 'nominornewtalk', 'autopatrol', 'suppressredirect', 'writeapi', 'autoreview', 'sboverride', 'skipcaptcha', 'abusefilter-bypass-blocked-external-domains', 'review', 'unreviewedpages', 'patrolmarks', 'read', 'edit', 'createpage', 'createtalk', 'abusefilter-log-detail', 'abusefilter-view', 'abusefilter-log', 'flow-hide', 'flow-edit-title', 'move-rootuserpages', 'move-categorypages', 'minoredit', 'applychangetags', 'changetags', 'move', 'flow-edit-post', 'movestable']}}}
         # ---
         userinfo = json1.get("query", {}).get("userinfo", {})
         # ---
+        print(json1)
+        # ---
         if "anon" in userinfo:
             return False
-        # ---
-        # print(userinfo)
         # ---
         self.username_in = userinfo.get("name", "")
         users_by_lang[self.lang] = self.username_in
@@ -224,14 +226,21 @@ class LOGIN_HELPS:
             try:
                 self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
                 print("We have %d cookies" % len(self.cookie_jar))
+                # ---
+                if len(self.cookie_jar) == 0:
+                    cookies_file.write_text("")
+                # ---
             except Exception as e:
                 exception_err(e)
+                cookies_file.write_text("")
         # ---
         seasons_by_lang[self.lang].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
         # ---
-        if self.loged_in():
-            printe.output("<<green>> Already logged in as " + self.username_in)
+        if len(self.cookie_jar) > 0:
+            if self.loged_in():
+                printe.output("<<green>> Already logged in as " + self.username_in)
         else:
+            cookies_file.write_text("")
             self.log_in()
         # ---
         # r3_token = self.make_new_r3_token()

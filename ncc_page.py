@@ -28,6 +28,7 @@ from newapi.ncc_page import NEW_API
 # revisions= api_new.get_revisions(title)
 
 """
+import sys
 import os
 import configparser
 from pathlib import Path
@@ -35,12 +36,18 @@ from newapi.super import bot_api
 from newapi.super import super_page
 from newapi.super import catdepth_new
 
+print_test = {1: True if "test" in sys.argv else False}
+
+def printt(s):
+    if print_test[1]:
+        print(s)
+
 
 catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "nccommons"
 
 dir2 = os.getenv("HOME")
-# print(f"HOME:{dir2}")
+printt(f"HOME:{dir2}")
 # ---
 if not dir2:
     Dir = str(Path(__file__).parents[0])
@@ -51,12 +58,20 @@ if not dir2:
     if dir2.startswith("I:"):
         dir2 = "I:/ncc"
 # ---
+file_path = Path(dir2) / "confs" / "nccommons_user.ini"
+# ---
+printt(f"{file_path=}")
+
+if not file_path.exists():
+    print(f"File not found: {file_path}")
+# ---
 config = configparser.ConfigParser()
 config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
 username = config["DEFAULT"]["username"].strip()
 password = config["DEFAULT"]["password"].strip()
-
+# ---
+printt(f"{username=}")
 # ---
 User_tables = {
     "username": username,
