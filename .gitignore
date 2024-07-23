@@ -6,4 +6,3 @@ tests/super_login_old.py
 *.txt
 super/login_bots/jar.py
 super/login_bots/mwclient.pyyy.py
-wd_login_bot.py
