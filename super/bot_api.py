@@ -264,43 +264,39 @@ class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
         return results
 
     def Get_Newpages(self, limit=5000, namespace="0", rcstart="", user="", three_houers=False):
-        # ---
         if three_houers:
             dd = datetime.datetime.utcnow() - timedelta(hours=3)
-            # ---
             rcstart = dd.strftime("%Y-%m-%dT%H:%M:00.000Z")
-        # ---
+        
         params = {
             "action": "query",
             "format": "json",
             "list": "recentchanges",
-            # "rcdir": "newer",
             "rcnamespace": namespace,
             "rclimit": "max",
             "utf8": 1,
             "rctype": "new",
             "formatversion": 2,
         }
-        # ---
+        
         if rcstart:
             params["rcstart"] = rcstart
         if user:
             params["rcuser"] = user
-        # ---
+        
         if (isinstance(limit, str) and limit.isdigit()) or isinstance(limit, int):
             limit = int(limit)
             params["rclimit"] = limit
         else:
             limit = 5000
-        # ---
+        
         json1 = self.post_continue(params, "query", _p_="recentchanges", p_empty=[], Max=limit)
-        # ---
+        
         Main_table = [x["title"] for x in json1]
-        # ---
+        
         test_print(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
-        # ---
+        
         return Main_table
-
     def UserContribs(self, user, limit=5000, namespace="*", ucshow=""):
         # ---
         params = {
