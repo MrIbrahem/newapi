@@ -25,6 +25,21 @@ users_by_lang = {}
 User_tables = {}
 
 
+def default_user_agent():
+    tool = os.getenv("HOME")
+    if tool:
+        # "/data/project/mdwiki"
+        tool = tool.split("/")[-1]
+    else:
+        tool = "himo"
+    # ---
+    li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
+    # ---
+    # printe.output(f"default_user_agent: {li}")
+    # ---
+    return li
+
+
 def warn_err(err):
     """
     Return formatted warning message with error details.
@@ -50,6 +65,8 @@ class LOGIN_HELPS:
         self.username_in = ""
         self.Bot_or_himo = 0
         self.user_table_done = False
+        self.user_agent = default_user_agent()
+        self.headers = {"User-Agent": self.user_agent}
 
     def add_User_tables(self, family, table):
         print(f"add_User_tables: {family=}")
@@ -120,9 +137,17 @@ class LOGIN_HELPS:
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         jsson1 = {}
         try:
-            r11 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r1_params)
+            r11 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r1_params, headers=self.headers)
+            if not str(r11.status_code).startswith("2"):
+                printe.output(f"<<red>> newapi {r11.status_code} Server Error: Server Hangup for url: {self.endpoint}")
+        except Exception as e:
+            exception_err(e)
+            return {}
+
+        try:
             jsson1 = r11.json()
         except Exception as e:
+            print(r11.text)
             exception_err(e)
             return {}
 
@@ -140,7 +165,7 @@ class LOGIN_HELPS:
         r22 = {}
 
         try:
-            req = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r2_params)
+            req = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r2_params, headers=self.headers)
             r22 = req.json()
         except Exception as e:
             exception_err(e)
@@ -153,7 +178,7 @@ class LOGIN_HELPS:
         # ---
         reason = r22.get("login", {}).get("reason", "")
         # ---
-        exception_err(r22)
+        # exception_err(r22)
         # ---
         if reason == "Incorrect username or password entered. Please try again.":
             pywikibot.output(f"user:{self.username}, pass:******")
@@ -188,7 +213,7 @@ class LOGIN_HELPS:
         json1 = {}
 
         try:
-            r22 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params)
+            r22 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, headers=self.headers)
             json1 = r22.json()
             # print(json1)
         except Exception as e:
@@ -199,7 +224,7 @@ class LOGIN_HELPS:
         # ---
         userinfo = json1.get("query", {}).get("userinfo", {})
         # ---
-        print(json1)
+        # print(json1)
         # ---
         if "anon" in userinfo:
             return False
@@ -215,7 +240,7 @@ class LOGIN_HELPS:
         # ---
         # self.session = requests.Session()
         # ---
-        seasons_by_lang[self.lang] = requests.Session()
+        seasons_by_lang[self.lang + self.family] = requests.Session()
         # ---
         cookies_file = get_file_name(self.lang, self.family, self.username)
         # ---
@@ -227,27 +252,30 @@ class LOGIN_HELPS:
                 self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
                 print("We have %d cookies" % len(self.cookie_jar))
                 # ---
-                if len(self.cookie_jar) == 0:
-                    cookies_file.write_text("")
+                # if len(self.cookie_jar) == 0: cookies_file.write_text("")
                 # ---
             except Exception as e:
                 exception_err(e)
-                cookies_file.write_text("")
+                # cookies_file.write_text("")
         # ---
-        seasons_by_lang[self.lang].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        seasons_by_lang[self.lang + self.family].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        # ---
+        loged_t = False
         # ---
         if len(self.cookie_jar) > 0:
             if self.loged_in():
+                loged_t = True
                 printe.output("<<green>> Already logged in as " + self.username_in)
         else:
-            cookies_file.write_text("")
-            self.log_in()
+            # cookies_file.write_text("")
+            loged_t = self.log_in()
         # ---
         # r3_token = self.make_new_r3_token()
         # ---
-        self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
+        if loged_t:
+            self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
         # ---
-        # return seasons_by_lang[self.lang]
+        # return seasons_by_lang[self.lang+self.family]
 
     def params_w(self, params):
         if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
@@ -257,14 +285,12 @@ class LOGIN_HELPS:
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 
-        params["assertuser"] = self.username
+        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wd"):
+            params["assertuser"] = self.username
 
         return params
 
     def post_it_2(self, params, files=None, timeout=30):
-        headers = {
-            "User-Agent": self.user_agent,
-        }
         # ---
         if not self.user_table_done:
             printe.output("<<green>> user_table_done == False!")
@@ -276,13 +302,13 @@ class LOGIN_HELPS:
         # ---
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
             return req0
         # ---
         req0 = None
         # ---
         try:
-            req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
 
         except requests.exceptions.ReadTimeout:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
@@ -295,7 +321,7 @@ class LOGIN_HELPS:
     def post_it(self, params, files=None, timeout=30):
         params = self.params_w(params)
         # ---
-        session = seasons_by_lang.get(self.lang)
+        session = seasons_by_lang.get(self.lang + self.family)
         # ---
         self.username_in = users_by_lang.get(self.lang, "")
         # ---
@@ -304,11 +330,12 @@ class LOGIN_HELPS:
         # ---
         if not self.username_in:
             printe.output("<<red>> no username_in.. ")
-            return {}
+            # return {}
         # ---
         req0 = self.post_it_2(params, files=files, timeout=timeout)
         # ---
         if not req0:
+            printe.output("<<red>> no req0.. ")
             return {}
         # ---
         return req0

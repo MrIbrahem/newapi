@@ -78,6 +78,7 @@ class Login(LOGIN_HELPS):
         self.r3_token = ""
         self.url_o_print = ""
         self.user_agent = default_user_agent()
+        # self.headers = {"User-Agent": self.user_agent}
 
         self.endpoint = f"https://{self.lang}.{self.family}.org/w/api.php"
 
