@@ -25,6 +25,21 @@ users_by_lang = {}
 User_tables = {}
 
 
+def default_user_agent():
+    tool = os.getenv("HOME")
+    if tool:
+        # "/data/project/mdwiki"
+        tool = tool.split("/")[-1]
+    else:
+        tool = "himo"
+    # ---
+    li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
+    # ---
+    # printe.output(f"default_user_agent: {li}")
+    # ---
+    return li
+
+
 def warn_err(err):
     """
     Return formatted warning message with error details.
@@ -50,6 +65,8 @@ class LOGIN_HELPS:
         self.username_in = ""
         self.Bot_or_himo = 0
         self.user_table_done = False
+        self.user_agent = default_user_agent()
+        self.headers = {"User-Agent": self.user_agent}
 
     def add_User_tables(self, family, table):
         print(f"add_User_tables: {family=}")
@@ -121,8 +138,8 @@ class LOGIN_HELPS:
         jsson1 = {}
         try:
             r11 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r1_params, headers=self.headers)
-            if r11.status_code == 403:
-                printe.output(f"newapi/page.py: 403 Server Error: Server Hangup for url: {self.endpoint}")
+            if not str(r11.status_code).startswith("2"):
+                printe.output(f"<<red>> newapi {r11.status_code} Server Error: Server Hangup for url: {self.endpoint}")
         except Exception as e:
             exception_err(e)
             return {}

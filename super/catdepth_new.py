@@ -9,7 +9,9 @@ import time
 import sys
 import tqdm
 from newapi import printe
+from newapi.super.botapi_bots.bot import BOTS_APIS
 from newapi.super.super_login import Login
+from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 SITECODE = "en"
 FAMILY = "wikipedia"
@@ -38,7 +40,8 @@ ns_list = {
 }
 
 
-class CategoryDepth(Login):
+# class CategoryDepth(Login):
+class CategoryDepth(Login, BOTS_APIS, HANDEL_ERRORS):
     def __init__(self, title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], no_gcmsort=False, props=None, only_titles=False, printtest=False, **kwargs):
         # ---
         super().__init__(sitecode, family)
