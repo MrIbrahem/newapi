@@ -66,7 +66,6 @@ class LOGIN_HELPS:
         self.username_in = ""
         self.Bot_or_himo = 0
         self.cookies_file = ""
-        self.Bot_or_himo = 0
         self.user_table_done = False
         self.user_agent = default_user_agent()
         self.headers = {"User-Agent": self.user_agent}
@@ -78,7 +77,6 @@ class LOGIN_HELPS:
             User_tables[family] = table
             self.username = table["username"]
             self.password = table["password"]
-            self.Bot_or_himo = 1 if "bot" not in self.username else ""
 
     def make_new_r3_token(self):
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
@@ -110,6 +108,8 @@ class LOGIN_HELPS:
         colors = {"ar": "yellow", "en": "lightpurple"}
 
         color = colors.get(self.lang, "")
+        if self.lang == "test":
+            raise Exception("test")
 
         Bot_passwords = self.password.find("@") != -1
 
@@ -190,10 +190,9 @@ class LOGIN_HELPS:
 
     def log_to_wiki_1(self, do=False):
         # ---
-        # return self.make_new_r3_token()
+        return self.make_new_r3_token()
         # ---
-        if do:
-            return self.get_r3token()
+        # if do: return self.get_r3token()
         # ---
         return True
 
@@ -284,11 +283,13 @@ class LOGIN_HELPS:
         if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
 
+        self.Bot_or_himo = 1 if "bot" in self.username else 0
+
         params["bot"] = self.Bot_or_himo
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 
-        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wd") or self.family == "wikidata":
+        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wb") or self.family == "wikidata":
             params["assertuser"] = self.username
 
         return params
@@ -384,6 +385,7 @@ class LOGIN_HELPS:
         return req0
 
     def post_it_parse_data(self, params, files=None, timeout=30, relogin=False):
+        # ---
         req = self.post_it(params, files, timeout)
         # ---
         data = {}
