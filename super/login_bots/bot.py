@@ -120,7 +120,7 @@ class LOGIN_HELPS:
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         jsson1 = {}
         try:
-            r11 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r1_params)
+            r11 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r1_params)
             jsson1 = r11.json()
         except Exception as e:
             exception_err(e)
@@ -140,7 +140,7 @@ class LOGIN_HELPS:
         r22 = {}
 
         try:
-            req = seasons_by_lang[self.lang].request("POST", self.endpoint, data=r2_params)
+            req = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r2_params)
             r22 = req.json()
         except Exception as e:
             exception_err(e)
@@ -188,7 +188,7 @@ class LOGIN_HELPS:
         json1 = {}
 
         try:
-            r22 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params)
+            r22 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params)
             json1 = r22.json()
             # print(json1)
         except Exception as e:
@@ -215,7 +215,7 @@ class LOGIN_HELPS:
         # ---
         # self.session = requests.Session()
         # ---
-        seasons_by_lang[self.lang] = requests.Session()
+        seasons_by_lang[self.lang + self.family] = requests.Session()
         # ---
         cookies_file = get_file_name(self.lang, self.family, self.username)
         # ---
@@ -228,26 +228,30 @@ class LOGIN_HELPS:
                 print("We have %d cookies" % len(self.cookie_jar))
                 # ---
                 if len(self.cookie_jar) == 0:
-                    cookies_file.write_text("")
+                    # cookies_file.write_text("")
                 # ---
             except Exception as e:
                 exception_err(e)
-                cookies_file.write_text("")
+                # cookies_file.write_text("")
         # ---
-        seasons_by_lang[self.lang].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        seasons_by_lang[self.lang + self.family].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        # ---
+        loged_t = False
         # ---
         if len(self.cookie_jar) > 0:
             if self.loged_in():
+                loged_t = True
                 printe.output("<<green>> Already logged in as " + self.username_in)
         else:
-            cookies_file.write_text("")
-            self.log_in()
+            # cookies_file.write_text("")
+            loged_t = self.log_in()
         # ---
         # r3_token = self.make_new_r3_token()
         # ---
-        self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
+        if loged_t:
+            self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
         # ---
-        # return seasons_by_lang[self.lang]
+        # return seasons_by_lang[self.lang+self.family]
 
     def params_w(self, params):
         if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
@@ -257,7 +261,8 @@ class LOGIN_HELPS:
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 
-        params["assertuser"] = self.username
+        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wd"):
+            params["assertuser"] = self.username
 
         return params
 
@@ -276,13 +281,13 @@ class LOGIN_HELPS:
         # ---
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
             return req0
         # ---
         req0 = None
         # ---
         try:
-            req0 = seasons_by_lang[self.lang].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
+            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=headers)
 
         except requests.exceptions.ReadTimeout:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
@@ -295,7 +300,7 @@ class LOGIN_HELPS:
     def post_it(self, params, files=None, timeout=30):
         params = self.params_w(params)
         # ---
-        session = seasons_by_lang.get(self.lang)
+        session = seasons_by_lang.get(self.lang + self.family)
         # ---
         self.username_in = users_by_lang.get(self.lang, "")
         # ---
@@ -304,11 +309,12 @@ class LOGIN_HELPS:
         # ---
         if not self.username_in:
             printe.output("<<red>> no username_in.. ")
-            return {}
+            # return {}
         # ---
         req0 = self.post_it_2(params, files=files, timeout=timeout)
         # ---
         if not req0:
+            printe.output("<<red>> no req0.. ")
             return {}
         # ---
         return req0
