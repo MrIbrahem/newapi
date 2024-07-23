@@ -11,7 +11,7 @@ class HANDEL_ERRORS:
         printe("class HANDEL_ERRORS:")
         pass
 
-    def handel_err(self, error, function="", params=None):
+    def handel_err(self, error: dict, function: str = "", params: dict = None):
         # ---
         # {'error': {'code': 'articleexists', 'info': 'The article you tried to create has been created already.', '*': 'See https://ar.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.'}, 'servedby': 'mw1425'}
         # ---
