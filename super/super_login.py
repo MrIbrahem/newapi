@@ -99,46 +99,6 @@ class Login(LOGIN_HELPS):
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
 
-    def parse_data(self, req0):
-        """
-        Parse JSON response data.
-        """
-        text = ""
-        try:
-            if isinstance(req0, dict):
-                data = req0
-            else:
-                data = req0.json()
-
-            if data.get("error", {}).get("*", "").find("mailing list") > -1:
-                data["error"]["*"] = ""
-            if data.get("servedby"):
-                data["servedby"] = ""
-
-            return data
-        except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(f"error:{e} when json.loads(response.text)")
-            pywikibot.output("CRITICAL:")
-            text = str(req0.text).strip()
-
-        valid_text = text.startswith("{") and text.endswith("}")
-
-        if not text or not valid_text:
-            return {}
-
-        try:
-            data = json.loads(text)
-            return data
-        except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(f"error:{e} when json.loads(response.text)")
-            pywikibot.output(traceback.format_exc())
-            pywikibot.output(self.url_o_print)
-            pywikibot.output("CRITICAL:")
-
-        return {}
-
     def make_response(self, params, files=None, timeout=30):
         """
         Make a POST request to the API endpoint.
@@ -149,11 +109,19 @@ class Login(LOGIN_HELPS):
 
         if params.get("list") == "querypage":
             timeout = 60
-
-        req = self.post_it(params, files, timeout)
+        # ---
+        req = self.post_it_parse_data(params, files, timeout)
         # ---
         if req:
             data = self.parse_data(req)
+        # ---
+        # assertnameduserfailed
+        # ---
+        error = data.get("error", {})
+        if error != {}:
+            er = self.handel_err(error)
+            # ---
+            return er
         # ---
         return data
 
