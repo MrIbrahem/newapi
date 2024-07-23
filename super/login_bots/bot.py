@@ -227,8 +227,7 @@ class LOGIN_HELPS:
                 self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
                 print("We have %d cookies" % len(self.cookie_jar))
                 # ---
-                if len(self.cookie_jar) == 0:
-                    # cookies_file.write_text("")
+                # if len(self.cookie_jar) == 0: cookies_file.write_text("")
                 # ---
             except Exception as e:
                 exception_err(e)
