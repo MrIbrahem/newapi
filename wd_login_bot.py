@@ -34,7 +34,7 @@ if "workibrahem" in sys.argv:
 # ---
 bot_wd.User_tables["wikidata"] = User_tables
 # ---
-NEW_API = bot_wd.NEW_API
+WD_API = bot_wd.WD_API
 
 
 def test():
