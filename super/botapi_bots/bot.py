@@ -7,6 +7,7 @@ import sys
 import pywikibot
 from newapi import printe
 from newapi.super.bots.post_helps import POST_HELPS
+from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
 Save_Edit_Pages = {1: False}
@@ -18,7 +19,7 @@ def test_print(s):
         printe.output(s)
 
 
-class BOTS_APIS(POST_HELPS):
+class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
     def __init__(self):
         # print("class APIS:")
         super().__init__()

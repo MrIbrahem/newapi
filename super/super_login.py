@@ -25,6 +25,7 @@ from warnings import warn
 import pywikibot
 from newapi import printe
 from newapi.super.login_bots.bot import LOGIN_HELPS
+from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 file_name = os.path.basename(__file__)
 
@@ -63,7 +64,7 @@ def warn_err(err):
     return f"\ndef {nn}(): {err}"
 
 
-class Login(LOGIN_HELPS):
+class Login(LOGIN_HELPS, HANDEL_ERRORS):
     """
     Represents a login session for a wiki.
     """
