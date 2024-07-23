@@ -8,7 +8,8 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 import sys
 import os
 import inspect
-import time
+import json
+import traceback
 import requests
 from warnings import warn
 from http.cookiejar import MozillaCookieJar
@@ -63,6 +64,8 @@ class LOGIN_HELPS:
         self.username = ""
         self.password = ""
         self.username_in = ""
+        self.Bot_or_himo = 0
+        self.cookies_file = ""
         self.Bot_or_himo = 0
         self.user_table_done = False
         self.user_agent = default_user_agent()
@@ -242,21 +245,21 @@ class LOGIN_HELPS:
         # ---
         seasons_by_lang[self.lang + self.family] = requests.Session()
         # ---
-        cookies_file = get_file_name(self.lang, self.family, self.username)
+        self.cookies_file = get_file_name(self.lang, self.family, self.username)
         # ---
-        self.cookie_jar = MozillaCookieJar(cookies_file)
+        self.cookie_jar = MozillaCookieJar(self.cookies_file)
         # ---
-        if os.path.exists(cookies_file):
-            print(f"Load cookies from file, including session cookies {cookies_file}")
+        if os.path.exists(self.cookies_file):
+            print(f"Load cookies from file, including session cookies {self.cookies_file}")
             try:
                 self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
                 print("We have %d cookies" % len(self.cookie_jar))
                 # ---
-                # if len(self.cookie_jar) == 0: cookies_file.write_text("")
+                # if len(self.cookie_jar) == 0: self.cookies_file.write_text("")
                 # ---
             except Exception as e:
                 exception_err(e)
-                # cookies_file.write_text("")
+                # self.cookies_file.write_text("")
         # ---
         seasons_by_lang[self.lang + self.family].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
         # ---
@@ -267,7 +270,7 @@ class LOGIN_HELPS:
                 loged_t = True
                 printe.output("<<green>> Already logged in as " + self.username_in)
         else:
-            # cookies_file.write_text("")
+            # self.cookies_file.write_text("")
             loged_t = self.log_in()
         # ---
         # r3_token = self.make_new_r3_token()
@@ -289,6 +292,46 @@ class LOGIN_HELPS:
             params["assertuser"] = self.username
 
         return params
+
+    def parse_data(self, req0):
+        """
+        Parse JSON response data.
+        """
+        text = ""
+        try:
+            if isinstance(req0, dict):
+                data = req0
+            else:
+                data = req0.json()
+
+            if data.get("error", {}).get("*", "").find("mailing list") > -1:
+                data["error"]["*"] = ""
+            if data.get("servedby"):
+                data["servedby"] = ""
+
+            return data
+        except Exception as e:
+            pywikibot.output("<<red>> Traceback (most recent call last):")
+            pywikibot.output(f"error:{e} when json.loads(response.text)")
+            pywikibot.output("CRITICAL:")
+            text = str(req0.text).strip()
+
+        valid_text = text.startswith("{") and text.endswith("}")
+
+        if not text or not valid_text:
+            return {}
+
+        try:
+            data = json.loads(text)
+            return data
+        except Exception as e:
+            pywikibot.output("<<red>> Traceback (most recent call last):")
+            pywikibot.output(f"error:{e} when json.loads(response.text)")
+            pywikibot.output(traceback.format_exc())
+            pywikibot.output(self.url_o_print)
+            pywikibot.output("CRITICAL:")
+
+        return {}
 
     def post_it_2(self, params, files=None, timeout=30):
         # ---
@@ -339,3 +382,33 @@ class LOGIN_HELPS:
             return {}
         # ---
         return req0
+
+    def post_it_parse_data(self, params, files=None, timeout=30, relogin=False):
+        req = self.post_it(params, files, timeout)
+        # ---
+        data = {}
+        # ---
+        if req:
+            data = self.parse_data(req)
+        # ---
+        error = data.get("error", {})
+        # ---
+        # {'code': 'assertnameduserfailed', 'info': 'You are no longer logged in as "Mr. Ibrahem", ....', '*': ''}
+        # ---
+        if error:
+            code = error.get("code", "")
+            # ---
+            if code == "assertnameduserfailed":
+                # ---
+                try:
+                    with open(self.cookies_file, "w", encoding="utf-8") as f:
+                        f.write("")
+                except Exception as e:
+                    printe.output(e)
+                # ---
+                self.username_in = ""
+                self.make_new_session()
+                # ---
+                return self.post_it_parse_data(params, files, timeout, relogin=True)
+        # ---
+        return data
