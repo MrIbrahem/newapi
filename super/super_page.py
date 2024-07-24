@@ -677,6 +677,7 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             return True
         # ---
         if error != {}:
+            print(pop)
             er = self.handel_err(error, function="Save",  params=params)
             # ---
             return er
@@ -766,6 +767,7 @@ class MainPage(Login, APIS, HANDEL_ERRORS):
             return True
         # ---
         if error != {}:
+            print(pop)
             er = self.handel_err(error, function="Create", params=params)
             # ---
             return er

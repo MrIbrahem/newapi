@@ -100,7 +100,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
             self.url_o_print = f"{self.endpoint}?{urllib.parse.urlencode(pams2)}".replace("&format=json", "")
             printe.output(self.url_o_print)
 
-    def make_response(self, params, files=None, timeout=30):
+    def make_response(self, params, files=None, timeout=30, do_error=True):
         """
         Make a POST request to the API endpoint.
         """
@@ -120,9 +120,11 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         # ---
         error = data.get("error", {})
         if error != {}:
+            print(data)
             er = self.handel_err(error, "", params=params)
             # ---
-            return er
+            if do_error:
+                return er
         # ---
         return data
 
@@ -147,7 +149,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
     def post(self, params, Type="get", addtoken=False, CSRF=True, files=None):
         return self.post_params(params, Type=Type, addtoken=addtoken, CSRF=CSRF, files=files)
 
-    def post_params(self, params, Type="get", addtoken=False, CSRF=True, files=None):
+    def post_params(self, params, Type="get", addtoken=False, CSRF=True, files=None, do_error=True):
         """
         Make a POST request to the API endpoint with authentication token.
         """
@@ -169,7 +171,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
 
         params.setdefault("formatversion", "1")
 
-        data = self.make_response(params, files=files)
+        data = self.make_response(params, files=files, do_error=do_error)
 
         if not data:
             printe.output("<<red>> super_login(post): not data. return {}.")

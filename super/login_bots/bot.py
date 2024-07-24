@@ -18,7 +18,7 @@ import pywikibot
 from newapi import printe
 from newapi.super.login_bots.r3_token_bot import get_r3_token, dump_r3_token
 
-from newapi.super.login_bots.cookies_bot import get_file_name
+from newapi.super.login_bots.cookies_bot import get_file_name, del_cookies_file
 
 # cookies = get_cookies(lang, family, username)
 seasons_by_lang = {}
@@ -61,7 +61,12 @@ class LOGIN_HELPS:
         # print("class LOGIN_HELPS:")
         self.cookie_jar = False
         self.session = requests.Session()
-        self.username = ""
+        # ---
+        # check if self has username before writeself.username = ""
+        self.username = getattr(self, "username") if hasattr(self, "username") else ""
+        self.family = getattr(self, "family") if hasattr(self, "family") else ""
+        self.lang = getattr(self, "lang") if hasattr(self, "lang") else ""
+        # ---
         self.password = ""
         self.username_in = ""
         self.Bot_or_himo = 0
@@ -69,6 +74,7 @@ class LOGIN_HELPS:
         self.user_table_done = False
         self.user_agent = default_user_agent()
         self.headers = {"User-Agent": self.user_agent}
+        self.sea_key = f"{self.lang}-{self.family}-{self.username}"
 
     def add_User_tables(self, family, table):
         print(f"add_User_tables: {family=}")
@@ -77,6 +83,7 @@ class LOGIN_HELPS:
             User_tables[family] = table
             self.username = table["username"]
             self.password = table["password"]
+            self.sea_key = f"{self.lang}-{self.family}-{self.username}"
 
     def make_new_r3_token(self):
         r3_params = {"format": "json", "action": "query", "meta": "tokens"}
@@ -108,7 +115,7 @@ class LOGIN_HELPS:
         colors = {"ar": "yellow", "en": "lightpurple"}
 
         color = colors.get(self.lang, "")
-        if self.lang == "test":
+        if self.lang == "test" and "testwikidata" not in sys.argv:
             raise Exception("test")
 
         Bot_passwords = self.password.find("@") != -1
@@ -140,7 +147,7 @@ class LOGIN_HELPS:
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
         jsson1 = {}
         try:
-            r11 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r1_params, headers=self.headers)
+            r11 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=r1_params, headers=self.headers)
             if not str(r11.status_code).startswith("2"):
                 printe.output(f"<<red>> newapi {r11.status_code} Server Error: Server Hangup for url: {self.endpoint}")
         except Exception as e:
@@ -168,7 +175,7 @@ class LOGIN_HELPS:
         r22 = {}
 
         try:
-            req = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=r2_params, headers=self.headers)
+            req = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=r2_params, headers=self.headers)
             r22 = req.json()
         except Exception as e:
             exception_err(e)
@@ -215,7 +222,7 @@ class LOGIN_HELPS:
         json1 = {}
 
         try:
-            r22 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, headers=self.headers)
+            r22 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, headers=self.headers)
             json1 = r22.json()
             # print(json1)
         except Exception as e:
@@ -242,7 +249,7 @@ class LOGIN_HELPS:
         # ---
         # self.session = requests.Session()
         # ---
-        seasons_by_lang[self.lang + self.family] = requests.Session()
+        seasons_by_lang[self.sea_key] = requests.Session()
         # ---
         self.cookies_file = get_file_name(self.lang, self.family, self.username)
         # ---
@@ -260,7 +267,7 @@ class LOGIN_HELPS:
                 exception_err(e)
                 # self.cookies_file.write_text("")
         # ---
-        seasons_by_lang[self.lang + self.family].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        seasons_by_lang[self.sea_key].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
         # ---
         loged_t = False
         # ---
@@ -277,7 +284,7 @@ class LOGIN_HELPS:
         if loged_t:
             self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
         # ---
-        # return seasons_by_lang[self.lang+self.family]
+        # return seasons_by_lang[self.sea_key]
 
     def params_w(self, params):
         if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
@@ -346,13 +353,13 @@ class LOGIN_HELPS:
         # ---
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
+            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
             return req0
         # ---
         req0 = None
         # ---
         try:
-            req0 = seasons_by_lang[self.lang + self.family].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
+            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
 
         except requests.exceptions.ReadTimeout:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
@@ -365,9 +372,10 @@ class LOGIN_HELPS:
     def post_it(self, params, files=None, timeout=30):
         params = self.params_w(params)
         # ---
-        session = seasons_by_lang.get(self.lang + self.family)
+        session = seasons_by_lang.get(self.sea_key)
         # ---
-        self.username_in = users_by_lang.get(self.lang, "")
+        if not self.username_in:
+            self.username_in = users_by_lang.get(self.lang, "")
         # ---
         if not session:
             self.make_new_session()
@@ -402,11 +410,7 @@ class LOGIN_HELPS:
             # ---
             if code == "assertnameduserfailed":
                 # ---
-                try:
-                    with open(self.cookies_file, "w", encoding="utf-8") as f:
-                        f.write("")
-                except Exception as e:
-                    printe.output(e)
+                del_cookies_file(self.cookies_file)
                 # ---
                 self.username_in = ""
                 self.make_new_session()

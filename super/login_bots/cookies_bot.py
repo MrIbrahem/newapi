@@ -29,6 +29,15 @@ if not ta_dir.exists():
 ta_tab = {}
 
 
+def del_cookies_file(file_path):
+    # ---
+    file = Path(str(file_path))
+    # ---
+    if file.exists():
+        file.unlink(missing_ok=True)
+        printe.output("<<green>> unlink: file:{file}")
+
+
 def get_file_name(lang, family, username):
     # ---
     lang = lang.lower()
@@ -39,6 +48,7 @@ def get_file_name(lang, family, username):
     file = ta_dir / f"{family}_{lang}_{username}.txt"
     # ---
     return file
+
 
 def from_folder(lang, family, username):
     # ---

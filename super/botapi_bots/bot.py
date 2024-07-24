@@ -100,6 +100,7 @@ class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
         error = results.get("error", {})
         # ---
         if error != {}:
+            print(results)
             er = self.handel_err(error, function="Add_To_Bottom", params=params)
             # ---
             return er
