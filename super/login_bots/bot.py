@@ -77,7 +77,7 @@ class LOGIN_HELPS:
         self.sea_key = f"{self.lang}-{self.family}-{self.username}"
 
     def add_User_tables(self, family, table):
-        print(f"add_User_tables: {family=}")
+        # print(f"add_User_tables: {family=}")
         if self.family == family:
             self.user_table_done = True
             User_tables[family] = table
@@ -292,7 +292,9 @@ class LOGIN_HELPS:
 
         self.Bot_or_himo = 1 if "bot" in self.username else 0
 
-        params["bot"] = self.Bot_or_himo
+        if self.family != "nccommons":
+            params["bot"] = self.Bot_or_himo
+
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 

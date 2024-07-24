@@ -107,7 +107,7 @@ def warn_err(err):
 
 class MainPage(Login, APIS):
     def __init__(self, title, lang, family="wikipedia"):
-        print(f"class MainPage: {lang=}")
+        # print(f"class MainPage: {lang=}")
         # ---
         self.username = ""
         # ---
