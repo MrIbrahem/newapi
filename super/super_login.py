@@ -17,9 +17,10 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 import os
 import inspect
 import sys
-import json
+import time
 import urllib.parse
-import traceback
+
+# import traceback
 from warnings import warn
 
 import pywikibot
@@ -149,7 +150,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
     def post(self, params, Type="get", addtoken=False, CSRF=True, files=None):
         return self.post_params(params, Type=Type, addtoken=addtoken, CSRF=CSRF, files=files)
 
-    def post_params(self, params, Type="get", addtoken=False, CSRF=True, files=None, do_error=True):
+    def post_params(self, params, Type="get", addtoken=False, CSRF=True, files=None, do_error=False, max_retry=0):
         """
         Make a POST request to the API endpoint with authentication token.
         """
@@ -176,10 +177,12 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         if not data:
             printe.output("<<red>> super_login(post): not data. return {}.")
             return {}
-
+        # ---
         error = data.get("error", {})
+        # ---
         if error != {}:
             Invalid = error.get("info", "")
+            error_code = error.get("code", "")
             # code = error.get("code", "")
             # ---
             printe.output(f"<<red>> super_login(post): error: {error}")
@@ -191,13 +194,32 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
                     self.r3_token = self.make_new_r3_token()
                     # ---
                     return self.post_params(params, Type=Type, addtoken=addtoken, CSRF=False)
-
+            # ---
+            error_code = error.get("code", "")
+            if error_code == "maxlag" and max_retry < 4:
+                lage = int(error.get("lag", "0"))
+                # ---
+                test_print(params)
+                # ---
+                printe.output(f"<<purple>>post_params: <<red>> {lage=} {max_retry=}, sleep: {lage + 1}")
+                # ---
+                time.sleep(lage + 1)
+                # ---
+                ar_lag[1] = lage + 1
+                # ---
+                params["maxlag"] = ar_lag[1]
+                # ---
+                return self.post_params(params, Type=Type, addtoken=addtoken, max_retry=max_retry + 1)
+            # ---
         if "printdata" in sys.argv:
             printe.output(data)
 
         return data
 
     def post_continue(self, params, action, _p_="pages", p_empty=None, Max=500000, first=False, _p_2="", _p_2_empty=None):
+        # ---
+        test_print("_______________________")
+        test_print(f"post_continue, start. {action=}, {_p_=}")
         # ---
         if not isinstance(Max, int) and Max.isdigit():
             Max = int(Max)
@@ -216,29 +238,48 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         # ---
         while continue_params != {} or d == 0:
             # ---
+            params2 = params.copy()
+            # ---
             d += 1
             # ---
             if continue_params:
                 # params = {**params, **continue_params}
-                params.update(continue_params)
+                test_print("continue_params:")
+                for k, v in continue_params.items():
+                    params2[k] = v
+                # params2.update(continue_params)
+                test_print(params2)
             # ---
-            json1 = self.post_params(params)
+            json1 = self.post_params(params2)
             # ---
             if not json1:
                 test_print("post_continue, json1 is empty. break")
                 break
             # ---
-            continue_params = json1.get("continue", {})
+            continue_params = {}
             # ---
-            data = json1.get(action, {}).get(_p_, p_empty)
-            # ---
-            if _p_ == "querypage":
-                data = data.get("results", [])
-            elif first:
-                if isinstance(data, list) and len(data) > 0:
-                    data = data[0]
-                    if _p_2:
-                        data = data.get(_p_2, _p_2_empty)
+            if action == "wbsearchentities":
+                data = json1.get("search", [])
+                # ---
+                # test_print("wbsearchentities json1: ")
+                # test_print(str(json1))
+                # ---
+                # search_continue = json1.get("search-continue")
+                # ---
+                # if search_continue: continue_params = {"search-continue": search_continue}
+            else:
+                # ---
+                continue_params = json1.get("continue", {})
+                # ---
+                data = json1.get(action, {}).get(_p_, p_empty)
+                # ---
+                if _p_ == "querypage":
+                    data = data.get("results", [])
+                elif first:
+                    if isinstance(data, list) and len(data) > 0:
+                        data = data[0]
+                        if _p_2:
+                            data = data.get(_p_2, _p_2_empty)
             # ---
             if not data:
                 test_print("post continue, data is empty. break")
@@ -252,6 +293,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
             # ---
             if isinstance(results, list):
                 results.extend(data)
+                # results = list(set(results))
             else:
                 print(f"{type(results)=}")
                 print(f"{type(data)=}")
