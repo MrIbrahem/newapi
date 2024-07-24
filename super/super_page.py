@@ -56,7 +56,6 @@ from newapi import botEdit
 from newapi.super.page_bots.ar_err import find_edit_error
 from newapi.super.page_bots.bot import APIS
 from newapi.super.super_login import Login
-from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 file_name = os.path.basename(__file__)
 
@@ -106,7 +105,7 @@ def warn_err(err):
     return f"\ndef {nn}(): {err}"
 
 
-class MainPage(Login, APIS, HANDEL_ERRORS):
+class MainPage(Login, APIS):
     def __init__(self, title, lang, family="wikipedia"):
         print(f"class MainPage: {lang=}")
         # ---

@@ -6,7 +6,6 @@ from newapi.super.botapi_bots.bot import BOTS_APIS
 import sys
 import pywikibot
 from newapi import printe
-from newapi.super.bots.post_helps import POST_HELPS
 from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 yes_answer = ["y", "a", "", "Y", "A", "all", "aaa"]
@@ -18,8 +17,7 @@ def test_print(s):
     if "test_print" in sys.argv:
         printe.output(s)
 
-
-class BOTS_APIS(POST_HELPS, HANDEL_ERRORS):
+class BOTS_APIS(HANDEL_ERRORS):
     def __init__(self):
         # print("class APIS:")
         self.username = ""

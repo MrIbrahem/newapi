@@ -41,7 +41,6 @@ from datetime import timedelta
 from newapi import printe
 from newapi.super.botapi_bots.bot import BOTS_APIS
 from newapi.super.super_login import Login
-from newapi.super.bots.handel_errors import HANDEL_ERRORS
 
 User_tables = {}
 
@@ -53,7 +52,7 @@ def test_print(s):
         printe.output(s)
 
 
-class NEW_API(Login, BOTS_APIS, HANDEL_ERRORS):
+class NEW_API(Login, BOTS_APIS):
     def __init__(self, lang, family="wikipedia"):
         # ---
         self.username = ""
