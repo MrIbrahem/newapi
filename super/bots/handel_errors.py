@@ -46,6 +46,10 @@ class HANDEL_ERRORS:
             printe.output("<<lightred>> ** article already created. ")
             return "articleexists"
         # ---
+        if err_code == "maxlag":
+            printe.output("<<lightred>> ** maxlag. ")
+            return False
+        # ---
         printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}, {params=}")
         # ---
         if "raise" in sys.argv:
