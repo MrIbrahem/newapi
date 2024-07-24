@@ -3,10 +3,7 @@
 from newapi.super.page_bots.bot import APIS
 
 """
-from newapi.super.bots.post_helps import POST_HELPS
-
-
-class APIS(POST_HELPS):
+class APIS():
     def __init__(self):
         # print("class APIS:")
         pass
