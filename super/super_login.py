@@ -122,7 +122,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         error = data.get("error", {})
         if error != {}:
             print(data)
-            er = self.handel_err(error, "", params=params)
+            er = self.handel_err(error, "", params=params, do_error=do_error)
             # ---
             if do_error:
                 return er
@@ -185,7 +185,8 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
             error_code = error.get("code", "")
             # code = error.get("code", "")
             # ---
-            printe.output(f"<<red>> super_login(post): error: {error}")
+            if do_error:
+                printe.output(f"<<red>> super_login(post): error: {error}")
             # ---
             if Invalid == "Invalid CSRF token.":
                 pywikibot.output(f'<<red>> ** error "Invalid CSRF token.".\n{self.r3_token} ')

@@ -11,7 +11,7 @@ class HANDEL_ERRORS:
         printe("class HANDEL_ERRORS:")
         pass
 
-    def handel_err(self, error: dict, function: str = "", params: dict = None):
+    def handel_err(self, error: dict, function: str = "", params: dict = None, do_error: bool = True):
         # ---
         # {'error': {'code': 'articleexists', 'info': 'The article you tried to create has been created already.', '*': 'See https://ar.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.'}, 'servedby': 'mw1425'}
         # ---
@@ -50,7 +50,8 @@ class HANDEL_ERRORS:
             printe.output("<<lightred>> ** maxlag. ")
             return False
         # ---
-        printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}, {params=}")
+        if do_error:
+            printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}, {params=}")
         # ---
         if "raise" in sys.argv:
             raise Exception(error)
