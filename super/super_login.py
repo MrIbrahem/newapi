@@ -121,7 +121,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         # ---
         error = data.get("error", {})
         if error != {}:
-            print(data)
+            # print(data)
             er = self.handel_err(error, "", params=params, do_error=do_error)
             # ---
             if do_error:
