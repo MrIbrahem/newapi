@@ -666,6 +666,11 @@ def showDiff(text_a: str, text_b: str, context: int = 0) -> None:
     PatchManager(text_a, text_b, context=context).print_hunks()
 
 
+__all__ = [
+    "showDiff",
+    "output",
+]
+
 if __name__ == "__main__":
     line = ""
     numb = 0
