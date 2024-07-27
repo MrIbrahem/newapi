@@ -240,7 +240,7 @@ def get_color_table():
 color_table = get_color_table()
 
 
-def output(textm):
+def output(textm, *kwargs):
     """
     Prints the given text with color formatting.
 
@@ -665,6 +665,11 @@ def showDiff(text_a: str, text_b: str, context: int = 0) -> None:
         return
     PatchManager(text_a, text_b, context=context).print_hunks()
 
+
+__all__ = [
+    "showDiff",
+    "output",
+]
 
 if __name__ == "__main__":
     line = ""

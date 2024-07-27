@@ -31,7 +31,7 @@ from newapi.super import bot_api
 from newapi.super import super_page
 from newapi.super import catdepth_new
 
-from mdpy.bots import user_account_new
+from apis import user_account_new
 
 # ---
 tool = os.getenv("HOME")
