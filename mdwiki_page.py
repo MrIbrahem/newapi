@@ -38,12 +38,12 @@ purge       = page.purge()
 '''
 """
 # ---
-import sys
+# import sys
 from newapi.super import bot_api
 from newapi.super import super_page
 from newapi.super import catdepth_new
 
-from mdpy.bots import user_account_new
+from apis import user_account_new
 
 catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "mdwiki"
@@ -104,7 +104,7 @@ def test():
     api_new = NEW_API("www", family="mdwiki")
     # login   = api_new.Login_to_wiki()
     # pages   = api_new.Find_pages_exists_or_not(liste)
-    pages = api_new.Get_Newpages(limit=5000)
+    # pages = api_new.Get_Newpages(limit=50)
 
 
 # ---

@@ -7,11 +7,8 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 """
 import sys
 import os
-import inspect
 import json
-import traceback
 import requests
-from warnings import warn
 from http.cookiejar import MozillaCookieJar
 
 import pywikibot
@@ -19,6 +16,7 @@ from newapi import printe
 from newapi.super.login_bots.r3_token_bot import get_r3_token, dump_r3_token
 
 from newapi.super.login_bots.cookies_bot import get_file_name, del_cookies_file
+from newapi.except_err import exception_err, warn_err
 
 # cookies = get_cookies(lang, family, username)
 seasons_by_lang = {}
@@ -39,21 +37,6 @@ def default_user_agent():
     # printe.output(f"default_user_agent: {li}")
     # ---
     return li
-
-
-def warn_err(err):
-    """
-    Return formatted warning message with error details.
-    """
-    err = str(err)
-    nn = inspect.stack()[1][3]
-    return f"\ndef {nn}(): {err}"
-
-
-def exception_err(e):
-    pywikibot.output("<<red>> Traceback (most recent call last):")
-    warn(warn_err(f"Exception:{str(e)}"), UserWarning, stacklevel=2)
-    pywikibot.output("CRITICAL:")
 
 
 class LOGIN_HELPS:
@@ -146,6 +129,7 @@ class LOGIN_HELPS:
         }
 
         # WARNING: /data/project/himo/core/bots/newapi/page.py:101: UserWarning: Exception:502 Server Error: Server Hangup for url: https://ar.wikipedia.org/w/api.php
+
         try:
             r11 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=r1_params, headers=self.headers)
             if not str(r11.status_code).startswith("2"):
@@ -175,6 +159,7 @@ class LOGIN_HELPS:
         }
         # ---
         req = ""
+        # ---
         try:
             req = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=r2_params, headers=self.headers)
         except Exception as e:
@@ -328,7 +313,7 @@ class LOGIN_HELPS:
             if isinstance(req0, dict):
                 data = req0
             else:
-                data = req0.json()
+                data = req0.json("x")
 
             if data.get("error", {}).get("*", "").find("mailing list") > -1:
                 data["error"]["*"] = ""
@@ -337,9 +322,7 @@ class LOGIN_HELPS:
 
             return data
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(f"error:{e} when json.loads(response.text)")
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
             text = str(req0.text).strip()
 
         valid_text = text.startswith("{") and text.endswith("}")
@@ -351,11 +334,7 @@ class LOGIN_HELPS:
             data = json.loads(text)
             return data
         except Exception as e:
-            pywikibot.output("<<red>> Traceback (most recent call last):")
-            pywikibot.output(f"error:{e} when json.loads(response.text)")
-            pywikibot.output(traceback.format_exc())
-            pywikibot.output(self.url_o_print)
-            pywikibot.output("CRITICAL:")
+            exception_err(e, self.url_o_print)
 
         return {}
 
@@ -371,7 +350,10 @@ class LOGIN_HELPS:
         # ---
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
-            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
+            printe.output(params)
+            printe.output("<<green>> :::dopost")
+            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, files=files, timeout=timeout)
+            # , headers=self.headers
             return req0
         # ---
         req0 = None

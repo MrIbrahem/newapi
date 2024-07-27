@@ -13,23 +13,18 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 # ----
 
 """
-# ---
 import os
-import inspect
 import sys
 import time
 import urllib.parse
-
-# import traceback
-from warnings import warn
 
 import pywikibot
 from newapi import printe
 from newapi.super.login_bots.bot import LOGIN_HELPS
 from newapi.super.bots.handel_errors import HANDEL_ERRORS
+from newapi.except_err import exception_err, warn_err
 
 file_name = os.path.basename(__file__)
-
 print_test = {1: False}
 User_tables = {"mdwiki": {}, "wikidata": {}, "wikipedia": {}, "nccommons": {}}
 seasons_by_lang = {}
@@ -54,15 +49,6 @@ def default_user_agent():
 def test_print(s):
     if "test_print" in sys.argv:
         printe.output(s)
-
-
-def warn_err(err):
-    """
-    Return formatted warning message with error details.
-    """
-    err = str(err)
-    nn = inspect.stack()[1][3]
-    return f"\ndef {nn}(): {err}"
 
 
 class Login(LOGIN_HELPS, HANDEL_ERRORS):
@@ -164,7 +150,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
             self.r3_token = self.make_new_r3_token()
 
         if not self.r3_token:
-            warn(warn_err('self.r3_token == "" '), UserWarning, stacklevel=2)
+            printe.output(warn_err('<<red>> self.r3_token == "" '))
 
         params["token"] = self.r3_token
 

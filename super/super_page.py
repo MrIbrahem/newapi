@@ -45,7 +45,6 @@ purge       = page.purge()
 """
 import os
 import pywikibot
-import inspect
 from warnings import warn
 import sys
 import wikitextparser as wtp
@@ -56,6 +55,7 @@ from newapi import botEdit
 from newapi.super.page_bots.ar_err import find_edit_error
 from newapi.super.page_bots.bot import APIS
 from newapi.super.super_login import Login
+from newapi.except_err import exception_err, warn_err
 
 file_name = os.path.basename(__file__)
 
@@ -97,13 +97,6 @@ def default_user_agent():
     # printe.output(f"default_user_agent: {li}")
     # ---
     return li
-
-
-def warn_err(err):
-    err = str(err)
-    nn = inspect.stack()[1][3]
-    return f"\ndef {nn}(): {err}"
-
 
 class MainPage(Login, APIS):
     def __init__(self, title, lang, family="wikipedia"):

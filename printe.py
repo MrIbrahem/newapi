@@ -240,7 +240,7 @@ def get_color_table():
 color_table = get_color_table()
 
 
-def output(textm):
+def output(textm, *kwargs):
     """
     Prints the given text with color formatting.
 
