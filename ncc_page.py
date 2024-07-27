@@ -68,8 +68,8 @@ if not file_path.exists():
 config = configparser.ConfigParser()
 config.read(f"{dir2}/confs/nccommons_user.ini")
 # ---
-username = config["DEFAULT"]["username"].strip()
-password = config["DEFAULT"]["password"].strip()
+username = config["DEFAULT"].get("username", "").strip()
+password = config["DEFAULT"].get("password", "").strip()
 # ---
 printt(f"{username=}")
 # ---

@@ -12,25 +12,25 @@ config.read(f"{project}/user.ini")
 
 DEFAULT = config['DEFAULT']
 
-username = config['DEFAULT']['botusername']
-password = config['DEFAULT']['botpassword']
+username = config['DEFAULT'].get('botusername', "")
+password = config['DEFAULT'].get('botpassword', "")
 # ---
 
-passworden = config['DEFAULT']['passworden']
-passwordwd = config['DEFAULT']['passwordwd']
+passworden = config['DEFAULT'].get('passworden', "")
+passwordwd = config['DEFAULT'].get('passwordwd', "")
 
-password_ar = config['DEFAULT']['password_ar']
-password_en = config['DEFAULT']['password_en']
+password_ar = config['DEFAULT'].get('password_ar', "")
+password_en = config['DEFAULT'].get('password_en', "")
 
-hiacc = config['DEFAULT']['hiacc']
-hipass = config['DEFAULT']['hipass']
+hiacc = config['DEFAULT'].get('hiacc', "")
+hipass = config['DEFAULT'].get('hipass', "")
 
-mdwiki_pass = config['DEFAULT']['mdwiki_pass']
+mdwiki_pass = config['DEFAULT'].get('mdwiki_pass', "")
 
-qs_token = config['DEFAULT']['qs_token']
-qs_tokenbot = config['DEFAULT']['qs_tokenbot']
+qs_token = config['DEFAULT'].get('qs_token', "")
+qs_tokenbot = config['DEFAULT'].get('qs_tokenbot', "")
 
-user_agent = config['DEFAULT']['user_agent']
+user_agent = config['DEFAULT'].get('user_agent', "")
 
 if "workibrahem" in sys.argv:
     username = hiacc
