@@ -569,7 +569,7 @@ class MainPage(Login, APIS):
         if not self.text:
             self.text = self.get_text()
         # ---
-        self.can_be_edit = botEdit.botMayEdit(False, text=self.text, title_page=self.title, botjob=script)
+        self.can_be_edit = botEdit.bot_May_Edit(text=self.text, title_page=self.title, botjob=script)
         # ---
         return self.can_be_edit
 

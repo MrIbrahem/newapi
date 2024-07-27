@@ -24,12 +24,7 @@ stop_edit_temps = {
 }
 
 
-def botMayEdit(page, text='', title_page='', botjob='all'):
-    # ---
-    if page and title_page == '':
-        title_page = page.title(as_link=False)
-    if page and text == '':
-        text = page.text
+def bot_May_Edit(text='', title_page='', botjob='all'):
     # ---
     if ('botedit' in sys.argv or 'editbot' in sys.argv) or 'workibrahem' in sys.argv:
         return True
@@ -147,6 +142,6 @@ if __name__ == '__main__':
 {{صندوق معلومات شخص
 | الصورة = Correggio, Alexandru Bogdan-Piteşti.jpg
 }}'''
-    fg = botMayEdit({}, text=texts)
+    fg = bot_May_Edit(text=texts)
     print(fg)
 # ---
