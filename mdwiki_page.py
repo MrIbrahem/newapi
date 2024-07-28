@@ -61,7 +61,10 @@ bot_api.User_tables["mdwiki"] = User_tables
 catdepth_new.User_tables["mdwiki"] = User_tables
 # ---
 NEW_API = bot_api.NEW_API
+
 MainPage = super_page.MainPage
+md_MainPage = MainPage
+
 change_codes = super_page.change_codes
 CatDepth = catdepth_new.subcatquery
 CatDepthLogin = catdepth_new.login_wiki

@@ -218,6 +218,24 @@ class MainPage(Login, APIS):
         # ---
         return False
 
+    def import_page(self, family="wikipedia"):
+        params = {
+            "action": "import",
+            "format": "json",
+            "interwikisource": family,
+            "interwikipage": self.title,
+            "fullhistory": 1,
+            "assignknownusers": 1,
+        }
+        # ---
+        data = self.post_params(params)
+        # ---
+        done = data.get("import", [{}])[0].get("revisions", 0)
+        # ---
+        printe.output(f"<<lightgreen>> imported {done} revisions")
+        # ---
+        return data
+
     def get_text(self, redirects=False):
         params = {
             "action": "query",

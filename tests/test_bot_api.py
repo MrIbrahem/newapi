@@ -1,6 +1,7 @@
 """
 
 python3 core8/pwb.py newapi/tests/test_bot_api
+python3 core8/pwb.py newapi/tests/test_bot_api test:13 printresult
 python3 core8/pwb.py newapi/tests/test_bot_api test:4
 python3 core8/pwb.py newapi/tests/test_bot_api test:44
 python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
@@ -8,6 +9,7 @@ python3 core8/pwb.py newapi/tests/test_bot_api noprr test:9
 """
 import sys
 import time
+
 sys.argv.append("ask")
 
 from newapi.page import NEW_API
@@ -142,6 +144,11 @@ class testmybot:
         move_it = api_new.Add_To_Bottom("x", "x", "الصفحة_الرئيسة")
         return move_it
 
+    def test13(self):
+        """get_pageassessments"""
+        move_it = self.api_new.get_pageassessments("yemen")
+        return move_it
+
     def start(self):
         # ---
         defs1 = {}
@@ -159,6 +166,7 @@ class testmybot:
             10: self.test10,
             11: self.test11,
             12: self.test12,
+            13: self.test13,
         }
         # ---
         for arg in sys.argv:
@@ -215,6 +223,7 @@ class testmybot:
             printe.output(f"<<lightyellow>> test: {def_name} end...")
             printe.output("time.sleep(1)")
             time.sleep(1)
+
 
 if __name__ == "__main__":
     testmybot().start()
