@@ -3,7 +3,9 @@
 from newapi.super.page_bots.bot import APIS
 
 """
-class APIS():
+
+
+class APIS:
     def __init__(self):
         # print("class APIS:")
         pass
@@ -47,6 +49,27 @@ class APIS():
         # data = data.get('parse', {}).get('links', [])
         # ---
         data = self.post_continue(params, "parse", _p_="links", p_empty=[])
+        # ---
+        # [{'ns': 14, 'title': 'تصنيف:مقالات بحاجة لشريط بوابات', 'exists': True}, {'ns': 14, 'title': 'تصنيف:مقالات بحاجة لصندوق معلومات', 'exists': False}]
+        # ---
+        self.links = data
+        # ---
+        return self.links
+
+    def page_links_query(self, plnamespace="*"):
+        params = {
+            "action": "query",
+            "prop": "links",
+            "formatversion": "2",
+            "titles": self.title,
+            "plnamespace": plnamespace,
+            "pllimit": "max",
+            "converttitles": 1,
+        }
+        # data = self.post_params(params)
+        # data = data.get('query', {}).get('links', [])
+        # ---
+        data = self.post_continue(params, "query", _p_="links", p_empty=[])
         # ---
         # [{'ns': 14, 'title': 'تصنيف:مقالات بحاجة لشريط بوابات', 'exists': True}, {'ns': 14, 'title': 'تصنيف:مقالات بحاجة لصندوق معلومات', 'exists': False}]
         # ---

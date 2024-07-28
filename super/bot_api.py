@@ -21,7 +21,8 @@ from newapi.page import NEW_API
 # pages_props  = api_new.pageswithprop(pwppropname="unlinkedwikibase_id", Max=None)
 # img_url  = api_new.Get_image_url(title)
 # added    = api_new.Add_To_Bottom(text, summary, title, poss="Head|Bottom")
-
+# titles   = api_new.get_titles_redirects(titles)
+# titles   = api_new.get_pageassessments(titles)
 Usage:
 from newapi.page import NEW_API
 # ---
@@ -35,6 +36,7 @@ if login_done_lang[1] != code:
     api_new.Login_to_wiki()
 """
 # ---
+import tqdm
 import sys
 import datetime
 from datetime import timedelta
@@ -69,8 +71,10 @@ class NEW_API(Login, BOTS_APIS):
         if User_tables != {}:
             for f, tab in User_tables.items():
                 self.add_User_tables(f, tab)
+
     def get_username(self):
         return self.username
+
     def Login_to_wiki(self):
         # ---
         self.log_to_wiki_1()
@@ -86,13 +90,15 @@ class NEW_API(Login, BOTS_APIS):
         missing = 0
         exists = 0
         # ---
-        for i in range(0, len(liste), 50):
+        if noprint:
+            qua = range(0, len(liste), 50)
+        else:
+            qua = tqdm.tqdm(range(0, len(liste), 50))
+        # ---
+        for i in qua:
             titles = liste[i : i + 50]
             # ---
             done += len(titles)
-            # ---
-            if not noprint:
-                printe.output(f"Find_pages_exists_or_not : {done}/{len(liste)}")
             # ---
             params = {
                 "action": "query",
@@ -296,6 +302,7 @@ class NEW_API(Login, BOTS_APIS):
         test_print(f'bot_api.Get_Newpages find "{len(Main_table)}" result. s')
 
         return Main_table
+
     def UserContribs(self, user, limit=5000, namespace="*", ucshow=""):
         # ---
         params = {
@@ -430,6 +437,24 @@ class NEW_API(Login, BOTS_APIS):
         links = [x["url"] for x in results]
         # ---
         return sorted(set(links))
+
+    def get_pageassessments(self, titles):
+        if isinstance(titles, list):
+            titles = "|".join(titles)
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "pageassessments",
+            "titles": titles,
+            "utf8": 1,
+            "ellimit": "max",
+            "formatversion": 2,
+        }
+        # ---
+        results = self.post_continue(params, "query", "pages", [], first=False, _p_2="pageassessments", _p_2_empty=[])
+        # ---
+        return results
 
     def get_revisions(self, title, rvprop="comment|timestamp|user|content|ids", options=None):
         # ---
@@ -599,3 +624,29 @@ class NEW_API(Login, BOTS_APIS):
         test_print(f"pageswithprop len(results) = {len(results)}")
         # ---
         return results
+
+    def get_titles_redirects(self, titles):
+        # ---
+        redirects = {}
+        # ---
+        for i in range(0, len(titles), 50):
+            group = titles[i : i + 50]
+            # ---
+            params = {
+                "action": "query",
+                "format": "json",
+                "titles": "|".join(group),
+                "redirects": 1,
+                # "prop": "templates|langlinks",
+                "utf8": 1,
+                # "normalize": 1,
+            }
+            # ---
+            json1 = self.post_continue(params, "query", _p_="redirects", p_empty=[])
+            # ---
+            lists = {x["from"]: x["to"] for x in json1}
+            # ---
+            if lists:
+                redirects.update(lists)
+        # ---
+        return redirects
