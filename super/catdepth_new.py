@@ -47,6 +47,7 @@ class CategoryDepth(Login, BOTS_APIS):
         # ---
         props = [props] if isinstance(props, str) else props
         # ---
+        self.print_s = kwargs.get("print_s", True)
         self.gcmlimit = kwargs.get("gcmlimit") or 1000
         self.no_props = kwargs.get("no_props") or False
         # ---
@@ -281,7 +282,8 @@ class CategoryDepth(Login, BOTS_APIS):
 
     def subcatquery_(self):
         # ---
-        print(f"catdepyh_new.py cat:{self.title}, ns:{self.ns}")
+        if self.print_s:
+            print(f"catdepyh_new.py cat:{self.title}, ns:{self.ns}")
         # ---
         tablemember = self.get_cat_new(self.title)
         # ---
@@ -322,6 +324,8 @@ class CategoryDepth(Login, BOTS_APIS):
 
 def subcatquery(title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nslist=[], onlyns=False, without_lang="", with_lang="", tempyes=[], props=None, only_titles=False, **kwargs):
     # ---
+    print_s = kwargs.get("print_s", True)
+    # ---
     priffixs = {"ar": "تصنيف:", "en": "Category:"}
     # ---
     start_priffix = priffixs.get(sitecode)
@@ -329,7 +333,8 @@ def subcatquery(title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nsli
     if start_priffix and not title.startswith(start_priffix):
         title = start_priffix + title
     # ---
-    printe.output(f"<<lightyellow>> catdepth_new.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}, onlyns:{onlyns}")
+    if print_s:
+        printe.output(f"<<lightyellow>> catdepth_new.py sub cat query for {sitecode}:{title}, depth:{depth}, ns:{ns}, onlyns:{onlyns}")
     # ---
     start = time.time()
     final = time.time()
@@ -346,7 +351,8 @@ def subcatquery(title, sitecode=SITECODE, family=FAMILY, depth=0, ns="all", nsli
     if "printresult" in sys.argv:
         printe.output(result)
     # ---
-    printe.output(f"<<lightblue>>catdepth_new.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds")
+    if print_s:
+        printe.output(f"<<lightblue>>catdepth_new.py: find {len(result)} pages({ns}) in {sitecode}:{title}, depth:{depth} in {delta} seconds")
     # ---
     return result
 

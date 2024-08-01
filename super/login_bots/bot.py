@@ -150,6 +150,10 @@ class LOGIN_HELPS:
         return jsson1.get("query", {}).get("tokens", {}).get("logintoken") or ""
 
     def get_login_result(self, logintoken) -> bool:
+        if not self.password:
+            printe.output("No password")
+            return False
+
         r2_params = {
             "format": "json",
             "action": "login",

@@ -142,7 +142,26 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
         """
         params["format"] = "json"
         params["utf8"] = 1
-        params["maxlag"] = ar_lag[1]
+        # ---
+        wb_actions = [
+            "wbcreateclaim",
+            "wbcreateredirect",
+            "wbeditentity",
+            "wbmergeitems",
+            "wbremoveclaims",
+            "wbsetaliases",
+            "wbsetdescription",
+            "wbsetqualifier",
+            "wbsetsitelink",
+            "edit",
+        ]
+        # ---
+        action = params["action"]
+        # ---
+        to_add_action = action in wb_actions or action.startswith("wbcreate") or action.startswith("wbset")
+        # ---
+        if self.family == "wikidata" and to_add_action:
+            params["maxlag"] = ar_lag[1]
 
         # if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
         if not self.r3_token:
@@ -183,6 +202,7 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
                     return self.post_params(params, Type=Type, addtoken=addtoken, CSRF=False)
             # ---
             error_code = error.get("code", "")
+            # ---
             if error_code == "maxlag" and max_retry < 4:
                 lage = int(error.get("lag", "0"))
                 # ---
