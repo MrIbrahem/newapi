@@ -2,13 +2,13 @@ import sys
 import os
 import configparser
 
-project = '/data/project/himo/'
+project = '/data/project/himo'
 # ---
 if not os.path.isdir(project):
     project = 'I:/core/bots/core1'
 # ---
 config = configparser.ConfigParser()
-config.read(f"{project}/user.ini")
+config.read(f"{project}/confs/user.ini")
 
 DEFAULT = config['DEFAULT']
 
