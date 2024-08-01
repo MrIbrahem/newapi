@@ -92,6 +92,11 @@ def test():
     text = page.get_text()
     print(f"{len(text)=}")
     # ---
+    text_html   = page.get_text_html()
+    # ---
+    print('---------------------------')
+    # print(text_html)
+    print(f"{len(text_html)=}")
     # ex = page.page_backlinks()
     # print('---------------------------')
     # print(f'page_backlinks:{ex}')
@@ -104,7 +109,7 @@ def test():
     # print(f'page_links:{red}')
     # ---
     # save = page.save(newtext=text + "\n{}")
-    api_new = NEW_API("www", family="mdwiki")
+    # api_new = NEW_API("www", family="mdwiki")
     # login   = api_new.Login_to_wiki()
     # pages   = api_new.Find_pages_exists_or_not(liste)
     # pages = api_new.Get_Newpages(limit=50)

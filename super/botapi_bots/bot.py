@@ -17,6 +17,7 @@ def test_print(s):
     if "test_print" in sys.argv:
         printe.output(s)
 
+
 class BOTS_APIS(HANDEL_ERRORS):
     def __init__(self):
         # print("class APIS:")
@@ -53,14 +54,14 @@ class BOTS_APIS(HANDEL_ERRORS):
     def Add_To_Bottom(self, text, summary, title, poss="Head|Bottom"):
         # ---
         if not title.strip():
-            printe.output('** Add_To_Bottom2 ..  title == ""')
+            printe.output('** Add_To_Bottom ..  title == ""')
             return False
         # ---
         if not text.strip():
-            printe.output('** Add_To_Bottom2 ..  text == ""')
+            printe.output('** Add_To_Bottom ..  text == ""')
             return False
         # ---
-        test_print(f"** Add_To_Bottom2 .. [[{title}]] ")
+        test_print(f"** Add_To_Bottom .. [[{title}]] ")
         # printe.showDiff("", text)
         # ---
         ask = self.ask_put(newtext=text, text="")
@@ -92,7 +93,7 @@ class BOTS_APIS(HANDEL_ERRORS):
         result = data.get("result", "")
         # ---
         if result == "Success":
-            printe.output("<<lightgreen>>** true.")
+            printe.output(f"<<lightgreen>>** True. Add_To_Bottom title:({title})")
             return True
         # ---
         error = results.get("error", {})
