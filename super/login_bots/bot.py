@@ -373,6 +373,19 @@ class LOGIN_HELPS:
         # ---
         return req0
 
+    def get_rest_result(self, url) -> dict:
+        # ---
+        result = {}
+        # ---
+        try:
+            req0 = seasons_by_lang[self.sea_key].request("GET", url)
+            result = req0.json()
+
+        except Exception as e:
+            exception_err(e)
+        # ---
+        return result
+
     def post_it(self, params, files=None, timeout=30) -> any or None:
         params = self.params_w(params)
         # ---
