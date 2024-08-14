@@ -48,9 +48,6 @@ def exception_err(e, text=""):
 if __name__ == "__main__":
 
     def xx(t, x):
-        try:
-            do(daad)
-        except Exception as e:
-            exception_err(e, x)
+        exception_err(t, x)
 
     xx("Exception", "test!!")

@@ -99,8 +99,8 @@ class LOGIN_HELPS:
         colors = {"ar": "yellow", "en": "lightpurple"}
 
         color = colors.get(self.lang, "")
-        if self.lang == "test" and "testwikidata" not in sys.argv:
-            raise Exception("test")
+        # if self.lang == "test" and "testwikidata" not in sys.argv:
+        #     raise Exception("test")
 
         Bot_passwords = self.password.find("@") != -1
 
@@ -269,7 +269,7 @@ class LOGIN_HELPS:
                 # if len(self.cookie_jar) == 0: self.cookies_file.write_text("")
                 # ---
             except Exception as e:
-                exception_err(e)
+                print(e)
                 # self.cookies_file.write_text("")
         # ---
         seasons_by_lang[self.sea_key].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.

@@ -695,7 +695,7 @@ def info(text):
 
 def warn(text):
     new_text = make_str(text)
-    log.warn(new_text)
+    log.warning(new_text)
 
 
 __all__ = [
