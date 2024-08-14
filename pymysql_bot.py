@@ -6,6 +6,7 @@ import pymysql
 import pymysql.cursors
 import pkg_resources
 import traceback
+from newapi.except_err import exception_err
 import pywikibot
 
 def get_pymysql_version():
@@ -23,9 +24,7 @@ def sql_connect_pymysql(query, return_dict=False, values=None, main_args={}, cre
     try:
         connection = pymysql.connect(**args, **credentials)
     except Exception as e:
-        pywikibot.output("Traceback (most recent call last):")
-        pywikibot.output(traceback.format_exc())
-        pywikibot.output("CRITICAL:")
+        exception_err(e)
         return []
 
     pymysql_version = get_pymysql_version()
@@ -40,17 +39,13 @@ def sql_connect_pymysql(query, return_dict=False, values=None, main_args={}, cre
             cursor.execute(query, params)
 
         except Exception as e:
-            pywikibot.output("Traceback (most recent call last):")
-            pywikibot.output(traceback.format_exc())
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
             return []
 
         try:
             results = cursor.fetchall()
         except Exception as e:
-            pywikibot.output("Traceback (most recent call last):")
-            pywikibot.output(traceback.format_exc())
-            pywikibot.output("CRITICAL:")
+            exception_err(e)
             return []
 
     return results
