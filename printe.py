@@ -20,6 +20,9 @@ from difflib import _format_range_unified as format_range_unified
 from itertools import zip_longest
 from collections.abc import Iterable, Sequence
 
+import logging
+
+log = logging.getLogger(__name__)
 
 _category_cf = frozenset(
     [
@@ -188,7 +191,7 @@ _category_cf = frozenset(
         "\U000e007f",
     ]
 )
-# ---
+
 _invisible_chars = _category_cf
 INVISIBLE_REGEX = re.compile(f"[{''.join(_invisible_chars)}]")
 
@@ -240,7 +243,7 @@ def get_color_table():
 color_table = get_color_table()
 
 
-def output(textm, *kwargs):
+def make_str(textm):
     """
     Prints the given text with color formatting.
 
@@ -251,9 +254,6 @@ def output(textm, *kwargs):
 
     :param textm: The text to print. Can contain color tags.
     """
-    if "noprint" in sys.argv:
-        return
-
     # Define a pattern for color tags
     _color_pat = r"((:?\w+|previous);?(:?\w+|previous)?)"
     # Compile a regex for color tags
@@ -264,13 +264,11 @@ def output(textm, *kwargs):
 
     # If the input is not a string, print it as is and return
     if not isinstance(textm, str):
-        print(textm)
-        return
+        return textm
 
     # If the text does not contain any color tags, print it as is and return
     if textm.find("\03") == -1 and textm.find("<<") == -1:
-        print(textm)
-        return
+        return textm
 
     # Split the text into parts based on the color tags
     text_parts = colorTagR.split(textm) + ["default"]
@@ -308,11 +306,7 @@ def output(textm, *kwargs):
         toprint += text
 
     # Print the final colored text
-    print(toprint)
-
-
-def error(text):
-    output(f"<<red>> {str(text)} <<default>>")
+    return toprint
 
 
 def replace_invisible(text):
@@ -666,9 +660,52 @@ def showDiff(text_a: str, text_b: str, context: int = 0) -> None:
     PatchManager(text_a, text_b, context=context).print_hunks()
 
 
+def output(textm, *kwargs):
+    """
+    Prints the given text with color formatting.
+
+    The text can contain color tags like '<<color>>' where 'color' is the name of the color.
+    The color will be applied to the text that follows the tag, until the end of the string or until a '<<default>>' tag is found.
+
+    If 'noprint' is in sys.argv, the function will return without printing anything.
+
+    :param textm: The text to print. Can contain color tags.
+    """
+    if "noprint" in sys.argv:
+        return
+
+    toprint = make_str(textm)
+
+    print(toprint)
+
+
+def error(text):
+    text = f"<<red>> {str(text)} <<default>>"
+    new_text = make_str(text)
+    log.error(new_text)
+
+
+def debug(text):
+    new_text = make_str(text)
+    log.error(new_text)
+
+def info(text):
+    new_text = make_str(text)
+    log.error(new_text)
+
+
+def warn(text):
+    new_text = make_str(text)
+    log.error(new_text)
+
+
 __all__ = [
     "showDiff",
     "output",
+    "debug",
+    "warn",
+    "error",
+    "info",
 ]
 
 if __name__ == "__main__":
