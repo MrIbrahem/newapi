@@ -3,7 +3,6 @@ This module provides functions for printing colored text and showing differences
 The main functions are `output` and `showDiff`.
 
 Example usage:
-from newapi import printe
 # To print colored text
 printe.output('<<red>>red')  # prints 'red' in red color
 # To show differences between two texts
@@ -687,16 +686,16 @@ def error(text):
 
 def debug(text):
     new_text = make_str(text)
-    log.error(new_text)
+    log.debug(new_text)
 
 def info(text):
     new_text = make_str(text)
-    log.error(new_text)
+    log.info(new_text)
 
 
 def warn(text):
     new_text = make_str(text)
-    log.error(new_text)
+    log.warn(new_text)
 
 
 __all__ = [

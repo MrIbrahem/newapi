@@ -27,6 +27,10 @@ def warn_err(err):
 
 
 def exception_err(e, text=""):
+    # ---
+    if not isinstance(text, str):
+        text = str(text)
+    # ---
     printe.output("<<yellow>> start exception_err:")
     # ---
     printe.error("Traceback (most recent call last):")

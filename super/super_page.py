@@ -206,10 +206,9 @@ class MainPage(Login, APIS):
         # ---
         # If the new edit will remove 90% of the text, return False
         if len(self.newtext) < 0.1 * len(self.text):
-            pywikibot.output("<<lightred>> Traceback (most recent call last):")
-            pywikibot.output(f"Edit will remove 90% of the text. {len(self.newtext)} < 0.1 * {len(self.text)}")
-            pywikibot.output(f"title: {self.title}, summary: {self.summary}")
-            pywikibot.output("CRITICAL:")
+            text_err = f"Edit will remove 90% of the text. {len(self.newtext)} < 0.1 * {len(self.text)}"
+            text_err += f"title: {self.title}, summary: {self.summary}"
+            exception_err("", text=text_err)
             return True
         # ---
         if self.lang == "ar" and self.ns == 0:
