@@ -1,5 +1,6 @@
 """
 
+python3 core8/pwb.py newapi/tests/test_langs ask mwclient
 python3 core8/pwb.py newapi/tests/test_langs ask
 
 """

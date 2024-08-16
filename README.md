@@ -8,7 +8,6 @@ from newapi import super_login
 bot   = Login(lang, family='wikipedia')
 # ---
 bot.add_User_tables('wikipedia', {'username': '', 'password': ''})
-login = bot.log_to_wiki_1()
 json1 = bot.post(params, Type='post', addtoken=False)
 ````
 ### Pages.

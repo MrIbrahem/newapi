@@ -7,16 +7,14 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 """
 import sys
 import os
-import json
 import requests
 from http.cookiejar import MozillaCookieJar
 
 import pywikibot
 from newapi import printe
-from newapi.super.login_bots.r3_token_bot import get_r3_token, dump_r3_token
-
 from newapi.super.login_bots.cookies_bot import get_file_name, del_cookies_file
-from newapi.except_err import exception_err, warn_err
+from newapi.except_err import exception_err
+from newapi.super.login_bots.params_help import PARAMS_HELPS
 
 # cookies = get_cookies(lang, family, username)
 seasons_by_lang = {}
@@ -39,11 +37,13 @@ def default_user_agent():
     return li
 
 
-class LOGIN_HELPS:
+class LOGIN_HELPS(PARAMS_HELPS):
     def __init__(self) -> None:
         # print("class LOGIN_HELPS:")
         self.cookie_jar = False
         self.session = requests.Session()
+        # ---
+        super().__init__()
         # ---
         # check if self has username before writeself.username = ""
         self.username = getattr(self, "username") if hasattr(self, "username") else ""
@@ -79,14 +79,9 @@ class LOGIN_HELPS:
         req = self.post_it_parse_data(r3_params) or {}
         # ---
         if not req:
-            _exceptions_ = [
-                """('Connection aborted.', OSError("(104, "ECONNRESET")"))""",
-            ]
             return False
 
         csrftoken = req.get("query", {}).get("tokens", {}).get("csrftoken", "")
-        # ---
-        dump_r3_token(self.lang, self.family, self.username, csrftoken)
         # ---
         return csrftoken
 
@@ -99,8 +94,6 @@ class LOGIN_HELPS:
         colors = {"ar": "yellow", "en": "lightpurple"}
 
         color = colors.get(self.lang, "")
-        # if self.lang == "test" and "testwikidata" not in sys.argv:
-        #     raise Exception("test")
 
         Bot_passwords = self.password.find("@") != -1
 
@@ -197,18 +190,6 @@ class LOGIN_HELPS:
     def log_to_wiki_1(self, do=False) -> str:
         # ---
         return self.make_new_r3_token()
-        # ---
-        # if do: return self.get_r3token()
-        # ---
-        # return True
-
-    def get_r3token(self) -> str:
-        r3_token = get_r3_token(self.lang, self.family, self.username)
-        # ---
-        if r3_token == "make_new":
-            r3_token = self.make_new_r3_token()
-        # ---
-        return r3_token
 
     def loged_in(self) -> bool:
         params = {
@@ -234,8 +215,6 @@ class LOGIN_HELPS:
                 print(req.text)
                 return False
         # ---
-        # {'batchcomplete': '', 'query': {'userinfo': {'id': 593870, 'name': 'Mr.Ibrahembot', 'groups': ['bot', 'editor', '*', 'user', 'autoconfirmed'], 'rights': ['apihighlimits', 'editautoreviewprotected', 'editeditorprotected', 'ipblock-exempt', 'noratelimit', 'bot', 'autoconfirmed', 'editsemiprotected', 'nominornewtalk', 'autopatrol', 'suppressredirect', 'writeapi', 'autoreview', 'sboverride', 'skipcaptcha', 'abusefilter-bypass-blocked-external-domains', 'review', 'unreviewedpages', 'patrolmarks', 'read', 'edit', 'createpage', 'createtalk', 'abusefilter-log-detail', 'abusefilter-view', 'abusefilter-log', 'flow-hide', 'flow-edit-title', 'move-rootuserpages', 'move-categorypages', 'minoredit', 'applychangetags', 'changetags', 'move', 'flow-edit-post', 'movestable']}}}
-        # ---
         userinfo = json1.get("query", {}).get("userinfo", {})
         # ---
         # print(json1)
@@ -252,8 +231,6 @@ class LOGIN_HELPS:
         # ---
         print("make_new_session:")
         # ---
-        # self.session = requests.Session()
-        # ---
         seasons_by_lang[self.sea_key] = requests.Session()
         # ---
         self.cookies_file = get_file_name(self.lang, self.family, self.username)
@@ -261,18 +238,15 @@ class LOGIN_HELPS:
         self.cookie_jar = MozillaCookieJar(self.cookies_file)
         # ---
         if os.path.exists(self.cookies_file):
-            print(f"Load cookies from file, including session cookies {self.cookies_file}")
+            print("Load cookies from file, including session cookies")
             try:
                 self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
                 print("We have %d cookies" % len(self.cookie_jar))
                 # ---
-                # if len(self.cookie_jar) == 0: self.cookies_file.write_text("")
-                # ---
             except Exception as e:
                 print(e)
-                # self.cookies_file.write_text("")
         # ---
-        seasons_by_lang[self.sea_key].cookies = self.cookie_jar  # Tell Requests session to use the cookiejar.
+        seasons_by_lang[self.sea_key].cookies = self.cookie_jar
         # ---
         loged_t = False
         # ---
@@ -281,66 +255,10 @@ class LOGIN_HELPS:
                 loged_t = True
                 printe.output("<<green>> Already logged in as " + self.username_in)
         else:
-            # self.cookies_file.write_text("")
             loged_t = self.log_in()
-        # ---
-        # r3_token = self.make_new_r3_token()
         # ---
         if loged_t:
             self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
-        # ---
-        # return seasons_by_lang[self.sea_key]
-
-    def params_w(self, params) -> dict:
-        if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
-            params["summary"] = ""
-
-        self.Bot_or_himo = 1 if "bot" in self.username else 0
-
-        if self.family != "nccommons":
-            params["bot"] = self.Bot_or_himo
-
-        if "minor" in params and params["minor"] == "":
-            params["minor"] = self.Bot_or_himo
-
-        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wb") or self.family == "wikidata":
-            params["assertuser"] = self.username
-
-        return params
-
-    def parse_data(self, req0) -> dict:
-        """
-        Parse JSON response data.
-        """
-        text = ""
-        try:
-            if isinstance(req0, dict):
-                data = req0
-            else:
-                data = req0.json()
-
-            if data.get("error", {}).get("*", "").find("mailing list") > -1:
-                data["error"]["*"] = ""
-            if data.get("servedby"):
-                data["servedby"] = ""
-
-            return data
-        except Exception as e:
-            exception_err(e)
-            text = str(req0.text).strip()
-
-        valid_text = text.startswith("{") and text.endswith("}")
-
-        if not text or not valid_text:
-            return {}
-
-        try:
-            data = json.loads(text)
-            return data
-        except Exception as e:
-            exception_err(e, self.url_o_print)
-
-        return {}
 
     def post_it_2(self, params, files=None, timeout=30) -> any or None:
         # ---
@@ -372,19 +290,6 @@ class LOGIN_HELPS:
             exception_err(e)
         # ---
         return req0
-
-    def get_rest_result(self, url) -> dict:
-        # ---
-        result = {}
-        # ---
-        try:
-            req0 = seasons_by_lang[self.sea_key].request("GET", url)
-            result = req0.json()
-
-        except Exception as e:
-            exception_err(e)
-        # ---
-        return result
 
     def post_it(self, params, files=None, timeout=30) -> any or None:
         params = self.params_w(params)
@@ -434,3 +339,18 @@ class LOGIN_HELPS:
                 return self.post_it_parse_data(params, files, timeout, relogin=True)
         # ---
         return data
+
+    def get_rest_result(self, url) -> dict:
+        # ---
+        print("get_rest_result:")
+        # ---
+        result = {}
+        # ---
+        try:
+            req0 = seasons_by_lang[self.sea_key].request("GET", url)
+            result = req0.json()
+
+        except Exception as e:
+            exception_err(e)
+        # ---
+        return result

@@ -75,8 +75,6 @@ class CategoryDepth(Login, BOTS_APIS):
         # ---
         self.timestamps = {}
         self.result_table = {}
-        self.params = {}
-        self.make_params()
 
         if User_tables != {}:
             for f, tab in User_tables.items():
@@ -84,6 +82,7 @@ class CategoryDepth(Login, BOTS_APIS):
 
     def Login_to_wiki(self):
         self.log_to_wiki_1()
+        return
 
     def params_work(self, params):
         t_props = ["revisions"] if not self.no_gcmsort else []
@@ -135,27 +134,6 @@ class CategoryDepth(Login, BOTS_APIS):
                 params["rvprop"] = "timestamp"
         # ---
         return params
-
-    def make_params(self):
-        # ---
-        params = {
-            "action": "query",
-            "format": "json",
-            "utf8": 1,
-            "generator": "categorymembers",
-            "gcmprop": "title",
-            # "prop": "revisions",
-            "gcmtype": "page|subcat",
-            "gcmlimit": self.gcmlimit,
-            "formatversion": "1",
-            "gcmsort": "timestamp",
-            "gcmdir": "newer",
-            # "rvprop": "timestamp",
-        }
-        # ---
-        params = self.params_work(params)
-        # ---
-        self.params = params
 
     def pages_table_work(self, table, pages):
         # ---
@@ -221,8 +199,25 @@ class CategoryDepth(Login, BOTS_APIS):
         # ---
         # print("get_cat_new")
         # ---
-        params = self.params
+        params = {
+            "action": "query",
+            "format": "json",
+            "utf8": 1,
+            "generator": "categorymembers",
+            "gcmprop": "title",
+            # "prop": "revisions",
+            "gcmtype": "page|subcat",
+            "gcmlimit": self.gcmlimit,
+            "formatversion": "1",
+            "gcmsort": "timestamp",
+            "gcmdir": "newer",
+            # "rvprop": "timestamp",
+        }
+        # ---
+        params = self.params_work(params)
+        # ---
         params["gcmtitle"] = cac
+        params["action"] = "query"
         # ---
         results = {}
         # ---
