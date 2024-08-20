@@ -34,8 +34,11 @@ def del_cookies_file(file_path):
     file = Path(str(file_path))
     # ---
     if file.exists():
-        file.unlink(missing_ok=True)
-        printe.output("<<green>> unlink: file:{file}")
+        try:
+            file.unlink(missing_ok=True)
+            printe.output(f"<<green>> unlink: file:{file}")
+        except Exception as e:
+            printe.output(f"<<red>> unlink: Exception:{e}")
 
 
 def get_file_name(lang, family, username):

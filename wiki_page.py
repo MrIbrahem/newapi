@@ -35,8 +35,7 @@ from apis import user_account_new
 
 # ---
 tool = os.getenv("HOME")
-if tool:
-    tool = tool.split("/")[-1]
+tool = tool.split("/")[-1] if tool else None
 # ---
 pyy_file = __file__.replace("\\", "/").split("/")[-1]
 # ---

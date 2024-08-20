@@ -34,10 +34,7 @@ class PARAMS_HELPS:
         """
         text = ""
         try:
-            if isinstance(req0, dict):
-                data = req0
-            else:
-                data = req0.json()
+            data = req0 if isinstance(req0, dict) else req0.json()
 
             if data.get("error", {}).get("*", "").find("mailing list") > -1:
                 data["error"]["*"] = ""
