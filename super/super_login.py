@@ -20,9 +20,13 @@ import urllib.parse
 
 import pywikibot
 from newapi import printe
-from newapi.super.login_bots.bot import LOGIN_HELPS
 from newapi.super.bots.handel_errors import HANDEL_ERRORS
-from newapi.except_err import exception_err, warn_err
+from newapi.except_err import warn_err
+
+if "mwclient" in sys.argv:
+    from newapi.super.login_bots.bot_new import LOGIN_HELPS
+else:
+    from newapi.super.login_bots.bot import LOGIN_HELPS
 
 file_name = os.path.basename(__file__)
 print_test = {1: False}
@@ -33,11 +37,8 @@ ar_lag = {1: 3}
 
 def default_user_agent():
     tool = os.getenv("HOME")
-    if tool:
-        # "/data/project/mdwiki"
-        tool = tool.split("/")[-1]
-    else:
-        tool = "himo"
+    # "/data/project/mdwiki"
+    tool = tool.split("/")[-1] if tool else "himo"
     # ---
     li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
     # ---
@@ -165,7 +166,6 @@ class Login(LOGIN_HELPS, HANDEL_ERRORS):
 
         # if addtoken or params["action"] in ["edit", "create", "upload", "delete", "move"]:
         if not self.r3_token:
-            # self.r3_token = self.get_r3token()
             self.r3_token = self.make_new_r3_token()
 
         if not self.r3_token:

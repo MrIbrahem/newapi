@@ -86,11 +86,8 @@ change_codes = {
 
 def default_user_agent():
     tool = os.getenv("HOME")
-    if tool:
-        # "/data/project/mdwiki"
-        tool = tool.split("/")[-1]
-    else:
-        tool = "himo"
+    # "/data/project/mdwiki"
+    tool = tool.split("/")[-1] if tool else "himo"
     # ---
     li = f"{tool} bot/1.0 (https://{tool}.toolforge.org/; tools.{tool}@toolforge.org)"
     # ---
