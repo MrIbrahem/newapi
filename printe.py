@@ -21,8 +21,12 @@ from collections.abc import Iterable, Sequence
 
 import logging
 
-log = logging.getLogger(__name__)
+if "debug" in sys.argv:
+    logging.basicConfig(level=logging.DEBUG)
+elif "warning" in sys.argv:
+    logging.basicConfig(level=logging.WARNING)
 
+log = logging.getLogger(__name__)
 _category_cf = frozenset(
     [
         "\xad",
@@ -687,6 +691,7 @@ def error(text):
 def debug(text):
     new_text = make_str(text)
     log.debug(new_text)
+
 
 def info(text):
     new_text = make_str(text)

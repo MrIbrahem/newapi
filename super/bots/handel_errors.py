@@ -51,6 +51,7 @@ class HANDEL_ERRORS:
             return False
         # ---
         if do_error:
+            params['data'] = {}
             printe.output(f"<<lightred>>{function} ERROR: <<defaut>>info: {err_info}, {params=}")
         # ---
         if "raise" in sys.argv:
