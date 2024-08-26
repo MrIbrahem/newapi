@@ -3,6 +3,7 @@
 from newapi.super.login_bots.params_help import PARAMS_HELPS
 
 """
+import sys
 import json
 from newapi.except_err import exception_err
 
@@ -25,7 +26,8 @@ class PARAMS_HELPS:
 
         if self.family != "toolforge":
             if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wb") or self.family == "wikidata":
-                params["assertuser"] = self.username
+                if "nologin" not in sys.argv:
+                    params["assertuser"] = self.username
 
         return params
 
