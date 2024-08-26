@@ -45,6 +45,7 @@ class MwClientSite:
         self.family = family
         self.username = None
         self.password = None
+        self.force_login = "nologin" not in sys.argv
         self.user_agent = default_user_agent()
 
         self.site_mwclient = None
@@ -80,15 +81,18 @@ class MwClientSite:
         self.domain = f"{self.lang}.{self.family}.org"
 
         if "dopost" in sys.argv:
-            self.site_mwclient = Site(self.domain, clients_useragent=self.user_agent, pool=self.connection)
+            self.site_mwclient = Site(self.domain, clients_useragent=self.user_agent, pool=self.connection, force_login=self.force_login)
         else:
             try:
-                self.site_mwclient = Site(self.domain, clients_useragent=self.user_agent, pool=self.connection)
+                self.site_mwclient = Site(self.domain, clients_useragent=self.user_agent, pool=self.connection, force_login=self.force_login)
             except Exception as e:
                 printe.error(f"Could not connect to ({self.domain}): %s" % e)
                 return False
 
     def do_login(self):
+        if not self.force_login:
+            return
+
         if not self.site_mwclient:
             printe.error(f"no self.ssite_mwclient to ({self.domain})")
             return
