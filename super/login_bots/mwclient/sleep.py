@@ -84,5 +84,7 @@ class Sleeper:
         timeout = self.retry_timeout * (self.retries - 1)
         if timeout < min_time:
             timeout = min_time
-        log.debug('Sleeping for %d seconds', timeout)
-        time.sleep(timeout)
+
+        print(f'mwclient/sleep.py: Sleeping for {timeout} seconds')
+
+        # time.sleep(timeout)

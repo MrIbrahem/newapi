@@ -1,6 +1,6 @@
 """
 
-from newapi.super.login_bots.bot import LOGIN_HELPS
+from newapi.super.login_bots.bot_new import LOGIN_HELPS
 
 Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recent login attempts. Please wait 5 minutes before trying again.'}}
 
@@ -24,6 +24,7 @@ from newapi.super.login_bots.mwclient.client import Site
 # cookies = get_cookies(lang, family, username)
 users_by_lang = {}
 User_tables = {}
+logins_count = {1: 0}
 
 
 def default_user_agent():
@@ -67,7 +68,7 @@ class MwClientSite:
         self.connection.headers["User-Agent"] = default_user_agent()
 
         if os.path.exists(cookies_file):
-            printe.output("<<yellow>>loading cookies")
+            # printe.output("<<yellow>>loading cookies")
             try:
                 # Load cookies from file, including session cookies
                 self.jar_cookie.load(ignore_discard=True, ignore_expires=True)
@@ -88,18 +89,23 @@ class MwClientSite:
                 return False
 
     def do_login(self):
+        if not self.site_mwclient:
+            printe.error(f"no self.ssite_mwclient to ({self.domain})")
+            return
+
         if not self.site_mwclient.logged_in:
-            printe.output(f"<<yellow>>logging in to ({self.domain})")
+            logins_count[1] += 1
+            printe.output(f"<<yellow>>logging in to ({self.domain}) count:{logins_count[1]}")
             try:
                 self.site_mwclient.login(username=self.username, password=self.password)
             except Exception as e:
                 printe.error(f"Could not login to ({self.domain}): %s" % e)
 
-        if self.site_mwclient.logged_in:
-            printe.output(f"<<yellow>>logged in as {self.site_mwclient.username} to ({self.domain})")
+            if self.site_mwclient.logged_in:
+                printe.output(f"<<purple>>logged in as {self.site_mwclient.username} to ({self.domain})")
 
-        # Save cookies to file, including session cookies
-        self.jar_cookie.save(ignore_discard=True, ignore_expires=True)
+            # Save cookies to file, including session cookies
+            self.jar_cookie.save(ignore_discard=True, ignore_expires=True)
 
     def do_request(self, params=None, method="POST"):
         # ---

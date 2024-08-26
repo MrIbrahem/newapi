@@ -23,8 +23,9 @@ class PARAMS_HELPS:
         if "minor" in params and params["minor"] == "":
             params["minor"] = self.Bot_or_himo
 
-        if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wb") or self.family == "wikidata":
-            params["assertuser"] = self.username
+        if self.family != "toolforge":
+            if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wb") or self.family == "wikidata":
+                params["assertuser"] = self.username
 
         return params
 

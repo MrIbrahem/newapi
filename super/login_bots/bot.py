@@ -20,6 +20,7 @@ from newapi.super.login_bots.params_help import PARAMS_HELPS
 seasons_by_lang = {}
 users_by_lang = {}
 User_tables = {}
+logins_count = {1: 0}
 
 
 def default_user_agent():
@@ -93,8 +94,8 @@ class LOGIN_HELPS(PARAMS_HELPS):
         color = colors.get(self.lang, "")
 
         Bot_passwords = self.password.find("@") != -1
-
-        printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint}")
+        logins_count[1] += 1
+        printe.output(f"<<{color}>> newapi/page.py: Log_to_wiki {self.endpoint} count:{logins_count[1]}")
         printe.output(f"newapi/page.py: log to {self.lang}.{self.family}.org user:{self.username}, ({Bot_passwords=})")
 
         logintoken = self.get_logintoken()
@@ -267,24 +268,33 @@ class LOGIN_HELPS(PARAMS_HELPS):
             if "raise" in sys.argv:
                 raise Exception("user_table_done == False!")
         # ---
+        args = {
+            "files": files,
+            "headers": self.headers,
+            "data": params,
+            "timeout": timeout,
+        }
+        # ---
         if "dopost" in sys.argv:
             printe.output("<<green>> dopost:::")
             printe.output(params)
             printe.output("<<green>> :::dopost")
-            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, files=files, timeout=timeout)
-            # , headers=self.headers
+            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, **args)
             return req0
         # ---
         req0 = None
         # ---
         try:
-            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, data=params, files=files, timeout=timeout, headers=self.headers)
+            req0 = seasons_by_lang[self.sea_key].request("POST", self.endpoint, **args)
 
         except requests.exceptions.ReadTimeout:
             printe.output(f"<<red>> ReadTimeout: {self.endpoint=}, {timeout=}")
 
         except Exception as e:
             exception_err(e)
+        # ---
+        if req0:
+            print(f"status_code: {req0.status_code}")
         # ---
         return req0
 
@@ -307,6 +317,13 @@ class LOGIN_HELPS(PARAMS_HELPS):
         # ---
         if not req0:
             printe.output("<<red>> no req0.. ")
+            return req0
+        # ---
+        if req0.headers and req0.headers.get("x-database-lag"):
+            printe.output("<<red>> x-database-lag.. ")
+
+            print(req0.headers)
+            # raise
         # ---
         return req0
 

@@ -134,7 +134,7 @@ class Site:
             # FIXME: Raise a specific exception instead of a generic RuntimeError.
             print(RuntimeError('Authentication is not a tuple or an instance of AuthBase'))
 
-        self.sleepers = Sleepers(max_retries, retry_timeout, wait_callback)
+        # self.sleepers = Sleepers(max_retries, retry_timeout, wait_callback)
 
         # Site properties
         self.blocked = False    # Whether current user is blocked
@@ -353,14 +353,14 @@ class Site:
             else:
                 kwargs['uiprop'] = 'blockinfo|hasmsg'
 
-        sleeper = self.sleepers.make()
+        # sleeper = self.sleepers.make()
 
         while True:
             info = self.raw_api(action, http_method, **kwargs)
             if not info:
                 info = {}
             # if self.handle_api_result(info, sleeper=sleeper):
-            self.handle_api_result(info, sleeper=sleeper)
+            self.handle_api_result(info)#, sleeper=sleeper
             return info
 
     def handle_api_result(self, info, kwargs=None, sleeper=None):
@@ -378,8 +378,7 @@ class Site:
             `False` if the given API response contains an exception, else `True`.
         """
 
-        if sleeper is None:
-            sleeper = self.sleepers.make()
+        # if sleeper is None: sleeper = self.sleepers.make()
 
         try:
             userinfo = info['query']['userinfo']
@@ -399,7 +398,7 @@ class Site:
         if 'error' in info:
             if info['error'].get('code') in {'internal_api_error_DBConnectionError',
                                              'internal_api_error_DBQueryError'}:
-                sleeper.sleep()
+                # sleeper.sleep()
                 return False
 
             # cope with https://phabricator.wikimedia.org/T106066
@@ -409,7 +408,7 @@ class Site:
             ):
                 log.warning('Retrying due to nonce error, see'
                             'https://phabricator.wikimedia.org/T106066')
-                sleeper.sleep()
+                # sleeper.sleep()
                 return False
 
             if 'query' in info['error']:
@@ -468,7 +467,7 @@ class Site:
         headers = {}
         if self.compress:
             headers['Accept-Encoding'] = 'gzip'
-        sleeper = self.sleepers.make((script, data))
+        # sleeper = self.sleepers.make((script, data))
 
         scheme = self.scheme
         host = self.host
@@ -494,13 +493,13 @@ class Site:
                 args['params'] = data
             else:
                 args['data'] = data
-
+            maxlag = data.get('maxlag', self.max_lag)
             try:
                 stream = self.connection.request(http_method, url, **args)
                 if stream.headers.get('x-database-lag'):
                     wait_time = int(stream.headers.get('retry-after'))
                     log.warning('Database lag exceeds max lag. '
-                                'Waiting for {} seconds'.format(wait_time))
+                                f'Waiting for {wait_time} seconds, maxlag:{maxlag}')
                     # fall through to the sleep
                 elif stream.status_code == 200:
                     return stream.text
@@ -515,6 +514,7 @@ class Site:
                                         text=stream.text))
                     toraise = "stream"
                     # fall through to the sleep
+                return stream.text
 
             except (
                 requests.exceptions.ConnectionError,
@@ -531,7 +531,8 @@ class Site:
 
             # all retry paths come here
             try:
-                sleeper.sleep(wait_time)
+                # sleeper.sleep(wait_time)
+                print(f"wait_time: {wait_time}")
             except errors.MaximumRetriesExceeded:
                 if toraise == "stream":
                     stream.raise_for_status()
@@ -601,8 +602,9 @@ class Site:
             requests.exceptions.Timeout: The API request timed out.
         """
         kwargs['action'] = action
-        kwargs['maxlag'] = self.max_lag
         data = self._query_string(*args, **kwargs)
+        if not data.get('maxlag'):
+            data['maxlag'] = self.max_lag
         return self.raw_call('index', data, http_method=http_method)
 
     def require(self, major, minor, revision=None, raise_error=True):
@@ -731,7 +733,7 @@ class Site:
             self.connection.cookies.update(cookies)
 
         if self.credentials:
-            sleeper = self.sleepers.make()
+            # sleeper = self.sleepers.make()
             kwargs = {
                 'lgname': self.credentials[0],
                 'lgpassword': self.credentials[1]
@@ -755,7 +757,9 @@ class Site:
                 elif login['login']['result'] == 'NeedToken':
                     kwargs['lgtoken'] = login['login']['token']
                 elif login['login']['result'] == 'Throttled':
-                    sleeper.sleep(int(login['login'].get('wait', 5)))
+                    so = int(login['login'].get('wait', 5))
+                    # sleeper.sleep(so)
+                    print(f"so: {so}")
                 else:
                     print(errors.LoginError(self, login['login']['result'],
                                             login['login']['reason']))
@@ -985,13 +989,15 @@ class Site:
             # filename, which might contain non-ascii.
             files = {'file': ('fake-filename', file)}
 
-        sleeper = self.sleepers.make()
+        # sleeper = self.sleepers.make()
         while True:
             data = self.raw_call('api', postdata, files)
             info = json.loads(data)
             if not info:
                 info = {}
-            if self.handle_api_result(info, kwargs=predata, sleeper=sleeper):
+            if self.handle_api_result(info, kwargs=predata
+                #, sleeper=sleeper
+                ):
                 response = info.get('upload', {})
                 # Workaround for https://github.com/mwclient/mwclient/issues/211
                 # ----------------------------------------------------------------
@@ -1035,13 +1041,15 @@ class Site:
         if ignorewarnings:
             params['ignorewarnings'] = 'true'
 
-        sleeper = self.sleepers.make()
+        # sleeper = self.sleepers.make()
         offset = 0
         for chunk in read_in_chunks(file, self.chunk_size):
             while True:
                 data = self.raw_call('api', params, files={'chunk': chunk})
                 info = json.loads(data)
-                if self.handle_api_result(info, kwargs=params, sleeper=sleeper):
+                if self.handle_api_result(info, kwargs=params
+                #, sleeper=sleeper
+                ):
                     response = info.get('upload', {})
                     break
 

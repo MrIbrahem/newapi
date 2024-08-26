@@ -13,7 +13,7 @@ from warnings import warn
 
 try:
     from . import printe
-except:
+except Exception:
     import printe
 
 
@@ -37,7 +37,7 @@ def exception_err(e, text=""):
     warn(warn_err(f"Exception:{str(e)}"), UserWarning, stacklevel=3)
     printe.warn(text)
     # ---
-    err = traceback.format_exc(limit=2)
+    err = traceback.format_exc(limit=4)
     err = str(err).replace("Traceback (most recent call last):", "").strip()
     # ---
     printe.warn(err)
