@@ -19,8 +19,6 @@ class HANDEL_ERRORS:
         err_info = error.get("info", "")
         # ---
         tt = f"<<lightred>>{function} ERROR: <<defaut>>code:{err_code}."
-        # printe.output(tt)
-        # warn(warn_err(tt), UserWarning)
         # ---["protectedpage", 'تأخير البوتات 3 ساعات', False]
         if err_code == "abusefilter-disallowed":
             # ---
