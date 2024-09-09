@@ -286,6 +286,16 @@ class MainPage(Login, APIS):
         return self.text
 
     def get_qid(self):
+        """Retrieve the QID from the wikibase item.
+
+        This function checks if the `wikibase_item` attribute is set. If it is
+        not set, it calls the `get_text` method to populate the `wikibase_item`.
+        Finally, it returns the current value of `wikibase_item`.
+
+        Returns:
+            str: The QID associated with the wikibase item.
+        """
+
         if not self.wikibase_item:
             self.get_text()
         return self.wikibase_item
@@ -629,6 +639,28 @@ class MainPage(Login, APIS):
         return self.templates
 
     def save(self, newtext="", summary="", nocreate=1, minor="", tags="", nodiff=False, ASK=False):
+        """Save the new text to a specified title with optional parameters.
+
+        This function updates the content of a page with new text. It handles
+        various parameters such as summary, minor edit flag, and tags. The
+        function checks for conditions that may prevent the edit, such as false
+        edits or user prompts. If the edit is successful, it updates the
+        instance variables with the new revision details.
+
+        Args:
+            newtext (str): The new content to be saved to the page.
+            summary (str): A brief summary of the edit.
+            nocreate (int): Flag indicating whether to create a new page if it doesn't exist
+                (default is 1).
+            minor (str): Indicates if the edit is minor.
+            tags (str): Tags associated with the edit.
+            nodiff (bool): Flag to indicate whether to skip diff checks.
+            ASK (bool): Flag to prompt the user for confirmation before saving.
+
+        Returns:
+            bool: True if the edit was successful, False otherwise.
+        """
+
         # ---
         self.newtext = newtext
         if summary:
