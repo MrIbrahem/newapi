@@ -95,6 +95,7 @@ def default_user_agent():
     # ---
     return li
 
+
 class MainPage(Login, APIS):
     def __init__(self, title, lang, family="wikipedia"):
         # print(f"class MainPage: {lang=}")
@@ -283,6 +284,11 @@ class MainPage(Login, APIS):
             break
         # ---
         return self.text
+
+    def get_qid(self):
+        if not self.wikibase_item:
+            self.get_text()
+        return self.wikibase_item
 
     def get_infos(self):
         # ---
@@ -684,7 +690,7 @@ class MainPage(Login, APIS):
         # ---
         if error != {}:
             print(pop)
-            er = self.handel_err(error, function="Save",  params=params)
+            er = self.handel_err(error, function="Save", params=params)
             # ---
             return er
         # ---
