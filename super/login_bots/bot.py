@@ -299,6 +299,24 @@ class LOGIN_HELPS(PARAMS_HELPS):
         return req0
 
     def post_it(self, params, files=None, timeout=30) -> any or None:
+        """Post data to a specified endpoint with optional file uploads.
+
+        This method processes the given parameters and files, manages user
+        sessions, and handles potential issues such as missing usernames or
+        database lag. It ensures that a valid session is established before
+        making the POST request and provides feedback on the request's success
+        or failure.
+
+        Args:
+            params (dict): A dictionary of parameters to be sent in the POST request.
+            files (dict?): A dictionary of files to be uploaded with the request. Defaults to None.
+            timeout (int?): The timeout duration for the request in seconds. Defaults to 30.
+
+        Returns:
+            any or None: The response object from the POST request, or None if the
+                request fails.
+        """
+
         params = self.params_w(params)
         # ---
         session = seasons_by_lang.get(self.sea_key)
