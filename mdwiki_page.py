@@ -38,7 +38,7 @@ purge       = page.purge()
 '''
 """
 # ---
-# import sys
+import os
 from newapi.super import bot_api
 from newapi.super import super_page
 from newapi.super import catdepth_new
@@ -66,11 +66,12 @@ MainPage = super_page.MainPage
 md_MainPage = MainPage
 
 change_codes = super_page.change_codes
+CategoryDepth = catdepth_new.CategoryDepth
 CatDepth = catdepth_new.subcatquery
 CatDepthLogin = catdepth_new.login_wiki
 # ---
 # xxxxxxxxxxx
-
+home_dir = os.getenv("HOME")
 
 def test():
     """

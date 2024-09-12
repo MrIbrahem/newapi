@@ -32,9 +32,8 @@ from newapi.super import catdepth_new
 
 from newapi import useraccount
 
-# ---
-tool = os.getenv("HOME")
-tool = tool.split("/")[-1] if tool else None
+home_dir = os.getenv("HOME")
+tool = home_dir.split("/")[-1] if home_dir else None
 # ---
 pyy_file = __file__.replace("\\", "/").split("/")[-1]
 # ---
@@ -65,6 +64,7 @@ catdepth_new.User_tables["wikidata"] = User_tables
 NEW_API = bot_api.NEW_API
 MainPage = super_page.MainPage
 change_codes = super_page.change_codes
+CategoryDepth = catdepth_new.CategoryDepth
 CatDepth = catdepth_new.subcatquery
 CatDepthLogin = catdepth_new.login_wiki
 

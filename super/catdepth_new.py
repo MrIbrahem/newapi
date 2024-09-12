@@ -73,6 +73,7 @@ class CategoryDepth(Login, BOTS_APIS):
                 print(f"self.depth != int: {self.depth}")
                 self.depth = 0
         # ---
+        self.revids = {}
         self.timestamps = {}
         self.result_table = {}
 
@@ -131,7 +132,7 @@ class CategoryDepth(Login, BOTS_APIS):
                 params["cllimit"] = "max"
             # ---
             if "revisions" in params["prop"]:
-                params["rvprop"] = "timestamp"
+                params["rvprop"] = "timestamp|ids"
         # ---
         return params
 
@@ -144,9 +145,14 @@ class CategoryDepth(Login, BOTS_APIS):
             timestamp = caca.get("revisions", [{}])[0].get("timestamp", "")
             self.timestamps[cate_title] = timestamp
             # ---
+            revid = caca.get("revisions", [{}])[0].get("revid", "")
+            self.revids[cate_title] = revid
+            # ---
             p_ns = str(caca.get("ns", 0))
             # ---
             tablese = table.get(cate_title, {})
+            if revid:
+                tablese["revid"] = revid
             # ---
             if p_ns:
                 tablese["ns"] = caca["ns"]

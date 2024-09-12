@@ -46,6 +46,7 @@ def printt(s):
 catdepth_new.SITECODE = "www"
 catdepth_new.FAMILY = "nccommons"
 
+
 dir2 = os.getenv("HOME")
 printt(f"HOME:{dir2}")
 # ---
@@ -87,11 +88,12 @@ catdepth_new.User_tables["nccommons"] = User_tables
 NEW_API = bot_api.NEW_API
 MainPage = super_page.MainPage
 change_codes = super_page.change_codes
+CategoryDepth = catdepth_new.CategoryDepth
 CatDepth = catdepth_new.subcatquery
 CatDepthLogin = catdepth_new.login_wiki
 # ---
 # xxxxxxxxxxx
-
+home_dir = os.getenv("HOME")
 
 def test():
     """
