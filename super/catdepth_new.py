@@ -86,6 +86,22 @@ class CategoryDepth(Login, BOTS_APIS):
         return
 
     def params_work(self, params):
+        """Process parameters for a specific operation.
+
+        This method modifies the input parameters based on various conditions
+        related to the object's attributes. It adjusts properties, language
+        links, and types based on the current state of the object and the
+        provided parameters. The method ensures that only relevant properties
+        are included in the final parameters dictionary, which is then returned
+        for further processing.
+
+        Args:
+            params (dict): A dictionary of parameters to be processed.
+
+        Returns:
+            dict: The modified parameters dictionary after processing.
+        """
+
         t_props = ["revisions"] if not self.no_gcmsort else []
         # ---
         if self.no_props:
@@ -137,6 +153,24 @@ class CategoryDepth(Login, BOTS_APIS):
         return params
 
     def pages_table_work(self, table, pages):
+        """Update the pages table with information from the provided pages.
+
+        This method processes a dictionary of pages, extracting relevant
+        information such as timestamps, revision IDs, namespaces, templates,
+        language links, and categories. It updates the provided table with this
+        information, ensuring that it maintains a structured format.
+
+        Args:
+            table (dict): A dictionary representing the current state of the
+                pages table to be updated.
+            pages (dict): A dictionary containing page information, where each
+                key is a category and each value is a dictionary with details
+                about that category.
+
+        Returns:
+            dict: The updated pages table after processing the input pages.
+        """
+
         # ---
         for category in pages:
             caca = pages[category] if isinstance(pages, dict) else category
