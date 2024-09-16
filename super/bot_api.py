@@ -6,6 +6,7 @@ from newapi.page import NEW_API
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
+# pages    = api_new.PrefixSearch(pssearch="", ns="0", pslimit="max", limit_all=100000)
 # all_pages= api_new.Get_All_pages_generator(start="", namespace="0", limit="max", filterredir="", ppprop="", limit_all=100000)
 # search   = api_new.Search(value='', ns="", offset='', srlimit="max", RETURN_dict=False, addparams={})
 # newpages = api_new.Get_Newpages(limit="max", namespace="0", rcstart="", user='')
@@ -185,6 +186,46 @@ class NEW_API(Login, BOTS_APIS):
         test_print(f"len of Main_table {len(Main_table)}.")
         # ---
         printe.output(f"bot_api.py Get_All_pages : find {len(Main_table)} pages.")
+        # ---
+        return Main_table
+
+    def PrefixSearch(self, pssearch="", ns="0", pslimit="max", limit_all=100000):
+        # ---
+        test_print(f"PrefixSearch for start:{pssearch}, pslimit:{pslimit}, ns:{ns}")
+        # ---
+        pssearch = pssearch.strip() if pssearch else ""
+        # ---
+        if not pssearch:
+            return
+        # ---
+        params = {
+            "action": "query",
+            "list": "prefixsearch",
+            "pssearch": pssearch,
+            "psnamespace": "*",
+            "pslimit": "max",
+            "formatversion": "1",
+            "format": "json",
+        }
+        # ---
+        if str(ns) in ["*", "", "all"]:
+            del params["apnamespace"]
+        # ---
+        if ns.isdigit():
+            params["psnamespace"] = ns
+        # ---
+        if pslimit.isdigit():
+            params["pslimit"] = pslimit
+        # ---
+        newp = self.post_continue(params, "query", _p_="prefixsearch", p_empty=[], Max=limit_all)
+        # ---
+        test_print(f"<<lightpurple>> --- PrefixSearch : find {len(newp)} pages.")
+        # ---
+        Main_table = [x["title"] for x in newp]
+        # ---
+        test_print(f"len of Main_table {len(Main_table)}.")
+        # ---
+        printe.output(f"bot_api.py PrefixSearch : find {len(Main_table)} pages.")
         # ---
         return Main_table
 
