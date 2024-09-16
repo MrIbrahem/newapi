@@ -293,7 +293,7 @@ class LOGIN_HELPS(PARAMS_HELPS):
         except Exception as e:
             exception_err(e)
         # ---
-        if req0:
+        if req0 and req0.status_code and req0.status_code != 200:
             print(f"status_code: {req0.status_code}")
         # ---
         return req0
