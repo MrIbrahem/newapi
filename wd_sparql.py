@@ -11,8 +11,8 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 
 
 def get_query_data(query):
-    # endpoint_url = "https://query.wikidata.org/sparql"
-    endpoint_url = "https://query-main.wikidata.org/sparql"
+    # endpoint_url = "https://query-main.wikidata.org/sparql"
+    endpoint_url = "https://query.wikidata.org/sparql"
     # ---
     user_agent = "WDQS-example Python/%s.%s" % (sys.version_info[0], sys.version_info[1])
     # ---
