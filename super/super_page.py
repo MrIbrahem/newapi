@@ -13,8 +13,9 @@ if not page.exists(): return
 page_edit = page.can_edit(script='fixref|cat|stub|tempcat|portal')
 if not page_edit: return
 # ---
-if page.isRedirect() :  return
 if page.isDisambiguation() :  return
+# ---
+if page.isRedirect() :  return
 # target = page.get_redirect_target()
 # ---
 text        = page.get_text()

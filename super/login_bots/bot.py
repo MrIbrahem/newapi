@@ -260,6 +260,8 @@ class LOGIN_HELPS(PARAMS_HELPS):
 
     def post_it_2(self, params, files=None, timeout=30) -> any or None:
         # ---
+        # TODO: ('toomanyvalues', 'Too many values supplied for parameter "titles". The limit is 50.', 'See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes.')
+        # ---
         if not self.user_table_done:
             printe.output("<<green>> user_table_done == False!")
             printe.output("<<green>> user_table_done == False!")
@@ -293,7 +295,7 @@ class LOGIN_HELPS(PARAMS_HELPS):
         except Exception as e:
             exception_err(e)
         # ---
-        if req0:
+        if req0 and req0.status_code and req0.status_code != 200:
             print(f"status_code: {req0.status_code}")
         # ---
         return req0
