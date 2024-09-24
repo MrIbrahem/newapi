@@ -11,6 +11,21 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 
 
 def get_query_data(query):
+    """Retrieve query data from the Wikidata SPARQL endpoint.
+
+    This function sends a SPARQL query to the Wikidata endpoint and
+    retrieves the results in JSON format. It constructs a user agent string
+    based on the Python version and uses the SPARQLWrapper library to handle
+    the query execution. If an error occurs during the query process, it
+    logs the exception.
+
+    Args:
+        query (str): A SPARQL query string to be executed against the Wikidata database.
+
+    Returns:
+        dict: The data retrieved from the SPARQL query, formatted as a dictionary.
+    """
+
     # TODO: https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/WDQS_graph_split/Rules#Scholarly_Articles
 
     # endpoint_url = "https://query-main.wikidata.org/sparql"
