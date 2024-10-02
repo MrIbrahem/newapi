@@ -190,20 +190,22 @@ class NEW_API(Login, BOTS_APIS):
         return Main_table
 
     def PrefixSearch(self, pssearch="", ns="0", pslimit="max", limit_all=100000):
-        """
-        Perform a prefix search for titles in a specified namespace.
+        """Perform a prefix search for titles in a specified namespace.
+
         This function constructs a query to search for titles that start with a
         given prefix. It allows for filtering by namespace and limits the number
         of results returned. The function handles various input formats for the
         namespace and limit parameters, ensuring that the query is properly
         formatted before sending it to the API. The results are then processed
         and returned as a list of titles.
+
         Args:
             pssearch (str): The prefix string to search for. Defaults to an empty string.
             ns (str): The namespace to search within. Can be "0", "*", "", or "all". Defaults
                 to "0".
             pslimit (str): The maximum number of results to return. Defaults to "max".
             limit_all (int): The maximum number of pages to retrieve. Defaults to 100000.
+
         Returns:
             list: A list of titles that match the prefix search.
         """
@@ -391,6 +393,27 @@ class NEW_API(Login, BOTS_APIS):
         return [titles[i : i + chunk_size] for i in range(0, len(titles), chunk_size)]
 
     def Get_langlinks_for_list(self, titles, targtsitecode="", numbes=40):
+        """Retrieve language links for a list of titles from a specified target
+        site.
+
+        This function takes a list of titles and queries a media wiki API to
+        fetch language links associated with those titles. It handles the
+        chunking of titles to comply with API limits and normalizes the results
+        to ensure consistency in title representation. The function also allows
+        for specifying a target site code to filter the language links returned.
+
+        Args:
+            titles (list): A list of titles for which to retrieve language links.
+            targtsitecode (str?): The target site code to filter language links.
+                Defaults to an empty string.
+            numbes (int?): The number of titles to process in each API call.
+                Defaults to 40.
+
+        Returns:
+            dict: A dictionary where keys are titles and values are dictionaries of
+                language links associated with those titles.
+        """
+
         # ---
         test_print(f'bot_api.Get_langlinks_for_list for "{len(titles)} pages". in wiki:{self.lang}')
         # ---
