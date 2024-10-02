@@ -387,6 +387,9 @@ class NEW_API(Login, BOTS_APIS):
         # ---
         return results
 
+    def chunk_titles(self, titles, chunk_size=50):
+        return [titles[i : i + chunk_size] for i in range(0, len(titles), chunk_size)]
+
     def Get_langlinks_for_list(self, titles, targtsitecode="", numbes=40):
         # ---
         test_print(f'bot_api.Get_langlinks_for_list for "{len(titles)} pages". in wiki:{self.lang}')
@@ -396,6 +399,7 @@ class NEW_API(Login, BOTS_APIS):
         # ---
         #  error: {'code': 'toomanyvalues', 'info': 'Too many values supplied for parameter "titles". The limit is 50.', 'parameter': 'titles', 'limit': 50, 'lowlimit': 50, 'highlimit': 500, '*': ''}
         # if self.lang != "ar":
+        # ---
         numbes = 50
         # ---
         params = {
@@ -417,13 +421,12 @@ class NEW_API(Login, BOTS_APIS):
         normalized = {}
         table = {}
         # ---
-        for i in range(0, len(titles), numbes):
-            # ---
-            group = titles[i : i + numbes]
+        # for i in range(0, len(titles), numbes): group = titles[i : i + numbes]
+        # ---
+        for title_chunk in self.chunk_titles(titles, chunk_size=numbes):
+            params["titles"] = "|".join(title_chunk)
             # ---
             # test_print(f'bot_api.Get_langlinks_for_list work for {len(group)} pages')
-            # ---
-            params["titles"] = "|".join(group)
             # ---
             json1 = self.post_params(params)
             # ---

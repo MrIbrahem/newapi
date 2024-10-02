@@ -103,7 +103,7 @@ class testmybot:
             "Nydia Velázquez",
             "Bonnie Watson Coleman",
         ]
-        ex = self.api_new.Get_langlinks_for_list(lista, targtsitecode="ar")
+        ex = self.api_new.Get_langlinks_for_list(lista, targtsitecode="de")
         return ex
 
     def test6(self):
@@ -194,7 +194,7 @@ class testmybot:
             # printe.output( result )
             # ---
             if isinstance(result, dict):
-                for na, ta in result.items():
+                for n, (na, ta) in enumerate(result.items()):
                     na2 = na  # f" '{na}' ".ljust(10)
                     # ---
                     if na == "claims":
@@ -204,7 +204,7 @@ class testmybot:
                     # ---
                     # ta = json.dumps(ta, indent=2, ensure_ascii=False)
                     # ---
-                    printe.output(f"* {na2}: {ta}")
+                    printe.output(f"{n}: {na2}: {ta}")
             # ---
             if result == "":
                 raise Exception("result == ''")
