@@ -47,7 +47,17 @@ class testmybot:
         return ex
 
     def test5(self):
-        """Get_langlinks_for_list"""
+        """Get language links for a list of names.
+
+        This method retrieves language links for a predefined list of names
+        using the `Get_langlinks_for_list` API method. The list contains various
+        individuals, and the function specifically targets the German language
+        site code ("de"). The results are returned for further processing or
+        validation.
+
+        Returns:
+            list: A list of language links corresponding to the input names.
+        """
         lista = [
             "Amanda Seales",
             "Aria Mia Loberti",
@@ -151,6 +161,20 @@ class testmybot:
         return move_it
 
     def start(self):
+        """Start the execution of defined test functions based on command-line
+        arguments.
+
+        This method initializes a dictionary of test functions and checks for
+        command-line arguments to determine which tests to execute. It processes
+        the arguments to filter the tests that should be run, executes them, and
+        outputs the results. If a test function returns a dictionary, it formats
+        and prints the results accordingly. Additionally, it handles specific
+        command-line flags to control the output.
+
+        Raises:
+            Exception: If the result of a test function is an empty string.
+        """
+
         # ---
         defs1 = {}
         # ---

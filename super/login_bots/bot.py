@@ -259,20 +259,25 @@ class LOGIN_HELPS(PARAMS_HELPS):
             self.cookie_jar.save(ignore_discard=True, ignore_expires=True)
 
     def post_it_2(self, params, files=None, timeout=30) -> any or None:
-        """
-        Send a POST request to a specified endpoint with given parameters and
+        """Send a POST request to a specified endpoint with given parameters and
         files.
-        This method constructs a POST request using the provided parameters and
-        optional files. It includes error handling for various scenarios, such
-        as checking if the user table is ready and managing request timeouts. If
-        the request is successful, it returns the response object.
+
+        This method constructs and sends a POST request using the provided
+        parameters and optional files. It includes error handling for various
+        scenarios, such as checking if the user table is ready and managing
+        request timeouts. If the request is successful, it returns the response
+        object; otherwise, it handles errors accordingly.
+
         Args:
             params (dict): A dictionary of parameters to include in the POST request.
-            files (dict?): A dictionary of files to upload with the request. Defaults to None.
+            files (dict?): A dictionary of files to upload with the request.
+                Defaults to None.
             timeout (int?): The timeout for the request in seconds. Defaults to 30.
+
         Returns:
             any or None: The response object from the POST request, or None if the
                 request fails.
+
         Raises:
             Exception: If the user table is not ready when attempting to send the request.
             requests.exceptions.ReadTimeout: If the request times out.
