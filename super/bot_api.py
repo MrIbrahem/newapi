@@ -39,6 +39,7 @@ if login_done_lang[1] != code:
 """
 # ---
 import tqdm
+import time
 import sys
 import datetime
 from datetime import timedelta
@@ -59,7 +60,6 @@ def test_print(s):
 class NEW_API(Login, BOTS_APIS):
     def __init__(self, lang, family="wikipedia"):
         # ---
-        self.cxtoken = ""
         self.username = ""
         # self.family = family
         self.lang = change_codes.get(lang) or lang
@@ -70,6 +70,9 @@ class NEW_API(Login, BOTS_APIS):
         # ---
         # self.family = family
         # self.endpoint = f"https://{lang}.{family}.org/w/api.php"
+        # ---
+        self.cxtoken_expiration = 0
+        self.cxtoken = ""
         # ---
         if User_tables != {}:
             for f, tab in User_tables.items():
@@ -740,8 +743,13 @@ class NEW_API(Login, BOTS_APIS):
 
     def get_cxtoken(self):
         # ---
-        if self.cxtoken:
-            return self.cxtoken
+        if self.cxtoken and self.cxtoken_expiration:
+            current_time = int(time.time())
+            if current_time < self.cxtoken_expiration:
+                return self.cxtoken
+            else:
+                self.cxtoken = ""
+                self.cxtoken_expiration = 0
         # ---
         print("get_cxtoken")
         # ---
@@ -754,8 +762,10 @@ class NEW_API(Login, BOTS_APIS):
         # ---
         # { "jwt": "eyJ0eXAiOiJ.....", "exp": 1728172536, "age": 3600 }
         jwt = data.get("jwt", "")
+        exp = data.get("exp", 0)
         # ---
         if jwt:
             self.cxtoken = jwt
+            self.cxtoken_expiration = exp
         # ---
         return jwt
