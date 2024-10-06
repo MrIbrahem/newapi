@@ -7,7 +7,8 @@ Exception:{'login': {'result': 'Failed', 'reason': 'You have made too many recen
 """
 import sys
 import os
-import json
+
+# import json
 import requests
 from http.cookiejar import MozillaCookieJar
 
@@ -16,7 +17,7 @@ from newapi.super.login_bots.cookies_bot import get_file_name, del_cookies_file
 from newapi.except_err import exception_err
 from newapi.super.login_bots.params_help import PARAMS_HELPS
 
-import mwclient
+# import mwclient
 
 # from mwclient.client import Site
 from newapi.super.login_bots.mwclient.client import Site

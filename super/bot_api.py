@@ -2,6 +2,7 @@
 from newapi.page import NEW_API
 # api_new  = NEW_API('ar', family='wikipedia')
 # login    = api_new.Login_to_wiki()
+# cxtoken  = api_new.get_cxtoken()
 # move_it  = api_new.move(old_title, to, reason="", noredirect=False, movesubpages=False)
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
@@ -38,6 +39,7 @@ if login_done_lang[1] != code:
 """
 # ---
 import tqdm
+import time
 import sys
 import datetime
 from datetime import timedelta
@@ -68,6 +70,9 @@ class NEW_API(Login, BOTS_APIS):
         # ---
         # self.family = family
         # self.endpoint = f"https://{lang}.{family}.org/w/api.php"
+        # ---
+        self.cxtoken_expiration = 0
+        self.cxtoken = ""
         # ---
         if User_tables != {}:
             for f, tab in User_tables.items():
@@ -735,3 +740,32 @@ class NEW_API(Login, BOTS_APIS):
                 redirects.update(lists)
         # ---
         return redirects
+
+    def get_cxtoken(self):
+        # ---
+        if self.cxtoken and self.cxtoken_expiration:
+            current_time = int(time.time())
+            if current_time < self.cxtoken_expiration:
+                return self.cxtoken
+            else:
+                self.cxtoken = ""
+                self.cxtoken_expiration = 0
+        # ---
+        print("get_cxtoken")
+        # ---
+        params = {"action": "cxtoken", "format": "json"}
+        # ---
+        data = self.post_params(params, addtoken=True)
+        # ---
+        if not data:
+            return ""
+        # ---
+        # { "jwt": "eyJ0eXAiOiJ.....", "exp": 1728172536, "age": 3600 }
+        jwt = data.get("jwt", "")
+        exp = data.get("exp", 0)
+        # ---
+        if jwt:
+            self.cxtoken = jwt
+            self.cxtoken_expiration = exp
+        # ---
+        return jwt
