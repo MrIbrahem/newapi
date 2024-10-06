@@ -716,6 +716,22 @@ class NEW_API(Login, BOTS_APIS):
         return results
 
     def get_titles_redirects(self, titles):
+        """Retrieve title redirects from a list of titles.
+
+        This function processes a list of titles in batches and queries a remote
+        API to retrieve any redirects associated with those titles. It
+        constructs a dictionary mapping original titles to their corresponding
+        redirected titles. The function handles the titles in groups of 50 to
+        comply with API request limits.
+
+        Args:
+            titles (list): A list of title strings to check for redirects.
+
+        Returns:
+            dict: A dictionary where the keys are original titles and the values are
+                the titles they redirect to.
+        """
+
         # ---
         redirects = {}
         # ---
@@ -742,6 +758,18 @@ class NEW_API(Login, BOTS_APIS):
         return redirects
 
     def get_cxtoken(self):
+        """Retrieve the context token.
+
+        This method checks if a valid context token is already available and has
+        not expired. If a valid token exists, it returns that token. If the
+        token is expired or does not exist, it makes a request to obtain a new
+        context token. The new token is then stored along with its expiration
+        time for future use.
+
+        Returns:
+            str: The context token if available, otherwise an empty string.
+        """
+
         # ---
         if self.cxtoken and self.cxtoken_expiration:
             current_time = int(time.time())
