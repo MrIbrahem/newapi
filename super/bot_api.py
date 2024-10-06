@@ -2,6 +2,7 @@
 from newapi.page import NEW_API
 # api_new  = NEW_API('ar', family='wikipedia')
 # login    = api_new.Login_to_wiki()
+# cxtoken  = api_new.get_cxtoken()
 # move_it  = api_new.move(old_title, to, reason="", noredirect=False, movesubpages=False)
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
@@ -58,6 +59,7 @@ def test_print(s):
 class NEW_API(Login, BOTS_APIS):
     def __init__(self, lang, family="wikipedia"):
         # ---
+        self.cxtoken = ""
         self.username = ""
         # self.family = family
         self.lang = change_codes.get(lang) or lang
@@ -735,3 +737,25 @@ class NEW_API(Login, BOTS_APIS):
                 redirects.update(lists)
         # ---
         return redirects
+
+    def get_cxtoken(self):
+        # ---
+        if self.cxtoken:
+            return self.cxtoken
+        # ---
+        print("get_cxtoken")
+        # ---
+        params = {"action": "cxtoken", "format": "json"}
+        # ---
+        data = self.post_params(params, addtoken=True)
+        # ---
+        if not data:
+            return ""
+        # ---
+        # { "jwt": "eyJ0eXAiOiJ.....", "exp": 1728172536, "age": 3600 }
+        jwt = data.get("jwt", "")
+        # ---
+        if jwt:
+            self.cxtoken = jwt
+        # ---
+        return jwt
