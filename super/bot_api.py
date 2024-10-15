@@ -4,6 +4,7 @@ from newapi.page import NEW_API
 # login    = api_new.Login_to_wiki()
 # cxtoken  = api_new.get_cxtoken()
 # move_it  = api_new.move(old_title, to, reason="", noredirect=False, movesubpages=False)
+# upload   = api_new.upload_by_file(file_name, text, file_path, comment="")
 # pages    = api_new.Find_pages_exists_or_not(liste, get_redirect=False)
 # json1    = api_new.post_params(params, addtoken=False)
 # pages    = api_new.Get_All_pages(start='', namespace="0", limit="max", apfilterredir='', limit_all=0)
@@ -22,6 +23,7 @@ from newapi.page import NEW_API
 # pages  = api_new.Get_template_pages(title, namespace="*", Max=10000)
 # pages_props  = api_new.pageswithprop(pwppropname="unlinkedwikibase_id", Max=None)
 # img_url  = api_new.Get_image_url(title)
+# img_info = api_new.Get_imageinfo(title)
 # added    = api_new.Add_To_Bottom(text, summary, title, poss="Head|Bottom")
 # titles   = api_new.get_titles_redirects(titles)
 # titles   = api_new.get_pageassessments(titles)
@@ -660,7 +662,7 @@ class NEW_API(Login, BOTS_APIS):
 
     def Get_image_url(self, title):
         # ---
-        if not title.startswith("File:"):
+        if not title.startswith("File:") and not title.startswith("ملف:"):
             title = f"File:{title}"
         # ---
         test_print(f'Get_image_url for file:"{title}":')
@@ -689,6 +691,31 @@ class NEW_API(Login, BOTS_APIS):
         printe.output(f"Get_image_url: image url: {url}")
         # ---
         return url
+
+    def Get_imageinfo(self, title):
+        # ---
+        if not title.startswith("File:") and not title.startswith("ملف:"):
+            title = f"File:{title}"
+        # ---
+        test_print(f'Get_imageinfo for file:"{title}":')
+        # ---
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "imageinfo",
+            "titles": title,
+            "iiprop": "url|userid|extmetadata|dimensions|commonmetadata|comment|bitdepth|badfile|archivename|canonicaltitle|mediatype|metadata|thumbmime|size|sha1|parsedcomment|mime|uploadwarning",
+            "formatversion": "2",
+        }
+        # ---
+        results = self.post_params(params)
+        # ---
+        if not results:
+            return ""
+        # ---
+        data = results.get("query", {}).get("pages", [{}])[0]
+        # ---
+        return data
 
     def pageswithprop(self, pwppropname="unlinkedwikibase_id", pwplimit=None, Max=None):
         # ---

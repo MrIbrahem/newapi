@@ -236,3 +236,45 @@ class BOTS_APIS(HANDEL_ERRORS):
         textnew = textnew.replace("\\n\\n", "")
         # ---
         return textnew
+
+    def upload_by_file(self, file_name, text, file_path, comment="", ignorewarnings=False):
+        # ---
+        printe.output(f"<<lightyellow>> def upload_by_file. {file_name=}")
+        # ---
+        if file_name.startswith("File:"):
+            file_name = file_name.replace("File:", "")
+        # ---
+        if file_name.startswith("ملف:"):
+            file_name = file_name.replace("ملف:", "")
+        # ---
+        printe.output(f"<<lightyellow>> {file_path=}...")
+        # ---
+        params = {
+            "action": "upload",
+            "format": "json",
+            "filename": file_name,
+            "comment": comment,
+            "text": text,
+            "utf8": 1,
+        }
+        # ---
+        if ignorewarnings:
+            params["ignorewarnings"] = 1
+        # ---
+        data = self.post_params(params, files={"file": open(file_path, "rb")})
+        # ---
+        upload_result = data.get("upload", {})
+        # ---
+        success = upload_result.get("result") == "Success"
+        error = data.get("error", {})
+        # ---
+        duplicate = upload_result.get("warnings", {}).get("duplicate", [""])[0].replace("_", " ")
+        # ---
+        if success:
+            printe.output(f"<<lightgreen>> ** upload true .. [[File:{file_name}]] ")
+            return True
+        # ---
+        if duplicate:
+            printe.output(f"<<lightred>> ** duplicate file: {duplicate}.")
+        # ---
+        return data
