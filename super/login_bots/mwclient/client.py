@@ -317,17 +317,28 @@ class Site:
     def api(self, action, http_method='POST', *args, **kwargs):
         """Perform a generic API call and handle errors.
 
-        All arguments will be passed on.
+        This method allows interaction with the MediaWiki API by performing
+        specified actions using the provided HTTP method. It handles the
+        necessary parameters and processes the response from the API. The
+        function is designed to accommodate various API actions and can be
+        extended with additional arguments as needed.
 
         Args:
             action (str): The MediaWiki API action to be performed.
-            http_method (str): The HTTP method to use.
+            http_method (str): The HTTP method to use (default is 'POST').
+            *args: Additional positional arguments to be passed to the API call.
+            **kwargs: Additional keyword arguments to be passed to the API call.
 
-        Example:
-            To get coordinates from the GeoData MediaWiki extension at English Wikipedia:
+        Returns:
+            dict: The raw response from the API call, as a dictionary.
 
+        Examples:
+            To get coordinates from the GeoData MediaWiki extension at
+            English Wikipedia:
+            
             >>> site = Site('en.wikipedia.org')
-            >>> result = site.api('query', prop='coordinates', titles='Oslo|Copenhagen')
+            >>> result = site.api('query', prop='coordinates',
+            titles='Oslo|Copenhagen')
             >>> for page in result['query']['pages'].values():
             ...     if 'coordinates' in page:
             ...         print('{} {} {}'.format(page['title'],
@@ -335,9 +346,6 @@ class Site:
             ...             page['coordinates'][0]['lon']))
             Oslo 59.95 10.75
             Copenhagen 55.6761 12.5683
-
-        Returns:
-            The raw response from the API call, as a dictionary.
         """
         kwargs.update(args)
 
@@ -434,35 +442,24 @@ class Site:
         return OrderedDict(qs1 + qs2)
 
     def raw_call(self, script, data, files=None, retry_on_error=True, http_method='POST'):
-        """
-        Perform a generic request and return the raw text.
+        """Perform a generic request and return the raw text.
 
-        In the event of a network problem, or an HTTP response with status code 5XX,
-        we'll wait and retry the configured number of times before giving up
-        if `retry_on_error` is True.
-
-        `requests.exceptions.HTTPError` is still raised directly for
-        HTTP responses with status codes in the 4XX range, and invalid
-        HTTP responses.
+        This method sends an HTTP request to a specified script endpoint with
+        the provided data and files. It handles retries in case of network
+        issues or server errors (5XX status codes) based on the `retry_on_error`
+        flag. If a 4XX error occurs, it raises an HTTPError directly. The method
+        also supports different HTTP methods, defaulting to 'POST'.
 
         Args:
             script (str): Script name, usually 'api'.
-            data (dict): Post data
-            files (dict): Files to upload
-            retry_on_error (bool): Retry on connection error
-            http_method (str): The HTTP method, defaults to 'POST'
+            data (dict): Post data to be sent in the request.
+            files (dict?): Files to upload with the request. Defaults to None.
+            retry_on_error (bool?): Flag to indicate whether to retry on connection errors. Defaults to
+                True.
+            http_method (str?): The HTTP method to use for the request. Defaults to 'POST'.
 
         Returns:
-            The raw text response.
-
-        Raises:
-            errors.MaximumRetriesExceeded: The API request failed and the maximum number
-                of retries was exceeded.
-            requests.exceptions.HTTPError: Received an invalid HTTP response, or a status
-                code in the 4xx range.
-            requests.exceptions.ConnectionError: Encountered an unexpected error while
-                performing the API request.
-            requests.exceptions.Timeout: The API request timed out.
+            str: The raw text response from the server.
         """
         headers = {}
         if self.compress:
