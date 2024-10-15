@@ -212,6 +212,23 @@ class BOTS_APIS(HANDEL_ERRORS):
         return newtext
 
     def Parse_Text(self, line, title):
+        """Parse the given text using specified parameters.
+
+        This method constructs a set of parameters to send a request for parsing
+        the provided text (`line`) associated with a specific `title`. It sends
+        the request and processes the response to extract the parsed text. If
+        the response does not contain any data, an empty string is returned. The
+        method also cleans up the parsed text by removing unnecessary newline
+        characters.
+
+        Args:
+            line (str): The text to be parsed.
+            title (str): The title associated with the text.
+
+        Returns:
+            str: The cleaned parsed text, or an empty string if no data is returned.
+        """
+
         # ---
         params = {
             "action": "parse",
@@ -238,6 +255,29 @@ class BOTS_APIS(HANDEL_ERRORS):
         return textnew
 
     def upload_by_file(self, file_name, text, file_path, comment="", ignorewarnings=False):
+        """Upload a file to a remote server.
+
+        This function handles the uploading of a specified file to a remote
+        server. It prepares the necessary parameters, including the file name,
+        comment, and text content, and sends a POST request to upload the file.
+        The function also manages potential warnings related to duplicate files
+        and provides feedback on the success or failure of the upload operation.
+
+        Args:
+            file_name (str): The name of the file to be uploaded.
+            text (str): The text content to be associated with the uploaded file.
+            file_path (str): The local path to the file that needs to be uploaded.
+            comment (str?): An optional comment to include with the upload. Defaults to an empty
+                string.
+            ignorewarnings (bool?): A flag indicating whether to ignore warnings during the upload. Defaults
+                to False.
+
+        Returns:
+            bool: True if the upload was successful; otherwise, returns False.
+            dict: If the upload fails or if there are warnings, returns a dictionary
+                containing error information.
+        """
+
         # ---
         printe.output(f"<<lightyellow>> def upload_by_file. {file_name=}")
         # ---
