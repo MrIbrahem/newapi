@@ -661,6 +661,22 @@ class NEW_API(Login, BOTS_APIS):
         return pages
 
     def Get_image_url(self, title):
+        """Retrieve the URL of an image from a given title.
+
+        This function constructs a query to fetch the image URL associated with
+        a specified title. It ensures that the title is formatted correctly by
+        prepending "File:" if it does not already start with "File:" or "ملف:".
+        The function then sends a request to retrieve the image information and
+        extracts the URL from the response.
+
+        Args:
+            title (str): The title of the image, which may or may not include
+                the "File:" prefix.
+
+        Returns:
+            str: The URL of the image if found; otherwise, an empty string.
+        """
+
         # ---
         if not title.startswith("File:") and not title.startswith("ملف:"):
             title = f"File:{title}"
@@ -693,6 +709,24 @@ class NEW_API(Login, BOTS_APIS):
         return url
 
     def Get_imageinfo(self, title):
+        """Retrieve image information from a given title.
+
+        This function constructs a query to fetch detailed information about an
+        image from a media repository. It ensures that the title is formatted
+        correctly by prepending "File:" if it does not already start with
+        "File:" or "ملف:". The function then sends a request to retrieve various
+        metadata about the image, including its URL, dimensions, and other
+        relevant details.
+
+        Args:
+            title (str): The title of the image, which may need to be prefixed with "File:".
+
+        Returns:
+            dict: A dictionary containing image information such as URL, dimensions,
+                and other metadata. If no results are found, an empty string is
+                returned.
+        """
+
         # ---
         if not title.startswith("File:") and not title.startswith("ملف:"):
             title = f"File:{title}"
