@@ -235,7 +235,7 @@ class LOGIN_HELPS(PARAMS_HELPS):
         # ---
         self.cookie_jar = MozillaCookieJar(self.cookies_file)
         # ---
-        if os.path.exists(self.cookies_file):
+        if os.path.exists(self.cookies_file) and self.family != "mdwiki":
             print("Load cookies from file, including session cookies")
             try:
                 self.cookie_jar.load(ignore_discard=True, ignore_expires=True)
