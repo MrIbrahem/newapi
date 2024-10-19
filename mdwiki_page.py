@@ -38,6 +38,11 @@ purge       = page.purge()
 '''
 """
 # ---
+import sys
+sys.argv.append("nomwclient")
+
+print("sys.argv.append('nomwclient')")
+
 import os
 from newapi.super import bot_api
 from newapi.super import super_page

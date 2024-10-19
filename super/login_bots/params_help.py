@@ -26,7 +26,7 @@ class PARAMS_HELPS:
 
         if self.family != "toolforge":
             if params["action"] in ["edit", "create", "upload", "delete", "move"] or params["action"].startswith("wb") or self.family == "wikidata":
-                if "nologin" not in sys.argv:
+                if "nologin" not in sys.argv and self.username:
                     params["assertuser"] = self.username
 
         return params
