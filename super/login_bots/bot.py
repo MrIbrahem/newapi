@@ -293,6 +293,9 @@ class LOGIN_HELPS(PARAMS_HELPS):
             if "raise" in sys.argv:
                 raise Exception("user_table_done == False!")
         # ---
+        if self.family == "mdwiki":
+            timeout = 60
+        # ---
         args = {
             "files": files,
             "headers": self.headers,
@@ -353,7 +356,7 @@ class LOGIN_HELPS(PARAMS_HELPS):
             self.make_new_session()
         # ---
         if not self.username_in:
-            printe.output(f"<<red>> no username_in.. action:" + params.get("action"))
+            printe.output("<<red>> no username_in.. action:" + params.get("action"))
             # return {}
         # ---
         req0 = self.post_it_2(params, files=files, timeout=timeout)
