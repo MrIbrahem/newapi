@@ -61,6 +61,15 @@ class MwClientSite:
         self.do_login()
 
     def __initialize_connection(self):
+        """Initialize a connection with the specified user settings.
+
+        This method sets up a requests session and loads cookies from a
+        specified file if it exists. It configures the session with a user agent
+        and handles the loading of cookies, ensuring that the session can
+        maintain state across requests. If the cookies file cannot be loaded, an
+        error message is printed.
+        """
+
         cookies_file = get_file_name(self.lang, self.family, self.username)
 
         self.jar_cookie = MozillaCookieJar(cookies_file)
