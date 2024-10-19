@@ -13,6 +13,23 @@ class PARAMS_HELPS:
         pass
 
     def params_w(self, params) -> dict:
+        """Prepare parameters for a specific action based on user and family
+        settings.
+
+        This function modifies the input parameters dictionary based on the
+        user's family type, language, and username. It ensures that certain
+        parameters are set correctly for actions like editing, creating,
+        uploading, deleting, or moving content. The function also handles
+        specific cases for Wikipedia and toolforge families, including setting
+        the bot flag and user assertions.
+
+        Args:
+            params (dict): A dictionary of parameters to be modified.
+
+        Returns:
+            dict: The modified parameters dictionary.
+        """
+
         if self.family == "wikipedia" and self.lang == "ar" and params.get("summary") and self.username.find("bot") == -1:
             params["summary"] = ""
 
