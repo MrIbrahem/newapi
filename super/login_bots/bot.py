@@ -226,6 +226,14 @@ class LOGIN_HELPS(PARAMS_HELPS):
         return True
 
     def make_new_session(self) -> None:
+        """Create a new session for the user.
+
+        This method initializes a new session by creating a requests.Session
+        object and loading cookies from a specified file if it exists. If the
+        user is already logged in, it will notify the user and save the cookies
+        back to the file. If not logged in, it will attempt to log in the user.
+        """
+
         # ---
         print("make_new_session:")
         # ---
