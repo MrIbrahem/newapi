@@ -69,7 +69,7 @@ class MwClientSite:
 
         self.connection.headers["User-Agent"] = default_user_agent()
 
-        if os.path.exists(cookies_file):
+        if os.path.exists(cookies_file) and self.family != "mdwiki":
             # printe.output("<<yellow>>loading cookies")
             try:
                 # Load cookies from file, including session cookies
